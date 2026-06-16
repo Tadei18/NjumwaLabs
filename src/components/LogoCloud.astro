@@ -2,6 +2,8 @@
 interface Props {
   heading?: string;
   items?: string[];
+  /** Render as an auto-scrolling marquee (pauses on hover). */
+  marquee?: boolean;
 }
 // Tools & platforms — text "logos" keep the page fast and avoid licensing issues.
 // Swap for real client logos (astro:assets <Image>) as they come in.
@@ -25,16 +27,33 @@ const defaultItems = [
   "Stripe",
   "M-Pesa",
 ];
-const { heading = "Tools and platforms I build with", items = defaultItems } = Astro.props;
+const { heading = "Tools and platforms I build with", items = defaultItems, marquee = false } =
+  Astro.props;
 ---
 
 <div class="logo-cloud" data-reveal>
   {heading && <p class="logo-heading">{heading}</p>}
-  <ul class="logo-list">
-    {items.map((item) => (
-      <li class="logo-item">{item}</li>
-    ))}
-  </ul>
+
+  {marquee ? (
+    <div class="marquee" role="list" aria-label="Tools and platforms">
+      <ul class="marquee-track logo-row">
+        {items.map((item) => (
+          <li class="logo-item" role="listitem">{item}</li>
+        ))}
+      </ul>
+      <ul class="marquee-track logo-row" aria-hidden="true">
+        {items.map((item) => (
+          <li class="logo-item">{item}</li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <ul class="logo-list">
+      {items.map((item) => (
+        <li class="logo-item">{item}</li>
+      ))}
+    </ul>
+  )}
 </div>
 
 <style>
@@ -47,14 +66,17 @@ const { heading = "Tools and platforms I build with", items = defaultItems } = A
     color: var(--color-muted);
     margin-bottom: 1.5rem;
   }
+  .logo-list,
+  .logo-row {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
   .logo-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.6rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
   }
   .logo-item {
     font-family: var(--font-display);
@@ -65,5 +87,12 @@ const { heading = "Tools and platforms I build with", items = defaultItems } = A
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-pill);
+    white-space: nowrap;
+    transition: border-color 0.18s, color 0.18s, transform 0.18s var(--ease-out);
+  }
+  .logo-item:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+    transform: translateY(-2px);
   }
 </style>

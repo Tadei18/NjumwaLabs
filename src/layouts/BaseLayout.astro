@@ -4,6 +4,7 @@ import Seo from "@components/Seo.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Analytics from "@components/Analytics.astro";
+import { ClientRouter } from "astro:transitions";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 
 interface Props {
@@ -66,8 +67,10 @@ const bingToken = import.meta.env.PUBLIC_BING_VERIFICATION;
     />
 
     <Analytics />
+    <ClientRouter />
   </head>
   <body>
+    <div class="grain-overlay" aria-hidden="true"></div>
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
     <main id="main">
@@ -76,11 +79,38 @@ const bingToken = import.meta.env.PUBLIC_BING_VERIFICATION;
     <Footer />
 
     <script>
-      // Scroll-reveal — minimal, respects reduced-motion via CSS.
-      const reveal = () => {
-        const els = document.querySelectorAll("[data-reveal]");
+      // Scroll-reveal + count-up — minimal, respects reduced-motion.
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const countUp = (el: Element) => {
+        const raw = el.getAttribute("data-count");
+        if (!raw) return;
+        const target = parseFloat(raw);
+        const prefix = el.getAttribute("data-prefix") ?? "";
+        const suffix = el.getAttribute("data-suffix") ?? "";
+        const decimals = (raw.split(".")[1] || "").length;
+        if (reduce || isNaN(target)) {
+          el.textContent = prefix + target.toFixed(decimals) + suffix;
+          return;
+        }
+        const dur = 1400;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      };
+
+      const init = () => {
+        const els = document.querySelectorAll("[data-reveal], [data-count]");
         if (!("IntersectionObserver" in window) || els.length === 0) {
-          els.forEach((el) => el.classList.add("is-visible"));
+          els.forEach((el) => {
+            el.classList.add("is-visible");
+            countUp(el);
+          });
           return;
         }
         const io = new IntersectionObserver(
@@ -88,6 +118,7 @@ const bingToken = import.meta.env.PUBLIC_BING_VERIFICATION;
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 entry.target.classList.add("is-visible");
+                countUp(entry.target);
                 io.unobserve(entry.target);
               }
             });
@@ -96,8 +127,8 @@ const bingToken = import.meta.env.PUBLIC_BING_VERIFICATION;
         );
         els.forEach((el) => io.observe(el));
       };
-      reveal();
-      document.addEventListener("astro:page-load", reveal);
+      init();
+      document.addEventListener("astro:page-load", init);
     </script>
 
     <style>

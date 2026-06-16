@@ -66,21 +66,25 @@ const usedPillars = pillars.filter((p) => items.some((i) => i.data.pillar === p.
 </BaseLayout>
 
 <script>
-  const filters = document.querySelectorAll<HTMLButtonElement>(".filter");
-  const items = document.querySelectorAll<HTMLElement>(".pf-item");
-  filters.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const f = btn.dataset.filter;
-      filters.forEach((b) => {
-        const on = b === btn;
-        b.classList.toggle("active", on);
-        b.setAttribute("aria-selected", String(on));
-      });
-      items.forEach((item) => {
-        item.style.display = f === "all" || item.dataset.pillar === f ? "" : "none";
+  const initFilter = () => {
+    const filters = document.querySelectorAll<HTMLButtonElement>(".filter");
+    const items = document.querySelectorAll<HTMLElement>(".pf-item");
+    filters.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const f = btn.dataset.filter;
+        filters.forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", String(on));
+        });
+        items.forEach((item) => {
+          item.style.display = f === "all" || item.dataset.pillar === f ? "" : "none";
+        });
       });
     });
-  });
+  };
+  initFilter();
+  document.addEventListener("astro:page-load", initFilter);
 </script>
 
 <style>

@@ -7,6 +7,7 @@ import BenefitBlock from "@components/BenefitBlock.astro";
 import ProcessSteps from "@components/ProcessSteps.astro";
 import Testimonial from "@components/Testimonial.astro";
 import CaseStudyCard from "@components/CaseStudyCard.astro";
+import CredentialsBand from "@components/CredentialsBand.astro";
 import LogoCloud from "@components/LogoCloud.astro";
 import Stat from "@components/Stat.astro";
 import CTASection from "@components/CTASection.astro";
@@ -22,8 +23,8 @@ const featured = (await getCollection("portfolio", ({ data }) => !data.draft && 
 const why = [
   {
     icon: "award",
-    title: "Senior & enterprise-trained",
-    text: "A Dynamics 365 F&O technical consultant background means I bring enterprise rigour — clean architecture, security, reliability — to projects of every size.",
+    title: "Microsoft-certified, enterprise-proven",
+    text: "Three Microsoft Solution Architect Expert certifications and a 200+ user D365 ERP go-live behind me — I bring enterprise rigour to projects of every size.",
   },
   {
     icon: "layers",
@@ -60,9 +61,9 @@ const description =
   <Hero />
 
   <!-- Trust strip -->
-  <section class="section trust-strip">
+  <section class="section trust-strip" id="explore">
     <div class="container-x">
-      <LogoCloud heading="Trusted by businesses in Kenya, the US, EU & the Gulf — built with" />
+      <LogoCloud heading="Trusted by businesses in Kenya, the US, EU & the Gulf — built with" marquee={true} />
       <div class="stats">
         <Stat value="5" label="Service pillars, one connected system" />
         <Stat value="D365" label="Enterprise ERP consulting background" />
@@ -107,13 +108,14 @@ const description =
     </div>
   </section>
 
-  <!-- AI automation spotlight -->
-  <section class="section spotlight">
+  <!-- AI automation spotlight (showpiece, dark) -->
+  <section class="section section-dark spotlight">
+    <span class="glow glow-cyan spot-glow" aria-hidden="true"></span>
     <div class="container-x">
       <div class="spotlight-inner">
         <div class="spotlight-copy" data-reveal>
           <span class="eyebrow">In focus · highest demand</span>
-          <h2 class="spotlight-title">Put your repetitive work on autopilot.</h2>
+          <h2 class="spotlight-title">Put your repetitive work <span class="text-gradient">on autopilot.</span></h2>
           <p class="spotlight-text">
             AI automation is where most businesses find the fastest return: faster responses, more
             qualified leads, and hours of manual work removed every week. Here's what that looks
@@ -125,9 +127,9 @@ const description =
           </a>
         </div>
         <ul class="scenarios">
-          {automationScenarios.map((s) => (
-            <li class="scenario" data-reveal>
-              <Icon name={`lucide:${s.icon}`} class="scenario-icon" />
+          {automationScenarios.map((s, i) => (
+            <li class="scenario" data-reveal data-delay={String(i + 1)}>
+              <span class="scenario-icon"><Icon name={`lucide:${s.icon}`} /></span>
               <div class="scenario-flow">
                 <span class="scenario-before">{s.before}</span>
                 <Icon name="lucide:arrow-right" class="scenario-arrow" />
@@ -136,6 +138,25 @@ const description =
             </li>
           ))}
         </ul>
+      </div>
+
+      <div class="spot-stats">
+        <div class="spot-stat" data-reveal>
+          <span class="spot-num"><span data-count="2" data-suffix="s">2s</span></span>
+          <span class="spot-label">to first reply, day or night</span>
+        </div>
+        <div class="spot-stat" data-reveal data-delay="1">
+          <span class="spot-num"><span data-count="24" data-suffix="/7">24/7</span></span>
+          <span class="spot-label">always-on coverage</span>
+        </div>
+        <div class="spot-stat" data-reveal data-delay="2">
+          <span class="spot-num"><span data-count="10" data-suffix="+ hrs">10+ hrs</span></span>
+          <span class="spot-label">manual work removed weekly</span>
+        </div>
+        <div class="spot-stat" data-reveal data-delay="3">
+          <span class="spot-num"><span data-count="0" data-suffix="">0</span></span>
+          <span class="spot-label">leads left unanswered</span>
+        </div>
       </div>
     </div>
   </section>
@@ -180,6 +201,13 @@ const description =
         text="No mystery, no runaway scope. Four simple stages, with you in the loop the whole way."
       />
       <ProcessSteps />
+    </div>
+  </section>
+
+  <!-- Credentials / trust band (dark) -->
+  <section class="section section-dark">
+    <div class="container-x">
+      <CredentialsBand variant="dark" />
     </div>
   </section>
 
@@ -274,7 +302,19 @@ const description =
     gap: 1.25rem;
   }
 
+  .spotlight {
+    position: relative;
+  }
+  .spot-glow {
+    width: 34rem;
+    height: 34rem;
+    top: -10rem;
+    right: -8rem;
+    opacity: 0.22;
+  }
   .spotlight-inner {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -286,7 +326,7 @@ const description =
   }
   .spotlight-text {
     margin-top: 1rem;
-    color: var(--color-muted);
+    color: rgba(255, 255, 255, 0.74);
     line-height: 1.6;
     max-width: 46ch;
   }
@@ -310,15 +350,29 @@ const description =
     align-items: center;
     gap: 1rem;
     padding: 1.25rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-night-line);
     border-radius: var(--radius-card);
+    transition: border-color 0.2s, transform 0.2s var(--ease-out);
+  }
+  .scenario:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    transform: translateX(4px);
   }
   .scenario-icon {
-    width: 1.6rem;
-    height: 1.6rem;
-    color: var(--color-accent-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
     flex-shrink: 0;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+    color: var(--color-accent);
+  }
+  .scenario-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
   }
   .scenario-flow {
     display: flex;
@@ -327,9 +381,9 @@ const description =
     flex-wrap: wrap;
   }
   .scenario-before {
-    color: var(--color-muted);
+    color: rgba(255, 255, 255, 0.5);
     text-decoration: line-through;
-    text-decoration-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
+    text-decoration-color: rgba(255, 255, 255, 0.3);
   }
   .scenario-arrow {
     width: 1.1rem;
@@ -340,7 +394,35 @@ const description =
   .scenario-after {
     font-family: var(--font-display);
     font-weight: 600;
-    color: var(--color-ink);
+    color: #fff;
+  }
+
+  .spot-stats {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1rem;
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--color-night-line);
+  }
+  .spot-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .spot-num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1;
+    color: var(--color-accent);
+  }
+  .spot-label {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.66);
+    line-height: 1.4;
   }
 
   .work-grid {

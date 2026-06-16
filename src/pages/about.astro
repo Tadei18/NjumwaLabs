@@ -4,6 +4,7 @@ import Breadcrumbs from "@components/Breadcrumbs.astro";
 import SectionHeading from "@components/SectionHeading.astro";
 import ProcessSteps from "@components/ProcessSteps.astro";
 import CTASection from "@components/CTASection.astro";
+import CredentialsBand from "@components/CredentialsBand.astro";
 import { Icon } from "astro-icon/components";
 import { site } from "@data/site";
 import { personSchema, organizationSchema, breadcrumbSchema } from "@/lib/schema";
@@ -32,7 +33,7 @@ const stack = [
 
 <BaseLayout
   title="About Crispus Njumwa — software engineer & D365 F&O consultant"
-  description="Crispus Njumwa is a senior, enterprise-trained software engineer and Microsoft Dynamics 365 Finance & Operations technical consultant in Nairobi, building software, AI, mobile and data systems for clients worldwide."
+  description="Crispus Martin Njumwa is a Microsoft-certified Dynamics 365 Finance & Operations technical consultant in Nairobi — Solution Architect Expert (×3), proven on a 200+ user enterprise ERP go-live — building software, AI, mobile and data systems for clients worldwide."
   schemas={[
     personSchema(),
     organizationSchema(),
@@ -47,17 +48,23 @@ const stack = [
           <span class="eyebrow">About</span>
           <h1 class="about-title">Hi, I'm Crispus — the engineer behind Njumwa Labs.</h1>
           <p class="about-lead">
-            I build, automate and maintain the software and data systems that growing businesses run
-            on. My background is enterprise: I work as a Microsoft Dynamics 365 Finance & Operations
-            technical consultant, the kind of role where reliability, security and clean architecture
-            aren't optional.
+            I'm a Microsoft-certified Dynamics 365 Finance & Operations technical consultant in
+            {site.city}, holding three Microsoft Solution Architect Expert certifications — across
+            D365 F&O, Azure and the Power Platform.
           </p>
           <p class="about-body">
-            Njumwa Labs is how I bring that same standard to SMEs, startups and founders — in {site.city}
-            and around the world — without the enterprise price tag. Whether it's a fast website, an
-            AI automation that answers leads in seconds, a mobile app, a database that finally runs
-            quickly, or deep D365 work, I'm the technical partner who can build it, automate it, and
-            keep it running.
+            After a BSc in Computer Science at Egerton University, I joined Impax Business Solutions
+            as a D365 F&O developer, where I delivered technical components on an enterprise insurance
+            ERP go-live serving 200+ users across General Ledger, AR, AP, Fixed Assets, Inventory and
+            Procurement. That's where I learned to build things that have to be reliable, secure and
+            upgrade-safe under real production load.
+          </p>
+          <p class="about-body">
+            Njumwa Labs is how I bring that same enterprise standard to SMEs, startups and founders —
+            in {site.city} and around the world — without the enterprise price tag. Whether it's a
+            fast website, an AI automation that answers leads in seconds, a mobile app, a database
+            that finally runs quickly, or deep D365 work, I'm the technical partner who can build it,
+            automate it, and keep it running.
           </p>
           <div class="about-actions">
             <a href="/contact/" class="btn btn-primary" data-track="book_call_about">
@@ -71,7 +78,7 @@ const stack = [
         <aside class="about-card card" data-reveal>
           <div class="ac-avatar" aria-hidden="true">CN</div>
           <p class="ac-name">{site.founder}</p>
-          <p class="ac-role">Software engineer · D365 F&O technical consultant</p>
+          <p class="ac-role">Microsoft-certified D365 F&O technical consultant</p>
           <ul class="ac-meta">
             <li><Icon name="lucide:map-pin" /> {site.city}</li>
             <li><Icon name="lucide:globe" /> Serving clients worldwide</li>
@@ -87,7 +94,7 @@ const stack = [
     <div class="container-x">
       <SectionHeading
         eyebrow="Experience & expertise"
-        title="Enterprise-trained, multidisciplinary, hands-on."
+        title="Microsoft-certified, multidisciplinary, hands-on."
         text="The range isn't a gimmick — modern businesses run on connected systems, and I've worked across the whole stack that powers them."
       />
       <ul class="expertise">
@@ -98,6 +105,13 @@ const stack = [
           </li>
         ))}
       </ul>
+    </div>
+  </section>
+
+  <!-- Credentials -->
+  <section class="section creds-section">
+    <div class="container-x">
+      <CredentialsBand variant="light" eyebrow="Certifications & credentials" />
     </div>
   </section>
 

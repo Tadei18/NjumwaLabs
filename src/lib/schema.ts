@@ -1,5 +1,6 @@
 // JSON-LD builders. Keep output minimal and valid (Rich Results Test clean).
 import { site } from "@data/site";
+import { allCerts, verificationUrl } from "@data/credentials";
 
 const abs = (path: string) => new URL(path, site.url).href;
 
@@ -50,11 +51,38 @@ export const personSchema = () => ({
   "@type": "Person",
   "@id": `${site.url}/#person`,
   name: site.founder,
-  jobTitle: "Software Engineer & Dynamics 365 Finance & Operations Technical Consultant",
-  worksFor: { "@id": `${site.url}/#organization` },
+  jobTitle: "Dynamics 365 Finance & Operations Technical Consultant",
+  worksFor: [
+    { "@id": `${site.url}/#organization` },
+    { "@type": "Organization", name: "Impax Business Solutions" },
+  ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Egerton University",
+  },
+  knowsAbout: [
+    "X++",
+    "Dynamics 365 Finance & Operations",
+    "Power Platform",
+    "Microsoft Azure",
+    "Power BI",
+    "Microsoft Fabric",
+    "SQL",
+    "AI automation",
+    "Machine Learning",
+    "Web development",
+    "Mobile app development",
+    "Database administration",
+  ],
+  hasCredential: allCerts.map((c) => ({
+    "@type": "EducationalOccupationalCredential",
+    credentialCategory: "certification",
+    name: c.name,
+    recognizedBy: { "@type": "Organization", name: c.by ?? "Microsoft" },
+  })),
   url: `${site.url}/about/`,
   address: { "@type": "PostalAddress", addressLocality: "Nairobi", addressCountry: "KE" },
-  sameAs: [site.socials.linkedin, site.socials.github].filter(Boolean),
+  sameAs: [site.socials.linkedin, site.socials.github, verificationUrl].filter(Boolean),
 });
 
 export const serviceSchema = (opts: {

@@ -4,7 +4,7 @@
 export const site = {
   name: "Njumwa Labs",
   legalName: "Njumwa Labs",
-  founder: "Crispus Njumwa",
+  founder: "Crispus Martin Njumwa",
   tagline: "Automation and efficiency brought closer",
   // Update once the production domain is purchased (also update astro.config.mjs `site`).
   url: "https://njumwalabs.com",
@@ -23,9 +23,9 @@ export const site = {
     linkedin: "https://www.linkedin.com/in/crispus-njumwa-692741267",
     github: "", // optional — add later
   },
-  // Placeholder OG image (SVG). Export a 1200×630 PNG before launch for full
-  // social-platform support (some scrapers don't render SVG). See README.
-  ogImage: "/og/default.svg",
+  // 1200×630 PNG OG card (rendered from public/og/default.svg via sharp).
+  // To refresh: edit the SVG, then run `npm run og` (see README).
+  ogImage: "/og/default.png",
 } as const;
 
 export const whatsappLink = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(

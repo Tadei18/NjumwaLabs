@@ -8,6 +8,7 @@ import ProcessSteps from "@components/ProcessSteps.astro";
 import CaseStudyCard from "@components/CaseStudyCard.astro";
 import FAQ from "@components/FAQ.astro";
 import CTASection from "@components/CTASection.astro";
+import CredentialsBand from "@components/CredentialsBand.astro";
 import { Icon } from "astro-icon/components";
 import { pillars, pillarBySlug } from "@data/services";
 import { pillarContent } from "@data/pillarContent";
@@ -21,6 +22,25 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const pillar = pillarBySlug(slug!)!;
 const content = pillarContent[slug!];
+const isD365 = slug === "dynamics-365-finance-operations";
+const isAI = slug === "ai-automation";
+
+// D365 enterprise go-live proof (anonymized — see README "pending approval").
+const goLiveModules = [
+  { icon: "book-open", label: "General Ledger" },
+  { icon: "hand-coins", label: "Accounts Receivable" },
+  { icon: "receipt", label: "Accounts Payable" },
+  { icon: "building", label: "Fixed Assets" },
+  { icon: "boxes", label: "Inventory" },
+  { icon: "shopping-cart", label: "Procurement & Sourcing" },
+];
+const goLiveWork = [
+  "Designed and developed custom AOT elements — tables, forms, classes, data entities, and table/form extensions — in X++ using the Chain of Command pattern, extending standard F&O behaviour without breaking upgrade paths.",
+  "Built SSRS and Power BI reports surfacing financial and operational KPIs for finance, claims and underwriting teams.",
+  "Configured Data Management Framework (DMF) projects to migrate master data and historical transactions from legacy systems during cutover.",
+  "Translated business requirements into technical specifications alongside senior architects across build, test, UAT and hypercare.",
+  "Resolved post-go-live defects and tuned performance of high-volume transactional workflows in production.",
+];
 
 const related = (
   await getCollection("portfolio", ({ data }) => !data.draft && data.pillar === slug)
@@ -52,6 +72,59 @@ const schemas = [
     priceFrom={pillar.priceFrom}
     breadcrumbs={breadcrumbs}
   />
+
+  {isD365 && (
+    <>
+      <!-- Credentials band -->
+      <section class="section section-dark">
+        <div class="container-x">
+          <CredentialsBand variant="dark" />
+        </div>
+      </section>
+
+      <!-- Proven on a real enterprise go-live -->
+      <section class="section golive">
+        <div class="container-x">
+          <SectionHeading
+            eyebrow="Proven delivery"
+            title="Proven on a real enterprise go-live."
+            text="I delivered technical components on a large-scale D365 Finance & Operations implementation and go-live serving 200–1,000 users at a leading East African insurance group — across six core finance and operations modules."
+          />
+
+          <div class="modules" data-reveal>
+            {goLiveModules.map((m) => (
+              <span class="module">
+                <Icon name={`lucide:${m.icon}`} />
+                {m.label}
+              </span>
+            ))}
+          </div>
+
+          <ul class="golive-work">
+            {goLiveWork.map((w, i) => (
+              <li class="golive-item" data-reveal data-delay={String((i % 3) + 1)}>
+                <Icon name="lucide:check" />
+                <span>{w}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </>
+  )}
+
+  {isAI && (
+    <section class="ai-cred-wrap">
+      <div class="container-x">
+        <p class="ai-cred" data-reveal>
+          <Icon name="lucide:sparkles" />
+          Backed by Microsoft AI certification and an applied Machine Learning Specialization
+          (DeepLearning.AI / Stanford) — plus hands-on ML projects, including a facial-recognition
+          attendance system built with Python, OpenCV and DLIB.
+        </p>
+      </div>
+    </section>
+  )}
 
   <!-- Problem -->
   <section class="section problem">
@@ -171,6 +244,80 @@ const schemas = [
 </BaseLayout>
 
 <style>
+  .ai-cred-wrap {
+    padding-top: 1.5rem;
+  }
+  .ai-cred {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    max-width: 60rem;
+    padding: 1.1rem 1.4rem;
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, var(--color-line));
+    border-radius: 14px;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .ai-cred svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    color: var(--color-accent-ink);
+  }
+
+  .modules {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .module {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .module svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--color-accent-ink);
+    flex-shrink: 0;
+  }
+  .golive-work {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .golive-item {
+    display: flex;
+    gap: 0.7rem;
+    padding: 1.1rem 1.3rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .golive-item svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-accent-ink);
+  }
+
   .problem {
     background: var(--color-surface-2);
   }
@@ -299,6 +446,12 @@ const schemas = [
     }
     .work-grid {
       grid-template-columns: repeat(3, 1fr);
+    }
+    .modules {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .golive-work {
+      grid-template-columns: repeat(2, 1fr);
     }
     .snap-card {
       flex-direction: row;

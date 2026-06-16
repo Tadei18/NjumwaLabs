@@ -78,6 +78,7 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
 </form>
 
 <script>
+  const initContactForm = () => {
   const form = document.querySelector<HTMLFormElement>(".contact-form");
   if (form) {
     const status = form.querySelector<HTMLParagraphElement>(".form-status")!;
@@ -139,6 +140,9 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
       }
     });
   }
+  };
+  initContactForm();
+  document.addEventListener("astro:page-load", initContactForm);
 </script>
 
 <style>

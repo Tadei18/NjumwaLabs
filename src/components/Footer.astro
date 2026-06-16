@@ -24,7 +24,7 @@ const company = [
         <p class="footer-tagline">{site.tagline}.</p>
         <p class="footer-pitch">
           Software, AI automation, mobile, data and Dynamics 365 systems — built and kept running by
-          a senior, enterprise-trained engineer in {site.city}.
+          a Microsoft-certified D365 Finance & Operations technical consultant in {site.city}.
         </p>
         <div class="footer-socials">
           <a href={site.socials.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn">
@@ -98,9 +98,34 @@ const company = [
 
 <style>
   .site-footer {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: var(--color-night);
     color: rgba(255, 255, 255, 0.78);
     padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
+  }
+  .site-footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    opacity: 0.6;
+  }
+  .site-footer::after {
+    content: "";
+    position: absolute;
+    top: -8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36rem;
+    height: 16rem;
+    background: radial-gradient(50% 60% at 50% 0%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
   }
   .footer-top {
     display: grid;

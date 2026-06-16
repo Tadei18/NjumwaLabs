@@ -53,7 +53,7 @@ export const pillars: Pillar[] = [
     title: "Dynamics 365 Finance & Operations",
     short: "Dynamics 365 F&O",
     icon: "building-2",
-    outcome: "Senior D365 Finance & Operations technical consulting.",
+    outcome: "Microsoft-certified D365 Finance & Operations technical consulting.",
     href: "/services/dynamics-365-finance-operations/",
     priceFrom: "$45/hr",
   },

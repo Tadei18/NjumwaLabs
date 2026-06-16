@@ -57,21 +57,25 @@ import { pricing } from "@data/pricing";
 </div>
 
 <script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>(".toggle-btn");
-  const panels = document.querySelectorAll<HTMLElement>(".pricing-panel");
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = btn.dataset.target;
-      buttons.forEach((b) => {
-        const on = b === btn;
-        b.classList.toggle("active", on);
-        b.setAttribute("aria-selected", String(on));
-      });
-      panels.forEach((p) => {
-        p.hidden = p.dataset.panel !== target;
+  const initPricing = () => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".toggle-btn");
+    const panels = document.querySelectorAll<HTMLElement>(".pricing-panel");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.target;
+        buttons.forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", String(on));
+        });
+        panels.forEach((p) => {
+          p.hidden = p.dataset.panel !== target;
+        });
       });
     });
-  });
+  };
+  initPricing();
+  document.addEventListener("astro:page-load", initPricing);
 </script>
 
 <style>

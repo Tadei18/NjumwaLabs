@@ -67,7 +67,7 @@ export const pricing: PricingGroup[] = [
           "Data migrations & warehousing",
           "Architecture, security & performance review",
           "Phased delivery with milestones",
-          "Dedicated senior engineering",
+          "Dedicated expert engineering",
         ],
         cta: "Request a quote",
       },
@@ -111,7 +111,7 @@ export const pricing: PricingGroup[] = [
         name: "Consulting",
         price: "$45",
         cadence: "/hour",
-        blurb: "Senior advisory & specialist work, including D365 F&O.",
+        blurb: "Specialist advisory & technical work, including D365 F&O.",
         features: [
           "D365 F&O technical consulting",
           "Architecture & code reviews",

@@ -65,20 +65,23 @@ Never commit `.env`. On Netlify/Cloudflare/Vercel, set these in the dashboard.
    - `src/data/site.ts` → `site.url`
    (Also update the `Sitemap:` line in `public/robots.txt` and the URLs in `public/llms.txt`.)
 2. **Set environment variables** (at minimum `PUBLIC_WEB3FORMS_KEY`).
-3. **Export a real OG image:** `public/og/default.svg` is a placeholder — export a
-   1200×630 **PNG** to `public/og/default.png` and update `ogImage` in `src/data/site.ts`
-   (some social scrapers don't render SVG).
+3. **OG image:** a branded 1200×630 PNG (`public/og/default.png`) is already rendered
+   from `public/og/default.svg`. To refresh it after editing the SVG, run `npm run og`.
 4. **Add a favicon.ico / apple-touch-icon** if you want broader device coverage
-   (an SVG favicon is already wired up).
+   (an SVG favicon + maskable icon are already wired up).
 5. **Replace placeholder content:**
    - Testimonials in `src/data/testimonials.ts` (set `placeholder: false` once real).
-   - Case studies in `src/content/portfolio/` (currently realistic placeholders).
+   - **`insurance-d365-go-live.mdx` is a REAL case study but anonymized — confirm with the
+     owner whether the client can be named, and that it's cleared for publication (NDA).**
+   - The other case studies in `src/content/portfolio/` are realistic placeholders.
    - **Review the AI-drafted blog posts** in `src/content/blog/` for accuracy/voice.
-6. **Review legal pages** (`/privacy`, `/terms`) with appropriate advice — they're templates.
-7. **Verify** Google Search Console + Bing Webmaster and submit `sitemap-index.xml`.
-8. **Set up a Google Business Profile** (off-site) for local SEO.
-9. Run Lighthouse (mobile) and confirm ≥95 across the board; validate JSON-LD with
-   Google's Rich Results Test.
+6. **Credentials:** add a verification link (Credly / Microsoft Learn) in
+   `src/data/credentials.ts` → `verificationUrl` (leave empty to omit — never fake it).
+7. **Review legal pages** (`/privacy`, `/terms`) with appropriate advice — they're templates.
+8. **Verify** Google Search Console + Bing Webmaster and submit `sitemap-index.xml`.
+9. **Set up a Google Business Profile** (off-site) for local SEO.
+10. Run Lighthouse (mobile) and confirm ≥95 across the board; validate JSON-LD with
+    Google's Rich Results Test.
 
 ---
 
@@ -173,4 +176,35 @@ After the first deploy, set the env vars in the host dashboard and add your cust
 amber secondary, on a cool off-white surface. Display **Space Grotesk**, body **Inter**,
 mono **JetBrains Mono** for technical texture. Tokens live in `src/styles/global.css`
 (`@theme` block) — change them there to re-skin the whole site. The signature element is
-the interactive **SystemsMap** node-graph in the hero (`src/components/SystemsMap.astro`).
+the interactive, animated **SystemsMap** node-graph in the hero (`src/components/SystemsMap.astro`).
+
+### Motion & the dark-section system (Phase 2)
+
+The page alternates light and **dark "peak" sections** for rhythm. Any section becomes a
+cinematic dark band by adding the `section-dark` class (deep indigo + accent glows + light
+text, defined in `global.css`). Helper utilities also live there:
+
+- `text-gradient` — cyan→amber accent on **one** key word per heading.
+- `glow` + `glow-cyan` / `glow-amber` — soft radial light blobs.
+- `grain-overlay` — global fine-grain texture (one element in `BaseLayout`).
+- `marquee` / `marquee-track` — auto-scrolling logo strip (pauses on hover).
+- `reveal-line` + `load-fade` — hero entrance animations.
+- `[data-reveal]` (+ optional `[data-delay="1..5"]`) — scroll-in reveals via a single
+  IntersectionObserver in `BaseLayout`.
+- `[data-count]` (+ `data-suffix` / `data-prefix`) — count-up numbers on scroll-in.
+- `.btn-primary` has a built-in hover fill-sweep.
+
+**Astro View Transitions** are enabled (`<ClientRouter />` in `BaseLayout`) for smooth
+cross-page fades. Because of this, interactive component scripts re-init on the
+`astro:page-load` event — follow that pattern when adding new client JS.
+
+**Every motion has a `prefers-reduced-motion` fallback** (content appears in its final
+state). Test with the OS reduced-motion setting before shipping motion changes.
+
+### Credentials
+
+`src/components/CredentialsBand.astro` renders the verified Microsoft certifications
+(data in `src/data/credentials.ts`), used on the home page (dark band), the About page,
+and the D365 pillar page. The same data feeds the extended **Person** JSON-LD
+(`hasCredential`, `alumniOf`, `worksFor`, `knowsAbout`) in `src/lib/schema.ts`. Positioning
+is **credential-led** — lead with verifiable proof, not "senior" self-labels.

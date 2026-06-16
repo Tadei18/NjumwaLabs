@@ -31,7 +31,7 @@ const { steps = defaultSteps } = Astro.props;
 
 <ol class="steps">
   {steps.map((step, i) => (
-    <li class="step" data-reveal>
+    <li class="step" data-reveal data-delay={String(i + 1)}>
       <span class="step-num">{String(i + 1).padStart(2, "0")}</span>
       <h3 class="step-title">{step.title}</h3>
       <p class="step-text">{step.text}</p>
@@ -41,13 +41,13 @@ const { steps = defaultSteps } = Astro.props;
 
 <style>
   .steps {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
     list-style: none;
     padding: 0;
     margin: 0;
-    counter-reset: none;
   }
   .step {
     position: relative;
@@ -55,6 +55,29 @@ const { steps = defaultSteps } = Astro.props;
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out),
+      border-color 0.22s var(--ease-out);
+  }
+  .step:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
+  }
+  /* connecting progress line across the row (desktop) */
+  .steps::before {
+    content: "";
+    position: absolute;
+    display: none;
+    top: 2.6rem;
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent), color-mix(in srgb, var(--color-accent) 20%, transparent));
+    z-index: 0;
+  }
+  .step > * {
+    position: relative;
+    z-index: 1;
   }
   .step-num {
     font-family: var(--font-mono);
@@ -83,6 +106,9 @@ const { steps = defaultSteps } = Astro.props;
   @media (min-width: 1024px) {
     .steps {
       grid-template-columns: repeat(4, 1fr);
+    }
+    .steps::before {
+      display: block;
     }
   }
 </style>

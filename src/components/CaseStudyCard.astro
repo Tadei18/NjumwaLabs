@@ -20,15 +20,20 @@ const p = pillarBySlug(pillar);
 ---
 
 <a href={url} class="cs-card card" data-reveal>
-  <div class="cs-media">
-    {cover ? (
-      <Image src={cover} alt={coverAlt ?? title} width={640} height={400} class="cs-img" />
-    ) : (
-      <div class="cs-placeholder" aria-hidden="true">
-        {p && <Icon name={`lucide:${p.icon}`} />}
-      </div>
-    )}
-    {p && <span class="cs-tag">{p.short}</span>}
+  <div class="cs-frame">
+    <span class="cs-bar" aria-hidden="true">
+      <span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span>
+    </span>
+    <div class="cs-media">
+      {cover ? (
+        <Image src={cover} alt={coverAlt ?? title} width={640} height={400} class="cs-img" />
+      ) : (
+        <div class="cs-placeholder" aria-hidden="true">
+          {p && <Icon name={`lucide:${p.icon}`} />}
+        </div>
+      )}
+      {p && <span class="cs-tag">{p.short}</span>}
+    </div>
   </div>
   <div class="cs-body">
     <p class="cs-meta">{client} · {industry}</p>
@@ -61,6 +66,33 @@ const p = pillarBySlug(pillar);
   .cs-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lift);
+  }
+  .cs-frame {
+    background: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .cs-bar {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-surface-2) 60%, var(--color-surface));
+  }
+  .cs-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--color-line);
+  }
+  .cs-dot:nth-child(1) {
+    background: #ff5f57;
+  }
+  .cs-dot:nth-child(2) {
+    background: #febc2e;
+  }
+  .cs-dot:nth-child(3) {
+    background: #28c840;
   }
   .cs-media {
     position: relative;

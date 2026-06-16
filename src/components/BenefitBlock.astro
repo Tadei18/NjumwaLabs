@@ -27,6 +27,13 @@ const { icon, title, text } = Astro.props;
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out),
+      border-color 0.22s var(--ease-out);
+  }
+  .benefit:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-line));
   }
   .benefit-icon {
     display: inline-flex;

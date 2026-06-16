@@ -121,13 +121,17 @@ const ogSchemas = [
 
 <script>
   // Show success banner when redirected back with ?sent=1 (no-JS fallback path).
-  if (new URLSearchParams(window.location.search).get("sent") === "1") {
-    const el = document.getElementById("form-success");
-    if (el) {
-      el.hidden = false;
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
+  const showSent = () => {
+    if (new URLSearchParams(window.location.search).get("sent") === "1") {
+      const el = document.getElementById("form-success");
+      if (el) {
+        el.hidden = false;
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }
-  }
+  };
+  showSent();
+  document.addEventListener("astro:page-load", showSent);
 </script>
 
 <style>

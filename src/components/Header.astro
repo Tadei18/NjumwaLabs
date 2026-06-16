@@ -80,22 +80,29 @@ const isActive = (href: string) => path === href || (href !== "/" && path.starts
 </header>
 
 <script>
-  const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
-  const drawer = document.getElementById("mobile-drawer");
-  const header = document.querySelector(".site-header");
+  // Re-init on every page load (works with View Transitions).
+  const initHeader = () => {
+    const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    const drawer = document.getElementById("mobile-drawer");
 
-  toggle?.addEventListener("click", () => {
-    const open = toggle.getAttribute("aria-expanded") === "true";
-    toggle.setAttribute("aria-expanded", String(!open));
-    toggle.setAttribute("aria-label", open ? "Open menu" : "Close menu");
-    if (drawer) drawer.hidden = open;
-    document.body.style.overflow = open ? "" : "hidden";
-  });
+    toggle?.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!open));
+      toggle.setAttribute("aria-label", open ? "Open menu" : "Close menu");
+      if (drawer) drawer.hidden = open;
+      document.body.style.overflow = open ? "" : "hidden";
+    });
 
-  // Shadow on scroll.
-  const onScroll = () => header?.classList.toggle("scrolled", window.scrollY > 8);
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+    const onScroll = () =>
+      document.querySelector(".site-header")?.classList.toggle("scrolled", window.scrollY > 8);
+    onScroll();
+    if (!(window as any).__hdrScroll) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      (window as any).__hdrScroll = true;
+    }
+  };
+  initHeader();
+  document.addEventListener("astro:page-load", initHeader);
 </script>
 
 <style>

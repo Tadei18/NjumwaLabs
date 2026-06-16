@@ -23,7 +23,7 @@ export const pillarContent: Record<string, PillarContent> = {
     slug: "web-development",
     metaTitle: "Web development services — fast, ranking, converting sites & apps",
     metaDescription:
-      "Custom websites, web apps and SaaS built with React, Next.js, Astro and Node.js — fast, accessible, SEO-engineered and built to convert. Affordable, senior delivery.",
+      "Custom websites, web apps and SaaS built with React, Next.js, Astro and Node.js — fast, accessible, SEO-engineered and built to convert. Affordable, expert delivery.",
     eyebrow: "Service · Web development",
     h1: "Websites and web apps that load fast, rank well, and convert.",
     subtitle:
@@ -189,13 +189,13 @@ export const pillarContent: Record<string, PillarContent> = {
 
   "dynamics-365-finance-operations": {
     slug: "dynamics-365-finance-operations",
-    metaTitle: "Dynamics 365 Finance & Operations technical consultant (X++)",
+    metaTitle: "Microsoft-certified Dynamics 365 Finance & Operations consultant (X++)",
     metaDescription:
-      "Senior D365 Finance & Operations technical consulting: X++ development, integrations, data migration (DMF), SSRS & Electronic Reporting, workflows, upgrades, security and Power Platform.",
+      "Microsoft-certified D365 Finance & Operations technical consulting — Solution Architect Expert ×3, proven on a 200+ user enterprise go-live. X++, integrations, DMF migration, SSRS & Power BI, upgrades and Power Platform.",
     eyebrow: "Service · Enterprise · D365 F&O",
-    h1: "Senior Dynamics 365 Finance & Operations technical consulting.",
+    h1: "Microsoft-certified Dynamics 365 Finance & Operations technical consulting.",
     subtitle:
-      "Enterprise-grade X++ development, integrations, data migration and reporting that make your ERP do exactly what your business needs — without the enterprise overhead.",
+      "Solution Architect Expert (×3), proven on a 200+ user enterprise ERP go-live. Upgrade-safe X++ development, integrations, data migration and reporting that make your ERP do exactly what your business needs.",
     serviceType: "Dynamics 365 Finance & Operations technical consulting",
     problem: {
       title: "Your ERP should fit your business — not the other way around.",

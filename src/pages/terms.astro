@@ -1,0 +1,104 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import Prose from "@components/Prose.astro";
+import { site, mailtoLink } from "@data/site";
+
+const updated = "June 2026";
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description="The terms that govern use of the Njumwa Labs website and services."
+  noindex={true}
+>
+  <section class="legal">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Terms", url: "/terms/" }]} />
+      <div class="legal-head">
+        <h1>Terms of Service</h1>
+        <p class="legal-updated">Last updated: {updated}</p>
+        <p class="legal-note">
+          ⚠️ Template content — review and adapt with legal advice before launch.
+        </p>
+      </div>
+      <Prose>
+        <p>
+          These terms govern your use of {site.url} and any services provided by {site.legalName}
+          ("we", "us"). By using this site you agree to these terms.
+        </p>
+
+        <h2>Use of the website</h2>
+        <p>
+          You may use this website for lawful purposes only. You agree not to misuse it, attempt to
+          disrupt it, or use it to infringe others' rights.
+        </p>
+
+        <h2>Services</h2>
+        <p>
+          Information on this site about services and pricing is for general guidance. Specific
+          engagements are governed by a separate written agreement or proposal, which sets out scope,
+          deliverables, timelines and fees.
+        </p>
+
+        <h2>Intellectual property</h2>
+        <p>
+          All content on this website (text, design, graphics, code) is owned by {site.legalName}
+          unless otherwise stated, and may not be copied or reused without permission.
+        </p>
+
+        <h2>Quotes and pricing</h2>
+        <p>
+          Prices shown are indicative "from" figures in USD. Final pricing is confirmed in a written
+          quote. Local (KES) and custom pricing may be offered.
+        </p>
+
+        <h2>Limitation of liability</h2>
+        <p>
+          The website is provided "as is" without warranties of any kind. To the maximum extent
+          permitted by law, we are not liable for any indirect or consequential loss arising from use
+          of the site.
+        </p>
+
+        <h2>Third-party links</h2>
+        <p>
+          This site may link to third-party websites. We are not responsible for their content or
+          practices.
+        </p>
+
+        <h2>Governing law</h2>
+        <p>These terms are governed by the laws of Kenya, unless otherwise agreed in writing.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about these terms? Email <a href={mailtoLink}>{site.email}</a>.</p>
+      </Prose>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal {
+    padding-block: 1.5rem clamp(3rem, 6vw, 5rem);
+  }
+  .legal-head {
+    max-width: 68ch;
+    margin: 1.5rem 0 2rem;
+  }
+  .legal-head h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-top: 1rem;
+  }
+  .legal-updated {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+  .legal-note {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--color-accent-2) 14%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-accent-2) 40%, var(--color-line));
+    border-radius: 10px;
+    font-size: 0.88rem;
+  }
+</style>

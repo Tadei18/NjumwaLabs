@@ -1,0 +1,210 @@
+---
+import { Icon } from "astro-icon/components";
+import { pricing } from "@data/pricing";
+---
+
+<div class="pricing">
+  <div class="pricing-toggle" role="tablist" aria-label="Pricing type">
+    {pricing.map((group, i) => (
+      <button
+        class:list={["toggle-btn", { active: i === 0 }]}
+        role="tab"
+        aria-selected={i === 0 ? "true" : "false"}
+        data-target={group.id}
+      >
+        {group.label}
+      </button>
+    ))}
+  </div>
+
+  {pricing.map((group, i) => (
+    <div class="pricing-panel" data-panel={group.id} hidden={i !== 0}>
+      <p class="pricing-note">{group.note}</p>
+      <div class="tiers">
+        {group.tiers.map((tier) => (
+          <div class:list={["tier", { featured: tier.featured }]} data-reveal>
+            {tier.featured && <span class="tier-badge">Most popular</span>}
+            <h3 class="tier-name">{tier.name}</h3>
+            <p class="tier-price">
+              <span class="tier-amount">{tier.price}</span>
+              <span class="tier-cadence">{tier.cadence}</span>
+            </p>
+            <p class="tier-blurb">{tier.blurb}</p>
+            <ul class="tier-features">
+              {tier.features.map((f) => (
+                <li>
+                  <Icon name="lucide:check" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/contact/"
+              class:list={["btn", tier.featured ? "btn-primary" : "btn-ghost", "tier-cta"]}
+              data-track="pricing_cta"
+            >
+              {tier.cta ?? "Get started"}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+
+  <p class="pricing-fineprint">
+    Prices in USD. Local (KES) and custom pricing available — <a href="/contact/" class="link-underline">get a quote</a>.
+  </p>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".toggle-btn");
+  const panels = document.querySelectorAll<HTMLElement>(".pricing-panel");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.target;
+      buttons.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-selected", String(on));
+      });
+      panels.forEach((p) => {
+        p.hidden = p.dataset.panel !== target;
+      });
+    });
+  });
+</script>
+
+<style>
+  .pricing-toggle {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.3rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    margin: 0 auto 1.5rem;
+  }
+  .pricing {
+    text-align: center;
+  }
+  .toggle-btn {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: var(--color-muted);
+    transition: background-color 0.18s, color 0.18s;
+  }
+  .toggle-btn.active {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-soft);
+  }
+  .pricing-note {
+    color: var(--color-muted);
+    max-width: 52ch;
+    margin: 0 auto 2rem;
+    font-size: 0.98rem;
+  }
+  .tiers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    text-align: left;
+  }
+  .tier {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 1.75rem;
+  }
+  .tier.featured {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent), var(--shadow-lift);
+  }
+  .tier-badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 1.75rem;
+    background: var(--color-accent);
+    color: #03222a;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+  }
+  .tier-name {
+    font-size: 1.25rem;
+  }
+  .tier-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+  .tier-amount {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--color-ink);
+  }
+  .tier-cadence {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .tier-blurb {
+    margin-top: 0.6rem;
+    color: var(--color-muted);
+    font-size: 0.93rem;
+    line-height: 1.5;
+  }
+  .tier-features {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex-grow: 1;
+  }
+  .tier-features li {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+  .tier-features svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-accent-ink);
+  }
+  .tier-cta {
+    width: 100%;
+  }
+  .pricing-fineprint {
+    margin-top: 1.75rem;
+    font-size: 0.88rem;
+    color: var(--color-muted);
+  }
+  .pricing-fineprint a {
+    color: var(--color-accent-ink);
+  }
+
+  @media (min-width: 860px) {
+    .tiers {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

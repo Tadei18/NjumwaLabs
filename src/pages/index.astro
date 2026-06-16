@@ -1,0 +1,434 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Hero from "@components/Hero.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import ServiceCard from "@components/ServiceCard.astro";
+import BenefitBlock from "@components/BenefitBlock.astro";
+import ProcessSteps from "@components/ProcessSteps.astro";
+import Testimonial from "@components/Testimonial.astro";
+import CaseStudyCard from "@components/CaseStudyCard.astro";
+import LogoCloud from "@components/LogoCloud.astro";
+import Stat from "@components/Stat.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { pillars } from "@data/services";
+import { testimonials } from "@data/testimonials";
+import { getCollection } from "astro:content";
+
+const featured = (await getCollection("portfolio", ({ data }) => !data.draft && data.featured))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
+
+const why = [
+  {
+    icon: "award",
+    title: "Senior & enterprise-trained",
+    text: "A Dynamics 365 F&O technical consultant background means I bring enterprise rigour — clean architecture, security, reliability — to projects of every size.",
+  },
+  {
+    icon: "layers",
+    title: "Full-stack range",
+    text: "Web, mobile, AI automation, databases and ERP under one roof. Fewer vendors, fewer handoffs, one partner who sees the whole system.",
+  },
+  {
+    icon: "wallet",
+    title: "Globally affordable",
+    text: "Enterprise quality at prices well below typical US/EU agencies — so SMEs and startups can afford to build things properly.",
+  },
+  {
+    icon: "message-square-text",
+    title: "Reliable & clear",
+    text: "Regular demos, plain-language updates and dependable delivery. You always know where your project stands.",
+  },
+];
+
+const automationScenarios = [
+  { before: "Leads answered overnight", after: "Answered in 2 seconds, 24/7", icon: "message-circle" },
+  { before: "10 hrs/week of data entry", after: "0 — fully automated", icon: "file-spreadsheet" },
+  { before: "Missed calls = lost sales", after: "Every call captured & booked", icon: "phone-call" },
+];
+
+const description =
+  "Njumwa Labs builds software, AI automation, mobile apps, databases and Dynamics 365 systems that grow your business — enterprise-grade delivery at globally affordable prices, from Nairobi to the world.";
+---
+
+<BaseLayout
+  title="Software, automation & data systems that grow your business"
+  description={description}
+  isHome={true}
+>
+  <Hero />
+
+  <!-- Trust strip -->
+  <section class="section trust-strip">
+    <div class="container-x">
+      <LogoCloud heading="Trusted by businesses in Kenya, the US, EU & the Gulf — built with" />
+      <div class="stats">
+        <Stat value="5" label="Service pillars, one connected system" />
+        <Stat value="D365" label="Enterprise ERP consulting background" />
+        <Stat value="24/7" label="Automations that never clock off" />
+        <Stat value="< 1 day" label="Typical first response" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Services overview -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="What I do"
+        title="Five capabilities. One business operating system."
+        text="Each service stands on its own — or combines into a single system where your website, app, data, automations and ERP all talk to each other."
+      />
+      <div class="services-grid">
+        {pillars.map((p, i) => (
+          <ServiceCard pillar={p} index={i} />
+        ))}
+        <a href="/services/" class="service-all card" data-reveal>
+          <span>See how they fit together</span>
+          <Icon name="lucide:arrow-right" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why work with me -->
+  <section class="section why">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="Why Njumwa Labs"
+        title="The technical partner who can build it, automate it, and keep it running."
+      />
+      <div class="why-grid">
+        {why.map((w) => (
+          <BenefitBlock icon={w.icon} title={w.title} text={w.text} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- AI automation spotlight -->
+  <section class="section spotlight">
+    <div class="container-x">
+      <div class="spotlight-inner">
+        <div class="spotlight-copy" data-reveal>
+          <span class="eyebrow">In focus · highest demand</span>
+          <h2 class="spotlight-title">Put your repetitive work on autopilot.</h2>
+          <p class="spotlight-text">
+            AI automation is where most businesses find the fastest return: faster responses, more
+            qualified leads, and hours of manual work removed every week. Here's what that looks
+            like in practice.
+          </p>
+          <a href="/services/ai-automation/" class="btn btn-primary">
+            Explore AI automation
+            <Icon name="lucide:arrow-right" />
+          </a>
+        </div>
+        <ul class="scenarios">
+          {automationScenarios.map((s) => (
+            <li class="scenario" data-reveal>
+              <Icon name={`lucide:${s.icon}`} class="scenario-icon" />
+              <div class="scenario-flow">
+                <span class="scenario-before">{s.before}</span>
+                <Icon name="lucide:arrow-right" class="scenario-arrow" />
+                <span class="scenario-after">{s.after}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured work -->
+  {featured.length > 0 && (
+    <section class="section">
+      <div class="container-x">
+        <SectionHeading
+          eyebrow="Selected work"
+          title="Systems that delivered measurable results."
+          text="A few representative projects. Each one started as a business problem, not a feature list."
+        />
+        <div class="work-grid">
+          {featured.map((cs) => (
+            <CaseStudyCard
+              url={`/portfolio/${cs.id}/`}
+              title={cs.data.title}
+              description={cs.data.description}
+              client={cs.data.client}
+              industry={cs.data.industry}
+              pillar={cs.data.pillar}
+              cover={cs.data.cover}
+              coverAlt={cs.data.coverAlt}
+              metrics={cs.data.metrics}
+            />
+          ))}
+        </div>
+        <div class="center-cta">
+          <a href="/portfolio/" class="btn btn-ghost">See all work <Icon name="lucide:arrow-right" /></a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Process -->
+  <section class="section process">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="How it works"
+        title="A clear path from idea to working system."
+        text="No mystery, no runaway scope. Four simple stages, with you in the loop the whole way."
+      />
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="In their words"
+        title="What working together feels like."
+        align="center"
+      />
+      <div class="testimonials-grid">
+        {testimonials.slice(0, 3).map((t) => (
+          <Testimonial testimonial={t} />
+        ))}
+      </div>
+      <p class="placeholder-note">Placeholder testimonials — real client quotes land here as projects wrap.</p>
+    </div>
+  </section>
+
+  <!-- Pricing teaser -->
+  <section class="section pricing-teaser">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="Pricing"
+        title="Transparent, globally affordable pricing."
+        text="Clear 'from' prices in USD. Local (KES) and custom quotes available — no surprises, ever."
+      />
+      <div class="teaser-grid">
+        {pillars.map((p) => (
+          <a href={p.href} class="teaser-item" data-reveal>
+            <span class="teaser-name">{p.short}</span>
+            <span class="teaser-price">from {p.priceFrom}</span>
+          </a>
+        ))}
+      </div>
+      <div class="center-cta">
+        <a href="/pricing/" class="btn btn-primary">See full pricing <Icon name="lucide:arrow-right" /></a>
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .trust-strip {
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1.5rem;
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .service-all {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.6rem;
+    background: var(--color-night);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: transform 0.22s var(--ease-out);
+  }
+  .service-all:hover {
+    transform: translateY(-4px);
+  }
+  .service-all svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--color-accent);
+  }
+
+  .why {
+    background: var(--color-surface-2);
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .spotlight-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .spotlight-title {
+    margin-top: 0.6rem;
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+  }
+  .spotlight-text {
+    margin-top: 1rem;
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+  .spotlight-copy .btn {
+    margin-top: 1.5rem;
+  }
+  .spotlight-copy svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .scenario {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+  .scenario-icon {
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--color-accent-ink);
+    flex-shrink: 0;
+  }
+  .scenario-flow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .scenario-before {
+    color: var(--color-muted);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
+  }
+  .scenario-arrow {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+  .scenario-after {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .center-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+  .center-cta svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .process {
+    background: var(--color-surface-2);
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .placeholder-note {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .teaser-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .teaser-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    transition: border-color 0.18s, transform 0.18s var(--ease-out);
+  }
+  .teaser-item:hover {
+    border-color: var(--color-accent);
+    transform: translateX(4px);
+  }
+  .teaser-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+  .teaser-price {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--color-accent-ink);
+  }
+
+  @media (min-width: 640px) {
+    .stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .services-grid,
+    .why-grid,
+    .work-grid,
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .teaser-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .services-grid,
+    .work-grid,
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .why-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .spotlight-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

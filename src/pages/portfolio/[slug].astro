@@ -1,0 +1,260 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import Prose from "@components/Prose.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { pillarBySlug } from "@data/services";
+import { caseStudySchema, breadcrumbSchema } from "@/lib/schema";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const items = await getCollection("portfolio", ({ data }) => !data.draft);
+  return items.map((item) => ({ params: { slug: item.id }, props: { item } }));
+}
+
+const { item } = Astro.props;
+const { data } = item;
+const { Content } = await render(item);
+const pillar = pillarBySlug(data.pillar)!;
+
+const url = `/portfolio/${item.id}/`;
+const breadcrumbs = [
+  { name: "Portfolio", url: "/portfolio/" },
+  { name: data.title, url },
+];
+const schemas = [
+  caseStudySchema({
+    title: data.title,
+    description: data.description,
+    url,
+    datePublished: data.pubDate.toISOString(),
+    image: data.cover?.src,
+  }),
+  breadcrumbSchema([{ name: "Home", url: "/" }, ...breadcrumbs]),
+];
+---
+
+<BaseLayout title={data.title} description={data.description} type="article" schemas={schemas}>
+  <article class="case">
+    <div class="container-x">
+      <Breadcrumbs items={breadcrumbs} />
+      <header class="case-head">
+        <a href={pillar.href} class="case-pillar">
+          <Icon name={`lucide:${pillar.icon}`} /> {pillar.short}
+        </a>
+        <h1 class="case-title" data-reveal>{data.title}</h1>
+        <p class="case-desc" data-reveal>{data.description}</p>
+        <dl class="case-facts" data-reveal>
+          <div><dt>Client</dt><dd>{data.client}</dd></div>
+          <div><dt>Industry</dt><dd>{data.industry}</dd></div>
+          {data.stack.length > 0 && (
+            <div class="facts-stack"><dt>Stack</dt><dd>{data.stack.join(" · ")}</dd></div>
+          )}
+        </dl>
+      </header>
+
+      {data.cover && (
+        <Image
+          src={data.cover}
+          alt={data.coverAlt ?? data.title}
+          width={1100}
+          height={620}
+          class="case-cover"
+        />
+      )}
+
+      {data.metrics.length > 0 && (
+        <div class="case-metrics" data-reveal>
+          {data.metrics.map((m) => (
+            <div class="cm">
+              <span class="cm-val">{m.value}</span>
+              <span class="cm-label">{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div class="case-body">
+        <Prose>
+          <Content />
+        </Prose>
+      </div>
+
+      <div class="case-related" data-reveal>
+        <span class="eyebrow">Related service</span>
+        <a href={pillar.href} class="related-link card">
+          <span class="related-icon"><Icon name={`lucide:${pillar.icon}`} /></span>
+          <span>
+            <span class="related-title">{pillar.title}</span>
+            <span class="related-out">{pillar.outcome}</span>
+          </span>
+          <Icon name="lucide:arrow-right" class="related-arrow" />
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <CTASection heading="Have a similar challenge?" />
+</BaseLayout>
+
+<style>
+  .case {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .case-head {
+    max-width: 52rem;
+    margin: 1.5rem auto 0;
+    text-align: center;
+  }
+  .case-pillar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-accent-ink);
+    padding: 0.35rem 0.75rem;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-radius: var(--radius-pill);
+  }
+  .case-pillar svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .case-title {
+    margin-top: 1rem;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+  }
+  .case-desc {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+  .case-facts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem 2.5rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+    text-align: left;
+  }
+  .case-facts dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+  .case-facts dd {
+    margin: 0.2rem 0 0;
+    font-weight: 500;
+  }
+  .facts-stack {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .case-cover {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+    margin: 2.5rem 0 0;
+    border: 1px solid var(--color-line);
+  }
+
+  .case-metrics {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 52rem;
+    margin: 2.5rem auto 0;
+  }
+  .cm {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--color-night);
+    border-radius: var(--radius-card);
+    color: #fff;
+  }
+  .cm-val {
+    display: block;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--color-accent);
+  }
+  .cm-label {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .case-body {
+    max-width: 52rem;
+    margin: 2.5rem auto 0;
+  }
+  .case-body :global(.prose) {
+    max-width: none;
+  }
+
+  .case-related {
+    max-width: 52rem;
+    margin: 3rem auto 0;
+  }
+  .related-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-top: 0.75rem;
+    transition: border-color 0.18s, transform 0.18s var(--ease-out);
+  }
+  .related-link:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+  .related-icon {
+    display: inline-flex;
+    width: 2.6rem;
+    height: 2.6rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    flex-shrink: 0;
+  }
+  .related-icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .related-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .related-out {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--color-muted);
+  }
+  .related-arrow {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: auto;
+    color: var(--color-accent-ink);
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .case-metrics {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,230 @@
+---
+// Signature element: an interactive node-graph showing the five service pillars
+// wired into one business "operating system". Hovering/focusing a node previews
+// how it feeds the others and links to that pillar page. Pure SVG + tiny JS.
+import { pillars } from "@data/services";
+
+// Pentagon layout around a centre hub (viewBox 600 x 480).
+const C = { x: 300, y: 240 };
+const positions = [
+  { x: 300, y: 70 }, // web (top)
+  { x: 512, y: 196 }, // ai (upper right)
+  { x: 432, y: 430 }, // mobile (lower right)
+  { x: 168, y: 430 }, // data (lower left)
+  { x: 88, y: 196 }, // erp (upper left)
+];
+
+const nodes = pillars.map((p, i) => ({ ...p, ...positions[i], id: p.slug }));
+
+// How each pillar feeds the others (shown in the caption on hover/focus).
+const feeds: Record<string, string> = {
+  "web-development":
+    "The front door. Your site captures demand, then hands leads to AI automation and data to act on.",
+  "ai-automation":
+    "The nervous system. It connects your web, mobile, data and ERP so work flows without manual handoffs.",
+  "mobile-apps":
+    "The pocket channel. Apps push the same data and automations into your customers' and team's hands.",
+  "database-administration":
+    "The foundation. Clean, fast, reliable data makes every other layer trustworthy and quick.",
+  "dynamics-365-finance-operations":
+    "The back office. ERP keeps finance and operations in sync, fed by automation and clean data.",
+};
+
+// Spokes (pillar → hub) + ring edges (adjacent pillars) to show they combine.
+const ring = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+  [4, 0],
+];
+---
+
+<figure class="systems-map" aria-labelledby="sysmap-caption">
+  <svg
+    viewBox="0 0 600 480"
+    role="img"
+    aria-label="Interactive map of five connected services: web development, AI automation, mobile apps, database administration, and Dynamics 365, all feeding one business operating system."
+    class="sysmap-svg"
+  >
+    <defs>
+      <radialGradient id="hubGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#0fb5c4" stop-opacity="0.35" />
+        <stop offset="100%" stop-color="#0fb5c4" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    {/* edges */}
+    <g class="edges" stroke-linecap="round">
+      {nodes.map((n) => (
+        <line
+          class="edge spoke"
+          data-from={n.id}
+          x1={C.x}
+          y1={C.y}
+          x2={n.x}
+          y2={n.y}
+        />
+      ))}
+      {ring.map(([a, b]) => (
+        <line
+          class="edge ring"
+          data-a={nodes[a].id}
+          data-b={nodes[b].id}
+          x1={nodes[a].x}
+          y1={nodes[a].y}
+          x2={nodes[b].x}
+          y2={nodes[b].y}
+        />
+      ))}
+    </g>
+
+    {/* hub */}
+    <circle cx={C.x} cy={C.y} r="74" fill="url(#hubGrad)" class="hub-glow" />
+    <g class="hub">
+      <circle cx={C.x} cy={C.y} r="46" class="hub-core" />
+      <text x={C.x} y={C.y - 4} text-anchor="middle" class="hub-label">Your</text>
+      <text x={C.x} y={C.y + 14} text-anchor="middle" class="hub-label">business OS</text>
+    </g>
+
+    {/* nodes */}
+    {nodes.map((n) => (
+      <a href={n.href} class="node" data-node={n.id} aria-label={`${n.title} — view services`}>
+        <circle cx={n.x} cy={n.y} r="34" class="node-circle" />
+        <text x={n.x} y={n.y + 4} text-anchor="middle" class="node-label">
+          {n.short.split(" ")[0]}
+        </text>
+      </a>
+    ))}
+  </svg>
+
+  <figcaption id="sysmap-caption" class="sysmap-caption" data-default="Five capabilities, one connected system. Hover a node to see how it feeds the others.">
+    Five capabilities, one connected system. Hover a node to see how it feeds the others.
+  </figcaption>
+</figure>
+
+<script is:inline define:vars={{ feeds }}>
+  const map = document.querySelector(".systems-map");
+  if (map) {
+    const svg = map.querySelector("svg");
+    const caption = map.querySelector(".sysmap-caption");
+    const def = caption.getAttribute("data-default");
+
+    const setActive = (id) => {
+      svg.querySelectorAll(".edge").forEach((e) => {
+        const on =
+          e.dataset.from === id || e.dataset.a === id || e.dataset.b === id;
+        e.classList.toggle("active", !!id && on);
+      });
+      svg.querySelectorAll(".node").forEach((n) => {
+        n.classList.toggle("dim", !!id && n.dataset.node !== id);
+      });
+      caption.textContent = id ? feeds[id] : def;
+    };
+
+    svg.querySelectorAll(".node").forEach((node) => {
+      const id = node.dataset.node;
+      node.addEventListener("mouseenter", () => setActive(id));
+      node.addEventListener("focus", () => setActive(id));
+      node.addEventListener("mouseleave", () => setActive(null));
+      node.addEventListener("blur", () => setActive(null));
+    });
+  }
+</script>
+
+<style>
+  .systems-map {
+    margin: 0;
+    width: 100%;
+  }
+  .sysmap-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .edge {
+    stroke: var(--color-night-line);
+    stroke-width: 1.5;
+    transition: stroke 0.25s var(--ease-out), stroke-width 0.25s var(--ease-out);
+  }
+  .ring {
+    stroke-dasharray: 4 6;
+  }
+  .edge.active {
+    stroke: var(--color-accent);
+    stroke-width: 2.5;
+  }
+
+  .hub-core {
+    fill: #0c1426;
+    stroke: var(--color-accent);
+    stroke-width: 1.5;
+  }
+  .hub-label {
+    fill: #fff;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .hub-glow {
+    animation: pulse 4s var(--ease-out) infinite;
+    transform-origin: center;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .node {
+    cursor: pointer;
+    transition: opacity 0.25s var(--ease-out);
+  }
+  .node.dim {
+    opacity: 0.4;
+  }
+  .node-circle {
+    fill: #101a30;
+    stroke: var(--color-night-line);
+    stroke-width: 1.5;
+    transition: fill 0.2s var(--ease-out), stroke 0.2s var(--ease-out), r 0.2s var(--ease-out);
+  }
+  .node:hover .node-circle,
+  .node:focus-visible .node-circle {
+    fill: #16223e;
+    stroke: var(--color-accent);
+  }
+  .node-label {
+    fill: #dbe4f5;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    pointer-events: none;
+  }
+  .node:focus {
+    outline: none;
+  }
+
+  .sysmap-caption {
+    margin-top: 1rem;
+    text-align: center;
+    min-height: 3em;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    max-width: 44ch;
+    margin-inline: auto;
+    transition: opacity 0.2s var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hub-glow {
+      animation: none;
+    }
+  }
+</style>

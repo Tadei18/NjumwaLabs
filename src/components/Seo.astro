@@ -1,0 +1,73 @@
+---
+import { site } from "@data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path or absolute URL of the social share image. */
+  image?: string;
+  /** Open Graph type. */
+  type?: "website" | "article";
+  /** Override canonical URL. Defaults to the current page. */
+  canonical?: string;
+  noindex?: boolean;
+  /** Array of JSON-LD objects to embed. */
+  schemas?: Record<string, unknown>[];
+  /** Article-specific meta. */
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+const {
+  title,
+  description,
+  image = site.ogImage,
+  type = "website",
+  canonical,
+  noindex = false,
+  schemas = [],
+  publishedTime,
+  modifiedTime,
+} = Astro.props;
+
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, site.url).href;
+const imageURL = new URL(image, site.url).href;
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+{/* Open Graph */}
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={imageURL} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="en" />
+{type === "article" && publishedTime && (
+  <meta property="article:published_time" content={publishedTime} />
+)}
+{type === "article" && modifiedTime && (
+  <meta property="article:modified_time" content={modifiedTime} />
+)}
+
+{/* Twitter */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageURL} />
+
+{/* Structured data */}
+{schemas.map((schema) => (
+  <script
+    is:inline
+    type="application/ld+json"
+    set:html={JSON.stringify(schema)}
+  />
+))}

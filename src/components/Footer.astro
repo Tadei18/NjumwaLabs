@@ -1,0 +1,232 @@
+---
+import { site, footerLegal, whatsappLink, mailtoLink } from "@data/site";
+import { pillars } from "@data/services";
+import { Icon } from "astro-icon/components";
+
+const year = new Date().getFullYear();
+const company = [
+  { label: "About", href: "/about/" },
+  { label: "Portfolio", href: "/portfolio/" },
+  { label: "Pricing", href: "/pricing/" },
+  { label: "Blog", href: "/blog/" },
+  { label: "Contact", href: "/contact/" },
+];
+---
+
+<footer class="site-footer">
+  <div class="container-x">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="/" class="brand" aria-label={`${site.name} — home`}>
+          <Icon name="lucide:hexagon" class="brand-mark" />
+          <span class="brand-name">Njumwa<span class="brand-accent">Labs</span></span>
+        </a>
+        <p class="footer-tagline">{site.tagline}.</p>
+        <p class="footer-pitch">
+          Software, AI automation, mobile, data and Dynamics 365 systems — built and kept running by
+          a senior, enterprise-trained engineer in {site.city}.
+        </p>
+        <div class="footer-socials">
+          <a href={site.socials.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn">
+            <Icon name="lucide:linkedin" />
+          </a>
+          {site.socials.github && (
+            <a href={site.socials.github} target="_blank" rel="noopener" aria-label="GitHub">
+              <Icon name="lucide:github" />
+            </a>
+          )}
+          <a href={whatsappLink} target="_blank" rel="noopener" aria-label="WhatsApp" data-track="whatsapp_footer">
+            <Icon name="lucide:message-circle" />
+          </a>
+          <a href={mailtoLink} aria-label="Email">
+            <Icon name="lucide:mail" />
+          </a>
+        </div>
+      </div>
+
+      <nav class="footer-col" aria-label="Services">
+        <h2 class="footer-heading">Services</h2>
+        <ul>
+          {pillars.map((p) => (
+            <li><a href={p.href} class="link-underline">{p.short}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Company">
+        <h2 class="footer-heading">Company</h2>
+        <ul>
+          {company.map((c) => (
+            <li><a href={c.href} class="link-underline">{c.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="footer-col">
+        <h2 class="footer-heading">Get in touch</h2>
+        <ul class="footer-contact">
+          <li>
+            <Icon name="lucide:map-pin" />
+            <span>{site.city}</span>
+          </li>
+          <li>
+            <Icon name="lucide:mail" />
+            <a href={mailtoLink} class="link-underline">{site.email}</a>
+          </li>
+          <li>
+            <Icon name="lucide:phone" />
+            <a href={whatsappLink} class="link-underline">{site.phoneDisplay}</a>
+          </li>
+        </ul>
+        <a href="/contact/" class="btn btn-on-dark footer-book" data-track="book_call_footer">
+          Book a free call
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {year} {site.legalName}. All rights reserved.</p>
+      <ul class="footer-legal">
+        {footerLegal.map((l) => (
+          <li><a href={l.href} class="link-underline">{l.label}</a></li>
+        ))}
+        <li><a href="/sitemap-index.xml" class="link-underline">Sitemap</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-night);
+    color: rgba(255, 255, 255, 0.78);
+    padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .footer-brand {
+    max-width: 22rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #fff;
+  }
+  .brand-mark {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-accent);
+  }
+  .brand-accent {
+    color: var(--color-accent);
+  }
+  .footer-tagline {
+    margin-top: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--color-accent);
+  }
+  .footer-pitch {
+    margin-top: 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .footer-socials {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .footer-socials a {
+    display: inline-flex;
+    padding: 0.55rem;
+    border-radius: 10px;
+    border: 1px solid var(--color-night-line);
+    color: #fff;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .footer-socials a:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-accent);
+  }
+  .footer-socials svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .footer-heading {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 1rem;
+  }
+  .footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .footer-col a {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .footer-col a:hover {
+    color: #fff;
+  }
+  .footer-contact li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .footer-contact svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+  .footer-book {
+    margin-top: 1.25rem;
+    width: 100%;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-night-line);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .footer-legal {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media (min-width: 640px) {
+    .footer-top {
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    }
+    .footer-bottom {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+</style>

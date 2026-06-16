@@ -1,0 +1,133 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import PricingTable from "@components/PricingTable.astro";
+import FAQ from "@components/FAQ.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+
+const reassurances = [
+  { icon: "globe", text: "Prices in USD — local KES and custom quotes always available" },
+  { icon: "file-text", text: "Clear scope and fixed or milestone pricing — no surprise invoices" },
+  { icon: "handshake", text: "Free discovery call before any commitment" },
+];
+
+const faqs = [
+  { q: "Are these prices fixed?", a: "They're transparent 'from' anchors so you know roughly where things start. Your actual quote depends on scope — which I'll confirm in writing before we begin. No hidden costs." },
+  { q: "Do you offer local (Kenyan) pricing?", a: "Yes. Prices are shown in USD for clarity, but I offer local KES rates and flexible terms for Kenyan businesses. Just <a href='/contact/'>ask for a local quote</a>." },
+  { q: "How do payments work?", a: "Typically a deposit to start, then milestone payments for projects, or monthly billing for retainers. I accept bank transfer, card (Stripe) and M-Pesa." },
+  { q: "What if I'm not sure which package I need?", a: "That's exactly what the free call is for. Tell me the problem and I'll recommend the smallest thing that solves it — even if that's a smaller package than you expected." },
+  { q: "Can I start small and grow?", a: "Absolutely. Many clients start with a focused project, then move to a retainer for ongoing improvements once it's live." },
+  { q: "Do you require a long contract?", a: "No. Projects are scoped per engagement, and retainers are month-to-month — you can cancel anytime." },
+];
+---
+
+<BaseLayout
+  title="Pricing & packages"
+  description="Transparent, globally affordable pricing for web, AI automation, mobile, database and Dynamics 365 work. Projects from $600, retainers from $300/month. USD with local KES quotes available."
+  schemas={[
+    breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Pricing", url: "/pricing/" }]),
+    faqSchema(faqs.map((f) => ({ q: f.q, a: f.a.replace(/<[^>]+>/g, "") }))),
+  ]}
+>
+  <section class="pricing-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Pricing", url: "/pricing/" }]} />
+      <span class="eyebrow pr-eyebrow" data-reveal>Pricing</span>
+      <h1 class="pr-title" data-reveal>Enterprise quality, without the enterprise price tag.</h1>
+      <p class="pr-sub" data-reveal>
+        Clear packages and honest 'from' prices. Built to be affordable for SMEs and startups while
+        delivering work that holds up to international standards.
+      </p>
+      <ul class="reassurance" data-reveal>
+        {reassurances.map((r) => (
+          <li><Icon name={`lucide:${r.icon}`} /> {r.text}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x">
+      <PricingTable />
+    </div>
+  </section>
+
+  <section class="section faq-section">
+    <div class="container-x">
+      <SectionHeading eyebrow="Pricing FAQ" title="Questions about working together" align="center" />
+      <div class="faq-wrap">
+        <FAQ items={faqs} />
+      </div>
+    </div>
+  </section>
+
+  <CTASection heading="Not sure what it'll cost? Let's scope it together." text="Tell me what you're trying to build. I'll come back with a clear recommendation and a fair price — usually within a day." />
+</BaseLayout>
+
+<style>
+  .pricing-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+    text-align: center;
+  }
+  .pricing-hero :global(.breadcrumbs ol) {
+    justify-content: center;
+  }
+  .pr-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .pr-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    max-width: 20ch;
+    margin-inline: auto;
+  }
+  .pr-sub {
+    margin-top: 1.1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 54ch;
+    margin-inline: auto;
+  }
+  .reassurance {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+  .reassurance li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .reassurance svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-accent-ink);
+  }
+  .faq-section {
+    background: var(--color-surface-2);
+  }
+  .faq-wrap {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+  @media (min-width: 820px) {
+    .reassurance {
+      flex-direction: row;
+      justify-content: center;
+      gap: 1.75rem;
+    }
+  }
+</style>

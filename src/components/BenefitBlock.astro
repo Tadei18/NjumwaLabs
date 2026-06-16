@@ -1,0 +1,55 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  icon: string;
+  title: string;
+  text: string;
+}
+const { icon, title, text } = Astro.props;
+---
+
+<div class="benefit" data-reveal>
+  <span class="benefit-icon">
+    <Icon name={`lucide:${icon}`} />
+  </span>
+  <div>
+    <h3 class="benefit-title">{title}</h3>
+    <p class="benefit-text">{text}</p>
+  </div>
+</div>
+
+<style>
+  .benefit {
+    display: flex;
+    gap: 1rem;
+    padding: 1.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+  .benefit-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 2.6rem;
+    height: 2.6rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+  }
+  .benefit-icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .benefit-title {
+    font-size: 1.05rem;
+  }
+  .benefit-text {
+    margin-top: 0.35rem;
+    color: var(--color-muted);
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+</style>

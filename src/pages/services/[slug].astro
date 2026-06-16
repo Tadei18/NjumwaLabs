@@ -1,0 +1,309 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import PillarHero from "@components/PillarHero.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import OfferingList from "@components/OfferingList.astro";
+import BenefitBlock from "@components/BenefitBlock.astro";
+import ProcessSteps from "@components/ProcessSteps.astro";
+import CaseStudyCard from "@components/CaseStudyCard.astro";
+import FAQ from "@components/FAQ.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { pillars, pillarBySlug } from "@data/services";
+import { pillarContent } from "@data/pillarContent";
+import { serviceSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  return pillars.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const pillar = pillarBySlug(slug!)!;
+const content = pillarContent[slug!];
+
+const related = (
+  await getCollection("portfolio", ({ data }) => !data.draft && data.pillar === slug)
+).slice(0, 3);
+
+const breadcrumbs = [
+  { name: "Services", url: "/services/" },
+  { name: pillar.title, url: pillar.href },
+];
+
+const schemas = [
+  serviceSchema({
+    name: pillar.title,
+    description: content.metaDescription,
+    url: pillar.href,
+    serviceType: content.serviceType,
+  }),
+  breadcrumbSchema([{ name: "Home", url: "/" }, ...breadcrumbs]),
+  faqSchema(content.faqs.map((f) => ({ q: f.q, a: f.a.replace(/<[^>]+>/g, "") }))),
+];
+---
+
+<BaseLayout title={content.metaTitle} description={content.metaDescription} schemas={schemas}>
+  <PillarHero
+    icon={pillar.icon}
+    eyebrow={content.eyebrow}
+    title={content.h1}
+    subtitle={content.subtitle}
+    priceFrom={pillar.priceFrom}
+    breadcrumbs={breadcrumbs}
+  />
+
+  <!-- Problem -->
+  <section class="section problem">
+    <div class="container-x">
+      <div class="problem-inner" data-reveal>
+        <span class="eyebrow">The problem</span>
+        <h2 class="problem-title">{content.problem.title}</h2>
+        <p class="problem-text prose-measure">{content.problem.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Offerings -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading eyebrow="What's included" title="Everything this service covers" />
+      <OfferingList items={content.offerings} />
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section class="section benefits">
+    <div class="container-x">
+      <SectionHeading eyebrow="How this helps your business" title="The outcomes you can expect" />
+      <div class="benefits-grid">
+        {content.benefits.map((b) => (
+          <BenefitBlock icon={b.icon} title={b.title} text={b.text} />
+        ))}
+      </div>
+
+      {content.scenarios && (
+        <ul class="scenarios">
+          {content.scenarios.map((s) => (
+            <li class="scenario" data-reveal>
+              <span class="scenario-before">{s.before}</span>
+              <Icon name="lucide:arrow-right" class="scenario-arrow" />
+              <span class="scenario-after">{s.after}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <!-- Tools -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading eyebrow="Stack" title="Tools and platforms I use here" align="center" />
+      <ul class="tools" data-reveal>
+        {content.tools.map((t) => (
+          <li class="tool">{t}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section process">
+    <div class="container-x">
+      <SectionHeading eyebrow="How it works" title="How we'll work together" />
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <!-- Related work -->
+  {related.length > 0 && (
+    <section class="section">
+      <div class="container-x">
+        <SectionHeading eyebrow="Relevant work" title="Related case studies" />
+        <div class="work-grid">
+          {related.map((cs) => (
+            <CaseStudyCard
+              url={`/portfolio/${cs.id}/`}
+              title={cs.data.title}
+              description={cs.data.description}
+              client={cs.data.client}
+              industry={cs.data.industry}
+              pillar={cs.data.pillar}
+              cover={cs.data.cover}
+              coverAlt={cs.data.coverAlt}
+              metrics={cs.data.metrics}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Pricing snapshot -->
+  <section class="section pricing-snap">
+    <div class="container-x">
+      <div class="snap-card" data-reveal>
+        <div>
+          <span class="eyebrow">Pricing</span>
+          <h2 class="snap-title">{pillar.title} starts from {pillar.priceFrom}</h2>
+          <p class="snap-text">Transparent USD pricing. Local (KES) and custom quotes available.</p>
+        </div>
+        <div class="snap-actions">
+          <a href="/pricing/" class="btn btn-ghost">See pricing</a>
+          <a href="/contact/" class="btn btn-primary" data-track="book_call_pillar_snap">Get a quote</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq-section">
+    <div class="container-x">
+      <SectionHeading eyebrow="FAQ" title="Common questions" align="center" />
+      <div class="faq-wrap">
+        <FAQ items={content.faqs} />
+      </div>
+    </div>
+  </section>
+
+  <CTASection heading={`Ready to get started with ${pillar.title.toLowerCase()}?`} />
+</BaseLayout>
+
+<style>
+  .problem {
+    background: var(--color-surface-2);
+  }
+  .problem-title {
+    margin-top: 0.6rem;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    max-width: 22ch;
+  }
+  .problem-text {
+    margin-top: 1rem;
+    color: var(--color-muted);
+    font-size: 1.08rem;
+    line-height: 1.65;
+  }
+
+  .benefits {
+    background: var(--color-night);
+  }
+  .benefits :global(.eyebrow) {
+    color: var(--color-accent);
+  }
+  .benefits :global(.sec-title) {
+    color: #fff;
+  }
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .scenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+  }
+  .scenario {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-night-line);
+    border-radius: 14px;
+    color: #fff;
+  }
+  .scenario-before {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: line-through;
+  }
+  .scenario-arrow {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-accent);
+  }
+  .scenario-after {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .tool {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+  }
+
+  .process {
+    background: var(--color-surface-2);
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .snap-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .snap-title {
+    margin-top: 0.5rem;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+  .snap-text {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+  }
+  .snap-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .faq-section {
+    background: var(--color-surface-2);
+  }
+  .faq-wrap {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 768px) {
+    .benefits-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .work-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .snap-card {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+</style>

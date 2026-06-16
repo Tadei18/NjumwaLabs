@@ -1,0 +1,35 @@
+# Njumwa Labs
+
+> Njumwa Labs is the software, automation and data studio of Crispus Njumwa — a senior, enterprise-trained engineer and Microsoft Dynamics 365 Finance & Operations technical consultant based in Nairobi, Kenya. He builds, automates and maintains production systems for SMEs, startups and enterprises locally and internationally (Kenya, United States, United Kingdom, European Union, and the Gulf), at enterprise quality and globally affordable prices.
+
+Tagline: Automation and efficiency brought closer.
+
+## What Njumwa Labs does
+
+- **Web development** — websites, web apps, SaaS, e-commerce, APIs; React, Next.js, Astro, Node.js, Python; SEO and Core Web Vitals engineering. https://njumwalabs.com/services/web-development/
+- **AI automation** — AI chatbots and support agents, AI lead generation, workflow automation (n8n/Make/Zapier), document processing, voice AI agents, RAG copilots, marketing automation. https://njumwalabs.com/services/ai-automation/
+- **Mobile apps** — cross-platform (Flutter, React Native) and native iOS/Android apps, MVPs, payments including M-Pesa, app store launch. https://njumwalabs.com/services/mobile-apps/
+- **Database administration** — performance tuning, backups & disaster recovery, high availability, migrations, cloud databases, managed DBA; SQL Server, PostgreSQL, MySQL, MongoDB, Oracle, Redis. https://njumwalabs.com/services/database-administration/
+- **Dynamics 365 Finance & Operations** — X++ development, integrations, data migration (DMF), SSRS & Electronic Reporting, workflow, upgrades, security, Power Platform. https://njumwalabs.com/services/dynamics-365-finance-operations/
+
+## Key pages
+
+- Home: https://njumwalabs.com/
+- Services overview: https://njumwalabs.com/services/
+- Pricing (USD "from" anchors; KES and custom quotes available): https://njumwalabs.com/pricing/
+- Portfolio / case studies: https://njumwalabs.com/portfolio/
+- About Crispus Njumwa: https://njumwalabs.com/about/
+- Blog / insights: https://njumwalabs.com/blog/
+- Contact & booking: https://njumwalabs.com/contact/
+
+## Pricing summary
+
+Globally affordable, transparent. Projects from ~$600; product builds from ~$1,800; managed retainers from ~$300/month; consulting (incl. D365 F&O) from ~$45/hour. Prices in USD; local (KES) and custom pricing available.
+
+## Contact
+
+- Email: crispusnjumwa@gmail.com
+- WhatsApp / phone: +254 745 278 006
+- Booking: https://calendly.com/crispusnjumwa
+- LinkedIn: https://www.linkedin.com/in/crispus-njumwa-692741267
+- Location: Nairobi, Kenya (serving clients worldwide)

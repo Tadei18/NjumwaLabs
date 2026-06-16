@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" width="240" height="48">
+  <path d="M24 6 L37 14 V32 L24 40 L11 32 V14 Z" fill="none" stroke="#0fb5c4" stroke-width="2"/>
+  <circle cx="24" cy="23" r="3.4" fill="#0fb5c4"/>
+  <circle cx="24" cy="12" r="2" fill="#ffb020"/>
+  <circle cx="33" cy="29" r="2" fill="#10182b"/>
+  <circle cx="15" cy="29" r="2" fill="#10182b"/>
+  <line x1="24" y1="23" x2="24" y2="12" stroke="#0fb5c4" stroke-width="1.2"/>
+  <line x1="24" y1="23" x2="33" y2="29" stroke="#0fb5c4" stroke-width="1.2"/>
+  <line x1="24" y1="23" x2="15" y2="29" stroke="#0fb5c4" stroke-width="1.2"/>
+  <text x="50" y="30" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="600" fill="#10182b">Njumwa<tspan fill="#0a7b86">Labs</tspan></text>
+</svg>

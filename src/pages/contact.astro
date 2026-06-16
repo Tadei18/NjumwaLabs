@@ -1,0 +1,305 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import ContactForm from "@components/ContactForm.astro";
+import FAQ from "@components/FAQ.astro";
+import { Icon } from "astro-icon/components";
+import { site, whatsappLink, mailtoLink } from "@data/site";
+import { organizationSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
+
+const calendly = import.meta.env.PUBLIC_CALENDLY_URL ?? site.calendly;
+
+const methods = [
+  { icon: "calendar-check", title: "Book a call", text: "Grab a free 20-minute slot.", href: calendly, cta: "Open calendar", track: "book_call_contact", external: true },
+  { icon: "message-circle", title: "WhatsApp", text: site.phoneDisplay, href: whatsappLink, cta: "Start a chat", track: "whatsapp_contact", external: true },
+  { icon: "mail", title: "Email", text: site.email, href: mailtoLink, cta: "Send an email", track: "email_contact", external: false },
+];
+
+const faqs = [
+  { q: "How quickly will you respond?", a: "Within one business day — usually much faster. For urgent issues (like a database outage), mark it urgent on WhatsApp and I'll prioritize it." },
+  { q: "How does an engagement start?", a: "With a free discovery call. We talk through your goals, I ask the right questions, and you get a clear scope, timeline and price before committing to anything." },
+  { q: "Do you work with international clients?", a: "Yes — most of my clients are international (US, EU, UK and the Gulf), alongside Kenyan businesses. I keep delivery time-zone friendly and communication clear." },
+  { q: "What information should I bring?", a: "Just the problem you're trying to solve and any constraints (timeline, budget, existing systems). You don't need a technical spec — that's my job." },
+  { q: "What are your payment options?", a: "Bank transfer, card via Stripe, and M-Pesa. Projects usually run on a deposit plus milestones; retainers are billed monthly." },
+];
+
+const ogSchemas = [
+  { "@context": "https://schema.org", "@type": "ContactPage", name: "Contact Njumwa Labs", url: `${site.url}/contact/` },
+  organizationSchema(),
+  breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Contact", url: "/contact/" }]),
+  faqSchema(faqs),
+];
+---
+
+<BaseLayout
+  title="Contact & book a call"
+  description="Book a free call, message on WhatsApp, or send a project inquiry. Njumwa Labs replies within one business day — serving Kenya and clients worldwide."
+  schemas={ogSchemas}
+>
+  <section class="contact-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Contact", url: "/contact/" }]} />
+      <span class="eyebrow ch-eyebrow" data-reveal>Contact</span>
+      <h1 class="ch-title" data-reveal>Let's talk about your project.</h1>
+      <p class="ch-sub" data-reveal>
+        Pick whatever's easiest — book a call, message on WhatsApp, or send the form below. I reply
+        within one business day.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact methods -->
+  <section class="section methods-section">
+    <div class="container-x">
+      <div class="methods">
+        {methods.map((m) => (
+          <a
+            href={m.href}
+            class="method card"
+            data-track={m.track}
+            data-reveal
+            {...(m.external ? { target: "_blank", rel: "noopener" } : {})}
+          >
+            <span class="method-icon"><Icon name={`lucide:${m.icon}`} /></span>
+            <h2 class="method-title">{m.title}</h2>
+            <p class="method-text">{m.text}</p>
+            <span class="method-cta">{m.cta} <Icon name="lucide:arrow-up-right" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Form + booking -->
+  <section class="section form-section">
+    <div class="container-x">
+      <div class="form-grid">
+        <div data-reveal>
+          <span class="eyebrow">Send a message</span>
+          <h2 class="form-title">Tell me what you're building.</h2>
+          <p class="form-sub">
+            The more detail you share, the better I can help. No detail too small — and no obligation.
+          </p>
+          <div id="form-success" class="form-success" hidden>
+            <Icon name="lucide:check-circle-2" />
+            <p>Thanks — your message came through. I'll be in touch within one business day.</p>
+          </div>
+          <ContactForm />
+        </div>
+
+        <aside class="booking" data-reveal>
+          <h2 class="booking-title">Prefer to book directly?</h2>
+          <p class="booking-sub">Choose a free 20-minute slot that suits you.</p>
+          <div class="calendly-wrap">
+            <iframe
+              src={`${calendly}?hide_gdpr_banner=1`}
+              title="Book a call with Crispus Njumwa"
+              loading="lazy"
+              width="100%"
+              height="630"
+            ></iframe>
+          </div>
+          <p class="booking-fallback">
+            Calendar not loading? <a href={calendly} target="_blank" rel="noopener" class="link-underline">Open it in a new tab</a>.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq-section">
+    <div class="container-x">
+      <SectionHeading eyebrow="Before you ask" title="Quick answers" align="center" />
+      <div class="faq-wrap">
+        <FAQ items={faqs} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Show success banner when redirected back with ?sent=1 (no-JS fallback path).
+  if (new URLSearchParams(window.location.search).get("sent") === "1") {
+    const el = document.getElementById("form-success");
+    if (el) {
+      el.hidden = false;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+</script>
+
+<style>
+  .contact-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .contact-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .ch-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .ch-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .ch-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 50ch;
+  }
+
+  .methods-section {
+    padding-top: 1rem;
+  }
+  .methods {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .method {
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), border-color 0.22s;
+  }
+  .method:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-line));
+  }
+  .method-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    margin-bottom: 1rem;
+  }
+  .method-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .method-title {
+    font-size: 1.2rem;
+  }
+  .method-text {
+    margin-top: 0.35rem;
+    color: var(--color-muted);
+    flex-grow: 1;
+  }
+  .method-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-accent-ink);
+  }
+  .method-cta svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .form-section {
+    background: var(--color-surface-2);
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .form-title {
+    margin-top: 0.5rem;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+  }
+  .form-sub {
+    margin-top: 0.6rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+  }
+  .form-success {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
+    border: 1px solid var(--color-accent);
+    border-radius: 12px;
+    color: var(--color-accent-ink);
+  }
+  .form-success svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+  .form-success p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .booking-title {
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+  }
+  .booking-sub {
+    margin-top: 0.6rem;
+    color: var(--color-muted);
+  }
+  .calendly-wrap {
+    margin-top: 1.25rem;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+  .calendly-wrap iframe {
+    display: block;
+    border: 0;
+  }
+  .booking-fallback {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .booking-fallback a {
+    color: var(--color-accent-ink);
+  }
+
+  .faq-section :global(.eyebrow) {
+    text-align: center;
+  }
+  .faq-wrap {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 720px) {
+    .methods {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .form-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

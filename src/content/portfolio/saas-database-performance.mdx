@@ -1,0 +1,40 @@
+---
+title: "From 8-second reports to under 1 second"
+description: "A B2B SaaS platform was buckling under slow queries. Targeted database tuning made it fast again — no rewrite needed."
+client: "Sample SaaS Co."
+industry: "B2B SaaS"
+pillar: "database-administration"
+pubDate: 2025-12-05
+stack: ["PostgreSQL", "AWS RDS", "Redis"]
+metrics:
+  - value: "62%"
+    label: "faster app overall"
+  - value: "8s → 0.8s"
+    label: "report load time"
+featured: true
+draft: false
+---
+
+> Placeholder case study — replace with a real engagement before launch.
+
+## The problem
+
+A SaaS product was growing nicely, but its database was struggling. Dashboards took up to **8 seconds** to load, some reports timed out entirely, and the team feared a costly full rewrite. Customers were starting to notice the lag.
+
+## The approach
+
+Rather than rebuild, we fixed the root causes:
+
+- Profiled the slowest queries with execution-plan analysis.
+- Added and reshaped indexes to match real access patterns.
+- Refactored a handful of N+1 and full-table-scan queries.
+- Introduced Redis caching for hot, read-heavy endpoints.
+- Right-sized the AWS RDS instance and tuned its configuration.
+
+## The stack
+
+PostgreSQL on AWS RDS, with Redis for caching.
+
+## The result
+
+Heavy reports dropped from **8 seconds to around 0.8 seconds**, and the application felt about **62% faster** overall — all without a rewrite. The team avoided a major re-platforming project and got their roadmap back.

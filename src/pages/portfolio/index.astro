@@ -1,0 +1,159 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CaseStudyCard from "@components/CaseStudyCard.astro";
+import CTASection from "@components/CTASection.astro";
+import { pillars } from "@data/services";
+import { breadcrumbSchema } from "@/lib/schema";
+import { getCollection } from "astro:content";
+
+const items = (await getCollection("portfolio", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+// Only show filter chips for pillars that actually have work.
+const usedPillars = pillars.filter((p) => items.some((i) => i.data.pillar === p.slug));
+---
+
+<BaseLayout
+  title="Portfolio & case studies"
+  description="Selected software, automation, mobile and database projects — each one a real business problem solved, with measurable results."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Portfolio", url: "/portfolio/" }])]}
+>
+  <section class="pf-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Portfolio", url: "/portfolio/" }]} />
+      <span class="eyebrow pf-eyebrow" data-reveal>Portfolio</span>
+      <h1 class="pf-title" data-reveal>Real problems, measurable results.</h1>
+      <p class="pf-sub" data-reveal>
+        Each project below started as a business problem — slow systems, manual work, missed leads —
+        and ended as a working system that moved a number that mattered.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x">
+      <div class="filters" role="tablist" aria-label="Filter by service">
+        <button class="filter active" data-filter="all" role="tab" aria-selected="true">All</button>
+        {usedPillars.map((p) => (
+          <button class="filter" data-filter={p.slug} role="tab" aria-selected="false">{p.short}</button>
+        ))}
+      </div>
+
+      <div class="pf-grid">
+        {items.map((cs) => (
+          <div class="pf-item" data-pillar={cs.data.pillar}>
+            <CaseStudyCard
+              url={`/portfolio/${cs.id}/`}
+              title={cs.data.title}
+              description={cs.data.description}
+              client={cs.data.client}
+              industry={cs.data.industry}
+              pillar={cs.data.pillar}
+              cover={cs.data.cover}
+              coverAlt={cs.data.coverAlt}
+              metrics={cs.data.metrics}
+            />
+          </div>
+        ))}
+      </div>
+      <p class="pf-note">More case studies are on the way as current projects wrap.</p>
+    </div>
+  </section>
+
+  <CTASection heading="Want results like these for your business?" />
+</BaseLayout>
+
+<script>
+  const filters = document.querySelectorAll<HTMLButtonElement>(".filter");
+  const items = document.querySelectorAll<HTMLElement>(".pf-item");
+  filters.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const f = btn.dataset.filter;
+      filters.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-selected", String(on));
+      });
+      items.forEach((item) => {
+        item.style.display = f === "all" || item.dataset.pillar === f ? "" : "none";
+      });
+    });
+  });
+</script>
+
+<style>
+  .pf-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .pf-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .pf-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .pf-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .pf-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .filter {
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-muted);
+    transition: all 0.15s;
+  }
+  .filter.active {
+    background: var(--color-ink);
+    color: #fff;
+    border-color: var(--color-ink);
+  }
+  .pf-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .pf-note {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+  @media (min-width: 640px) {
+    .pf-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .pf-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

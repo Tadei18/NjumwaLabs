@@ -1,0 +1,88 @@
+---
+interface Step {
+  title: string;
+  text: string;
+}
+interface Props {
+  steps?: Step[];
+}
+
+const defaultSteps: Step[] = [
+  {
+    title: "Discovery",
+    text: "A free call to understand your goals, constraints and what success looks like. You leave with clarity even if we don't work together.",
+  },
+  {
+    title: "Proposal",
+    text: "A clear scope, timeline and fixed or milestone-based price. No surprises, no padded hours.",
+  },
+  {
+    title: "Build & ship",
+    text: "I build in focused iterations with regular demos, so you see progress and steer early — not at the end.",
+  },
+  {
+    title: "Support",
+    text: "Launch, monitoring and ongoing care. Systems need upkeep; I keep yours running and improving.",
+  },
+];
+
+const { steps = defaultSteps } = Astro.props;
+---
+
+<ol class="steps">
+  {steps.map((step, i) => (
+    <li class="step" data-reveal>
+      <span class="step-num">{String(i + 1).padStart(2, "0")}</span>
+      <h3 class="step-title">{step.title}</h3>
+      <p class="step-text">{step.text}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: none;
+  }
+  .step {
+    position: relative;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent-ink);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+  }
+  .step-title {
+    margin-top: 0.9rem;
+    font-size: 1.15rem;
+  }
+  .step-text {
+    margin-top: 0.45rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+    font-size: 0.95rem;
+  }
+  @media (min-width: 640px) {
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .steps {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

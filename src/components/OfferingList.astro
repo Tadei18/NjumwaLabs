@@ -1,0 +1,68 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Offering {
+  title: string;
+  text: string;
+}
+interface Props {
+  items: Offering[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="offerings">
+  {items.map((item) => (
+    <li class="offering" data-reveal>
+      <Icon name="lucide:check" class="offering-check" />
+      <div>
+        <h3 class="offering-title">{item.title}</h3>
+        <p class="offering-text">{item.text}</p>
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .offerings {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .offering {
+    display: flex;
+    gap: 0.85rem;
+    padding: 1.2rem 1.3rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+  }
+  .offering-check {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.15rem;
+    color: var(--color-accent-ink);
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    border-radius: 6px;
+    padding: 0.15rem;
+    box-sizing: content-box;
+  }
+  .offering-title {
+    font-size: 1rem;
+  }
+  .offering-text {
+    margin-top: 0.25rem;
+    color: var(--color-muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+  @media (min-width: 768px) {
+    .offerings {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

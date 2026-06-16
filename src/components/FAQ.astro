@@ -1,0 +1,74 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+interface Props {
+  items: FaqItem[];
+}
+const { items } = Astro.props;
+---
+
+<div class="faq">
+  {items.map((item, i) => (
+    <details class="faq-item" data-reveal name="faq" open={i === 0}>
+      <summary class="faq-q">
+        <span>{item.q}</span>
+        <Icon name="lucide:plus" class="faq-icon" />
+      </summary>
+      <div class="faq-a">
+        <p set:html={item.a} />
+      </div>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .faq-item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    padding: 0 1.25rem;
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    list-style: none;
+    padding: 1.15rem 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+  .faq-q::-webkit-details-marker {
+    display: none;
+  }
+  .faq-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: var(--color-accent-ink);
+    transition: transform 0.2s var(--ease-out);
+  }
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+  .faq-a {
+    padding-bottom: 1.25rem;
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+  .faq-a :global(a) {
+    color: var(--color-accent-ink);
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Testimonial } from "@data/testimonials";
+
+interface Props {
+  testimonial: Testimonial;
+}
+const { testimonial: t } = Astro.props;
+---
+
+<figure class="testimonial card" data-reveal>
+  <div class="stars" aria-label={`${t.rating} out of 5`}>
+    {Array.from({ length: t.rating }).map(() => (
+      <Icon name="lucide:star" />
+    ))}
+  </div>
+  <blockquote class="quote">"{t.quote}"</blockquote>
+  <figcaption class="author">
+    <span class="avatar" aria-hidden="true">{t.name.charAt(0)}</span>
+    <span class="author-meta">
+      <span class="author-name">{t.name}</span>
+      <span class="author-role">{t.role}, {t.company}</span>
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    height: 100%;
+  }
+  .stars {
+    display: flex;
+    gap: 0.15rem;
+    color: var(--color-accent-2);
+  }
+  .stars svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: currentColor;
+  }
+  .quote {
+    margin: 1rem 0 0;
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    flex-grow: 1;
+  }
+  .author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-ink);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .author-meta {
+    display: flex;
+    flex-direction: column;
+  }
+  .author-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .author-role {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+</style>

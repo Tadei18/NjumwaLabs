@@ -1,0 +1,49 @@
+---
+// Deferred, privacy-aware analytics. Respects Do Not Track.
+// IDs come from env (.env / host dashboard) — nothing tracks until set.
+const ga4 = import.meta.env.PUBLIC_GA4_ID;
+const plausible = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN;
+---
+
+{plausible && (
+  <script
+    is:inline
+    defer
+    data-domain={plausible}
+    src="https://plausible.io/js/script.tagged-events.js"
+  />
+)}
+
+{ga4 && (
+  <Fragment>
+    <script
+      is:inline
+      type="text/partytown-fallback"
+      define:vars={{ ga4 }}
+    >
+      {/* Only load GA4 when DNT is not enabled. */}
+      if (navigator.doNotTrack !== "1" && window.doNotTrack !== "1") {
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + ga4;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag("js", new Date());
+        window.gtag("config", ga4, { anonymize_ip: true });
+      }
+    </script>
+  </Fragment>
+)}
+
+{/* Lightweight conversion tracking for booking / WhatsApp / form clicks.
+    Sends to GA4 (gtag) and Plausible if present. No-op otherwise. */}
+<script is:inline>
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-track]");
+    if (!t) return;
+    const name = t.getAttribute("data-track");
+    if (window.gtag) window.gtag("event", name);
+    if (window.plausible) window.plausible(name);
+  });
+</script>

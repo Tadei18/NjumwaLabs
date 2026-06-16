@@ -1,0 +1,103 @@
+---
+import { Icon } from "astro-icon/components";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+
+interface Props {
+  icon: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  priceFrom: string;
+  breadcrumbs: { name: string; url: string }[];
+}
+const { icon, eyebrow, title, subtitle, priceFrom, breadcrumbs } = Astro.props;
+---
+
+<section class="pillar-hero">
+  <div class="container-x">
+    <Breadcrumbs items={breadcrumbs} />
+    <div class="ph-grid">
+      <div>
+        <span class="ph-icon" data-reveal>
+          <Icon name={`lucide:${icon}`} />
+        </span>
+        <span class="eyebrow ph-eyebrow" data-reveal>{eyebrow}</span>
+        <h1 class="ph-title" data-reveal>{title}</h1>
+        <p class="ph-sub" data-reveal>{subtitle}</p>
+        <div class="ph-actions" data-reveal>
+          <a href="/contact/" class="btn btn-primary" data-track="book_call_pillar">
+            <Icon name="lucide:calendar-check" />
+            Book a free call
+          </a>
+          <a href="/pricing/" class="btn btn-ghost">
+            From {priceFrom}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pillar-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2.5rem, 6vw, 4rem);
+  }
+  .pillar-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      45% 60% at 85% 0%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  .ph-grid {
+    position: relative;
+    margin-top: 1.5rem;
+    max-width: 56rem;
+  }
+  .ph-icon {
+    display: inline-flex;
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+    color: var(--color-accent-ink);
+    border: 1px solid var(--color-line);
+    margin-bottom: 1.25rem;
+  }
+  .ph-icon svg {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+  .ph-eyebrow {
+    display: block;
+  }
+  .ph-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .ph-sub {
+    margin-top: 1.1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 50ch;
+  }
+  .ph-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+  .ph-actions svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+</style>

@@ -1,0 +1,235 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import ServiceCard from "@components/ServiceCard.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { pillars } from "@data/services";
+import { breadcrumbSchema } from "@/lib/schema";
+
+const engagements = [
+  {
+    icon: "package",
+    title: "One-off project",
+    text: "A defined build — a site, app, automation or migration — with a fixed scope, timeline and price.",
+    best: "Best when you know what you need built.",
+  },
+  {
+    icon: "repeat",
+    title: "Managed retainer",
+    text: "Ongoing care and improvement — monitoring, fixes, new features and managed DBA — month to month.",
+    best: "Best for live systems that need upkeep.",
+  },
+  {
+    icon: "compass",
+    title: "Consulting",
+    text: "Senior advisory and specialist work, including D365 F&O, architecture reviews and incident response.",
+    best: "Best when you need expertise, not a full build.",
+  },
+];
+
+const guide = [
+  { need: "I need to get found and convert visitors", go: "Web development", href: "/services/web-development/" },
+  { need: "I'm drowning in repetitive work or slow lead follow-up", go: "AI automation", href: "/services/ai-automation/" },
+  { need: "I want an app my customers can use on their phones", go: "Mobile apps", href: "/services/mobile-apps/" },
+  { need: "My app/reports are slow or my data feels risky", go: "Database administration", href: "/services/database-administration/" },
+  { need: "My Dynamics 365 ERP needs customizing or integrating", go: "Dynamics 365 F&O", href: "/services/dynamics-365-finance-operations/" },
+];
+---
+
+<BaseLayout
+  title="Software, automation & data services"
+  description="Five connected services — web development, AI automation, mobile apps, database administration and Dynamics 365 — delivered by a senior, enterprise-trained engineer at affordable prices."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }])]}
+>
+  <section class="hub-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Services", url: "/services/" }]} />
+      <span class="eyebrow hub-eyebrow" data-reveal>Services</span>
+      <h1 class="hub-title" data-reveal>Everything you need to build, automate and run your systems.</h1>
+      <p class="hub-sub" data-reveal>
+        Five capabilities that work on their own — or combine into one connected business operating
+        system. One senior partner, enterprise standards, globally affordable prices.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x">
+      <div class="services-grid">
+        {pillars.map((p, i) => (
+          <ServiceCard pillar={p} index={i} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Which service do I need? -->
+  <section class="section guide">
+    <div class="container-x">
+      <SectionHeading eyebrow="Not sure where to start?" title="Which service do I need?" align="center" />
+      <ul class="guide-list">
+        {guide.map((g) => (
+          <li class="guide-item" data-reveal>
+            <span class="guide-need">"{g.need}"</span>
+            <Icon name="lucide:arrow-right" class="guide-arrow" />
+            <a href={g.href} class="guide-go link-underline">{g.go}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Engagement types -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="Ways to work together"
+        title="Pick the engagement that fits."
+        text="Whether you need one thing built, an ongoing partner, or senior advice, there's a model that fits."
+      />
+      <div class="eng-grid">
+        {engagements.map((e) => (
+          <div class="eng-card card" data-reveal>
+            <span class="eng-icon"><Icon name={`lucide:${e.icon}`} /></span>
+            <h3 class="eng-title">{e.title}</h3>
+            <p class="eng-text">{e.text}</p>
+            <p class="eng-best">{e.best}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .hub-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .hub-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .hub-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .hub-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    max-width: 18ch;
+  }
+  .hub-sub {
+    margin-top: 1.1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .guide {
+    background: var(--color-surface-2);
+  }
+  .guide-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 52rem;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .guide-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.1rem 1.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+  }
+  .guide-need {
+    flex: 1;
+    min-width: 14rem;
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+  .guide-arrow {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-accent);
+  }
+  .guide-go {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-accent-ink);
+  }
+
+  .eng-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .eng-card {
+    padding: 1.75rem;
+  }
+  .eng-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    margin-bottom: 1rem;
+  }
+  .eng-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .eng-title {
+    font-size: 1.2rem;
+  }
+  .eng-text {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+  }
+  .eng-best {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--color-accent-ink);
+  }
+
+  @media (min-width: 640px) {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .eng-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

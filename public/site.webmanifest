@@ -1,0 +1,10 @@
+{
+  "name": "Njumwa Labs",
+  "short_name": "Njumwa Labs",
+  "description": "Software, AI automation, mobile, data and Dynamics 365 systems that grow your business.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#10182b",
+  "theme_color": "#10182b",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

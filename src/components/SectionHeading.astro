@@ -1,0 +1,38 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  text?: string;
+  align?: "left" | "center";
+  as?: "h2" | "h3";
+}
+const { eyebrow, title, text, align = "left", as = "h2" } = Astro.props;
+const Tag = as;
+---
+
+<div class:list={["sec-head", align]} data-reveal>
+  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+  <Tag class="sec-title">{title}</Tag>
+  {text && <p class="sec-text prose-measure">{text}</p>}
+</div>
+
+<style>
+  .sec-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+  }
+  .sec-head.center {
+    align-items: center;
+    text-align: center;
+  }
+  .sec-title {
+    font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+  }
+  .sec-text {
+    color: var(--color-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+</style>

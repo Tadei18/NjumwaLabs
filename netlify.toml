@@ -1,0 +1,17 @@
+# Netlify deploy config. (Cloudflare Pages: set build command "npm run build"
+# and output directory "dist" in the dashboard — no file needed.)
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Security headers also live in public/_headers (portable across hosts).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"

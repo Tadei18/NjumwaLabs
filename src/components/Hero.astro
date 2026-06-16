@@ -1,0 +1,156 @@
+---
+import { Icon } from "astro-icon/components";
+import SystemsMap from "@components/SystemsMap.astro";
+---
+
+<section class="hero">
+  <div class="container-x hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow" data-reveal>Software · AI · Mobile · Data · ERP</span>
+      <h1 class="hero-title" data-reveal>
+        Software, automation, and data systems that
+        <span class="accent"> grow your business.</span>
+      </h1>
+      <p class="hero-sub" data-reveal>
+        I design, build, automate and maintain the systems behind growing companies — web and
+        mobile apps, AI automation, reliable databases, and Dynamics 365 — at enterprise quality and
+        globally affordable prices.
+      </p>
+      <div class="hero-actions" data-reveal>
+        <a href="/contact/" class="btn btn-primary" data-track="book_call_hero">
+          <Icon name="lucide:calendar-check" />
+          Book a free call
+        </a>
+        <a href="/services/" class="btn btn-ghost">
+          See services
+          <Icon name="lucide:arrow-right" />
+        </a>
+      </div>
+      <ul class="hero-trust" data-reveal>
+        <li><Icon name="lucide:globe" /> Serving Kenya, US, EU & the Gulf</li>
+        <li><Icon name="lucide:shield-check" /> Enterprise-trained, D365 background</li>
+        <li><Icon name="lucide:zap" /> Fast, reliable delivery</li>
+      </ul>
+    </div>
+
+    <div class="hero-panel" data-reveal>
+      <div class="panel-head">
+        <span class="panel-dot"></span>
+        <span class="panel-title">your business — one connected system</span>
+      </div>
+      <SystemsMap />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem);
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(40% 50% at 90% 0%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%),
+      radial-gradient(50% 60% at 0% 100%, color-mix(in srgb, var(--color-accent-2) 8%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .hero-title {
+    margin-top: 1rem;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    line-height: 1.02;
+  }
+  .accent {
+    color: var(--color-accent-ink);
+  }
+  .hero-sub {
+    margin-top: 1.25rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+  .hero-actions svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .hero-trust {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+  .hero-trust li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .hero-trust svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-accent-ink);
+  }
+
+  .hero-panel {
+    position: relative;
+    background: linear-gradient(160deg, var(--color-night), var(--color-night-2));
+    border: 1px solid var(--color-night-line);
+    border-radius: 24px;
+    padding: 1.25rem 1.25rem 1.75rem;
+    box-shadow: var(--shadow-lift);
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-night-line);
+  }
+  .panel-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 25%, transparent);
+  }
+  .panel-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  @media (min-width: 980px) {
+    .hero-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3rem;
+    }
+    .hero-trust {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+  }
+</style>

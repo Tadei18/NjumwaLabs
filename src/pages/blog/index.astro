@@ -1,0 +1,219 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { categoryLabel } from "@/lib/categories";
+import { breadcrumbSchema } from "@/lib/schema";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const categories = [...new Set(posts.map((p) => p.data.category))];
+const [featured, ...rest] = posts;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+---
+
+<BaseLayout
+  title="Blog & insights"
+  description="Practical articles on web development, AI automation, mobile apps, databases and Dynamics 365 — written to actually help you make better technical decisions."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Blog", url: "/blog/" }])]}
+>
+  <section class="blog-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Blog", url: "/blog/" }]} />
+      <span class="eyebrow bh-eyebrow" data-reveal>Insights</span>
+      <h1 class="bh-title" data-reveal>Practical articles on building and running systems.</h1>
+      <p class="bh-sub" data-reveal>
+        Answer-first guides on web, AI automation, mobile, data and Dynamics 365 — no fluff, written
+        to help you make better decisions.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x">
+      <div class="cats" data-reveal>
+        <span class="cats-label">Topics:</span>
+        {categories.map((c) => (
+          <span class="cat-chip">{categoryLabel(c)}</span>
+        ))}
+      </div>
+
+      {featured && (
+        <a href={`/blog/${featured.id}/`} class="featured card" data-reveal>
+          <div class="featured-body">
+            <span class="featured-tag">{categoryLabel(featured.data.category)}</span>
+            <h2 class="featured-title">{featured.data.title}</h2>
+            <p class="featured-desc">{featured.data.description}</p>
+            <span class="featured-meta">{fmt(featured.data.pubDate)} · Read article <Icon name="lucide:arrow-right" /></span>
+          </div>
+        </a>
+      )}
+
+      <div class="post-grid">
+        {rest.map((post) => (
+          <a href={`/blog/${post.id}/`} class="post card" data-reveal>
+            <span class="post-tag">{categoryLabel(post.data.category)}</span>
+            <h3 class="post-title">{post.data.title}</h3>
+            <p class="post-desc">{post.data.description}</p>
+            <span class="post-meta">{fmt(post.data.pubDate)}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .blog-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .blog-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .bh-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .bh-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    max-width: 20ch;
+  }
+  .bh-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .cats-label {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .cat-chip {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink-soft);
+  }
+
+  .featured {
+    display: block;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+  }
+  .featured:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  .featured-body {
+    padding: 2rem;
+    background:
+      radial-gradient(60% 100% at 100% 0%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 70%);
+  }
+  .featured-tag,
+  .post-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+  }
+  .featured-title {
+    margin-top: 0.6rem;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    max-width: 24ch;
+  }
+  .featured-desc {
+    margin-top: 0.6rem;
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 60ch;
+  }
+  .featured-meta,
+  .post-meta {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .featured-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.1rem;
+    color: var(--color-accent-ink);
+    font-weight: 500;
+  }
+  .featured-meta svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .post {
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), border-color 0.22s;
+  }
+  .post:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-line));
+  }
+  .post-title {
+    margin-top: 0.5rem;
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+  .post-desc {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+  .post-meta {
+    margin-top: 1.1rem;
+  }
+
+  @media (min-width: 640px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .post-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

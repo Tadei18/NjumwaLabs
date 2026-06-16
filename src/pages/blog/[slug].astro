@@ -1,0 +1,407 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import Prose from "@components/Prose.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { site } from "@data/site";
+import { categoryLabel } from "@/lib/categories";
+import { pillarBySlug } from "@data/services";
+import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content, headings } = await render(post);
+
+// Related: same category, then most recent.
+const all = (await getCollection("blog", ({ data }) => !data.draft)).filter((p) => p.id !== post.id);
+const related = [
+  ...all.filter((p) => p.data.category === data.category),
+  ...all.filter((p) => p.data.category !== data.category),
+].slice(0, 3);
+
+const pillar = data.category !== "general" ? pillarBySlug(data.category) : undefined;
+const toc = headings.filter((h) => h.depth === 2);
+
+const url = `/blog/${post.id}/`;
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+const schemas = [
+  blogPostingSchema({
+    title: data.title,
+    description: data.description,
+    url,
+    datePublished: data.pubDate.toISOString(),
+    dateModified: data.updatedDate?.toISOString(),
+    image: data.cover?.src,
+    author: data.author,
+  }),
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Blog", url: "/blog/" },
+    { name: data.title, url },
+  ]),
+];
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  type="article"
+  image={data.cover?.src}
+  publishedTime={data.pubDate.toISOString()}
+  modifiedTime={data.updatedDate?.toISOString()}
+  schemas={schemas}
+>
+  <article class="article">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Blog", url: "/blog/" }, { name: data.title, url }]} />
+
+      <header class="art-head">
+        <span class="art-tag">{categoryLabel(data.category)}</span>
+        <h1 class="art-title" data-reveal>{data.title}</h1>
+        <p class="art-desc" data-reveal>{data.description}</p>
+        <div class="art-meta" data-reveal>
+          <span><Icon name="lucide:user" /> {data.author}</span>
+          <span><Icon name="lucide:calendar" /> {fmt(data.pubDate)}</span>
+          {data.updatedDate && <span>Updated {fmt(data.updatedDate)}</span>}
+        </div>
+      </header>
+
+      {data.cover && (
+        <Image src={data.cover} alt={data.coverAlt ?? data.title} width={1100} height={620} class="art-cover" />
+      )}
+
+      <div class="art-grid">
+        {toc.length > 2 && (
+          <aside class="toc" aria-label="Table of contents">
+            <p class="toc-title">On this page</p>
+            <ul>
+              {toc.map((h) => (
+                <li><a href={`#${h.slug}`}>{h.text}</a></li>
+              ))}
+            </ul>
+          </aside>
+        )}
+
+        <div class="art-body">
+          <Prose>
+            <Content />
+          </Prose>
+
+          <div class="share">
+            <span>Share:</span>
+            <a
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${site.url}${url}`}
+              target="_blank"
+              rel="noopener"
+              aria-label="Share on LinkedIn"
+            >
+              <Icon name="lucide:linkedin" />
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?url=${site.url}${url}&text=${encodeURIComponent(data.title)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label="Share on X"
+            >
+              <Icon name="lucide:twitter" />
+            </a>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(data.title + " " + site.url + url)}`}
+              target="_blank"
+              rel="noopener"
+              aria-label="Share on WhatsApp"
+            >
+              <Icon name="lucide:message-circle" />
+            </a>
+          </div>
+
+          <div class="author-box">
+            <div class="author-avatar" aria-hidden="true">CN</div>
+            <div>
+              <p class="author-name">{data.author}</p>
+              <p class="author-bio">
+                Software engineer and Dynamics 365 F&O technical consultant. I build software, AI
+                automation, mobile apps and data systems for businesses worldwide.
+                <a href="/about/" class="link-underline">More about me</a> ·
+                <a href={site.socials.linkedin} target="_blank" rel="noopener" class="link-underline">LinkedIn</a>
+              </p>
+            </div>
+          </div>
+
+          {pillar && (
+            <a href={pillar.href} class="context-cta">
+              <span>
+                <span class="cc-label">Related service</span>
+                <span class="cc-title">{pillar.title}</span>
+              </span>
+              <Icon name="lucide:arrow-right" />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="section related-section">
+      <div class="container-x">
+        <h2 class="related-h">Keep reading</h2>
+        <div class="related-grid">
+          {related.map((p) => (
+            <a href={`/blog/${p.id}/`} class="rel card">
+              <span class="rel-tag">{categoryLabel(p.data.category)}</span>
+              <h3 class="rel-title">{p.data.title}</h3>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .article {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .art-head {
+    max-width: 52rem;
+    margin: 1.5rem auto 0;
+  }
+  .art-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+  }
+  .art-title {
+    margin-top: 0.6rem;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+  }
+  .art-desc {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+  .art-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.88rem;
+    color: var(--color-muted);
+  }
+  .art-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .art-meta svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .art-cover {
+    width: 100%;
+    height: auto;
+    max-width: 64rem;
+    margin: 2rem auto 0;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-line);
+  }
+
+  .art-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    max-width: 52rem;
+    margin: 2.5rem auto 0;
+  }
+  .toc {
+    align-self: start;
+  }
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-left: 2px solid var(--color-line);
+  }
+  .toc a {
+    display: block;
+    padding-left: 0.9rem;
+    font-size: 0.88rem;
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
+  .toc a:hover {
+    color: var(--color-accent-ink);
+  }
+
+  .share {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-line);
+    font-size: 0.88rem;
+    color: var(--color-muted);
+  }
+  .share a {
+    display: inline-flex;
+    padding: 0.5rem;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .share a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+  .share svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .author-box {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-card);
+  }
+  .author-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-night);
+    color: var(--color-accent);
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .author-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .author-bio {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+  }
+  .author-bio a {
+    color: var(--color-accent-ink);
+    margin-left: 0.25rem;
+  }
+
+  .context-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-night);
+    color: #fff;
+    border-radius: var(--radius-card);
+    transition: transform 0.18s var(--ease-out);
+  }
+  .context-cta:hover {
+    transform: translateY(-2px);
+  }
+  .cc-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+  }
+  .cc-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-top: 0.2rem;
+  }
+  .context-cta svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .related-section {
+    background: var(--color-surface-2);
+  }
+  .related-h {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .rel {
+    padding: 1.4rem;
+    transition: transform 0.18s var(--ease-out), border-color 0.18s;
+  }
+  .rel:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-accent);
+  }
+  .rel-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--color-accent-ink);
+  }
+  .rel-title {
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  @media (min-width: 640px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .art-grid {
+      grid-template-columns: 1fr;
+      max-width: 52rem;
+    }
+  }
+</style>

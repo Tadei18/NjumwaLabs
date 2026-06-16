@@ -1,0 +1,338 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import SectionHeading from "@components/SectionHeading.astro";
+import ProcessSteps from "@components/ProcessSteps.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { site } from "@data/site";
+import { personSchema, organizationSchema, breadcrumbSchema } from "@/lib/schema";
+
+const values = [
+  { icon: "shield-check", title: "Reliability", text: "I do what I say, on the timeline I promise. Production systems have to be dependable — and so does the person building them." },
+  { icon: "message-square-text", title: "Clear communication", text: "No jargon walls, no silence. You get plain-language updates and regular demos so you always know where things stand." },
+  { icon: "globe-2", title: "Global standards, fair prices", text: "Enterprise-grade engineering shouldn't be out of reach. I deliver international quality at prices SMEs and startups can actually afford." },
+  { icon: "target", title: "Outcomes over output", text: "I care about what the work does for your business — more leads, less manual effort, faster systems — not just shipping features." },
+];
+
+const expertise = [
+  "Microsoft Dynamics 365 Finance & Operations (X++, integrations, DMF, reporting)",
+  "Full-stack web development (React, Next.js, Astro, Node.js, Python)",
+  "AI automation & agents (chatbots, RAG, n8n/Make/Zapier, LLM integrations)",
+  "Cross-platform mobile (Flutter, React Native)",
+  "Database administration & data (SQL Server, PostgreSQL, MongoDB, Power BI)",
+];
+
+const stack = [
+  "TypeScript", "React", "Next.js", "Astro", "Node.js", "Python", "Flutter",
+  "PostgreSQL", "SQL Server", "MongoDB", "Azure", "AWS", "Dynamics 365 F&O",
+  "X++", "Power Platform", "n8n", "OpenAI", "Power BI",
+];
+---
+
+<BaseLayout
+  title="About Crispus Njumwa — software engineer & D365 F&O consultant"
+  description="Crispus Njumwa is a senior, enterprise-trained software engineer and Microsoft Dynamics 365 Finance & Operations technical consultant in Nairobi, building software, AI, mobile and data systems for clients worldwide."
+  schemas={[
+    personSchema(),
+    organizationSchema(),
+    breadcrumbSchema([{ name: "Home", url: "/" }, { name: "About", url: "/about/" }]),
+  ]}
+>
+  <section class="about-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "About", url: "/about/" }]} />
+      <div class="about-grid">
+        <div data-reveal>
+          <span class="eyebrow">About</span>
+          <h1 class="about-title">Hi, I'm Crispus — the engineer behind Njumwa Labs.</h1>
+          <p class="about-lead">
+            I build, automate and maintain the software and data systems that growing businesses run
+            on. My background is enterprise: I work as a Microsoft Dynamics 365 Finance & Operations
+            technical consultant, the kind of role where reliability, security and clean architecture
+            aren't optional.
+          </p>
+          <p class="about-body">
+            Njumwa Labs is how I bring that same standard to SMEs, startups and founders — in {site.city}
+            and around the world — without the enterprise price tag. Whether it's a fast website, an
+            AI automation that answers leads in seconds, a mobile app, a database that finally runs
+            quickly, or deep D365 work, I'm the technical partner who can build it, automate it, and
+            keep it running.
+          </p>
+          <div class="about-actions">
+            <a href="/contact/" class="btn btn-primary" data-track="book_call_about">
+              <Icon name="lucide:calendar-check" /> Book a free call
+            </a>
+            <a href={site.socials.linkedin} target="_blank" rel="noopener" class="btn btn-ghost">
+              <Icon name="lucide:linkedin" /> Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+        <aside class="about-card card" data-reveal>
+          <div class="ac-avatar" aria-hidden="true">CN</div>
+          <p class="ac-name">{site.founder}</p>
+          <p class="ac-role">Software engineer · D365 F&O technical consultant</p>
+          <ul class="ac-meta">
+            <li><Icon name="lucide:map-pin" /> {site.city}</li>
+            <li><Icon name="lucide:globe" /> Serving clients worldwide</li>
+            <li><Icon name="lucide:clock" /> Time-zone friendly delivery</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Expertise -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="Experience & expertise"
+        title="Enterprise-trained, multidisciplinary, hands-on."
+        text="The range isn't a gimmick — modern businesses run on connected systems, and I've worked across the whole stack that powers them."
+      />
+      <ul class="expertise">
+        {expertise.map((e) => (
+          <li class="exp-item" data-reveal>
+            <Icon name="lucide:check" />
+            <span>{e}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="section values">
+    <div class="container-x">
+      <SectionHeading eyebrow="How I work" title="What you can count on." />
+      <div class="values-grid">
+        {values.map((v) => (
+          <div class="value card" data-reveal>
+            <span class="value-icon"><Icon name={`lucide:${v.icon}`} /></span>
+            <h3 class="value-title">{v.title}</h3>
+            <p class="value-text">{v.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stack -->
+  <section class="section">
+    <div class="container-x">
+      <SectionHeading eyebrow="My stack" title="Tools I reach for" align="center" />
+      <ul class="stack" data-reveal>
+        {stack.map((s) => <li class="stack-item">{s}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section process">
+    <div class="container-x">
+      <SectionHeading eyebrow="The process" title="How an engagement runs" />
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <CTASection heading="Let's talk about what you're building." />
+</BaseLayout>
+
+<style>
+  .about-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2.5rem, 6vw, 4rem);
+  }
+  .about-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(40% 55% at 90% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .about-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+  .about-title {
+    margin-top: 0.6rem;
+    font-size: clamp(1.9rem, 4.5vw, 3rem);
+  }
+  .about-lead {
+    margin-top: 1.1rem;
+    font-size: 1.15rem;
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+  }
+  .about-body {
+    margin-top: 1rem;
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+  .about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+  .about-actions svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .about-card {
+    padding: 1.75rem;
+    text-align: center;
+  }
+  .ac-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    background: var(--color-night);
+    color: var(--color-accent);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .ac-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+  .ac-role {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+  .ac-meta {
+    list-style: none;
+    padding: 1.25rem 0 0;
+    margin: 1.25rem 0 0;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  .ac-meta li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .ac-meta svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--color-accent-ink);
+  }
+
+  .expertise {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .exp-item {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: 1.1rem 1.3rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    font-size: 0.98rem;
+  }
+  .exp-item svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    color: var(--color-accent-ink);
+  }
+
+  .values {
+    background: var(--color-surface-2);
+  }
+  .values-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .value {
+    padding: 1.6rem;
+  }
+  .value-icon {
+    display: inline-flex;
+    width: 2.8rem;
+    height: 2.8rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    margin-bottom: 0.9rem;
+  }
+  .value-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  .value-title {
+    font-size: 1.1rem;
+  }
+  .value-text {
+    margin-top: 0.45rem;
+    color: var(--color-muted);
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stack-item {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+  }
+
+  .process {
+    background: var(--color-surface-2);
+  }
+
+  @media (min-width: 720px) {
+    .values-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 960px) {
+    .about-grid {
+      grid-template-columns: 1.6fr 1fr;
+    }
+    .expertise {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .values-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

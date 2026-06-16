@@ -1,0 +1,98 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import Prose from "@components/Prose.astro";
+import { site, mailtoLink } from "@data/site";
+
+const updated = "June 2026";
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="How Njumwa Labs collects, uses and protects your information."
+  noindex={true}
+>
+  <section class="legal">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Privacy", url: "/privacy/" }]} />
+      <div class="legal-head">
+        <h1>Privacy Policy</h1>
+        <p class="legal-updated">Last updated: {updated}</p>
+        <p class="legal-note">
+          ⚠️ Template content — review and adapt with legal advice before launch.
+        </p>
+      </div>
+      <Prose>
+        <p>
+          This Privacy Policy explains how {site.legalName} ("we", "us") collects, uses and protects
+          information when you visit {site.url} or contact us.
+        </p>
+
+        <h2>Information we collect</h2>
+        <ul>
+          <li><strong>Information you give us:</strong> when you submit the contact form or book a call, we collect your name, email, and the details you share (service of interest, budget, message).</li>
+          <li><strong>Usage data:</strong> we use privacy-respecting analytics to understand how the site is used (pages viewed, approximate location, device type). This is aggregated and not used to identify you personally.</li>
+        </ul>
+
+        <h2>How we use your information</h2>
+        <ul>
+          <li>To respond to your inquiry and provide our services.</li>
+          <li>To improve the website and our offerings.</li>
+          <li>To send information you've requested.</li>
+        </ul>
+
+        <h2>Analytics and cookies</h2>
+        <p>
+          We may use Google Analytics 4, Plausible and/or Microsoft Clarity. These tools respect Do
+          Not Track and, where used, IP anonymization. You can block cookies in your browser settings.
+        </p>
+
+        <h2>Third-party services</h2>
+        <p>
+          Form submissions are processed by our form provider (e.g. Web3Forms) and bookings by our
+          scheduling provider (e.g. Calendly). These providers process data on our behalf under their
+          own privacy terms.
+        </p>
+
+        <h2>Data retention</h2>
+        <p>We keep inquiry information only as long as needed to respond and maintain our records.</p>
+
+        <h2>Your rights</h2>
+        <p>
+          You may request access to, correction of, or deletion of your personal data. Contact us at
+          <a href={mailtoLink}>{site.email}</a>.
+        </p>
+
+        <h2>Contact</h2>
+        <p>Questions about this policy? Email <a href={mailtoLink}>{site.email}</a>.</p>
+      </Prose>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal {
+    padding-block: 1.5rem clamp(3rem, 6vw, 5rem);
+  }
+  .legal-head {
+    max-width: 68ch;
+    margin: 1.5rem 0 2rem;
+  }
+  .legal-head h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-top: 1rem;
+  }
+  .legal-updated {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+  .legal-note {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--color-accent-2) 14%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-accent-2) 40%, var(--color-line));
+    border-radius: 10px;
+    font-size: 0.88rem;
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+title: "Why your website is slow — and what it's costing you in customers"
+description: "The real reasons websites load slowly, how slow loads quietly cost you customers and search rankings, and the fixes that actually work."
+pubDate: 2026-02-12
+category: "web-development"
+tags: ["web performance", "core web vitals", "seo", "conversion"]
+---
+
+**The short answer:** Most websites are slow because of oversized images, too much JavaScript, render-blocking resources, and slow hosting. Slow loads cost you real money: every extra second of load time increases bounce rate and lowers conversions, and Google uses speed (Core Web Vitals) as a ranking signal — so a slow site is both harder to find and less likely to convert once found.
+
+## What "slow" actually costs you
+
+- **Lost visitors.** A large share of people abandon a page that takes more than about three seconds to load.
+- **Lower conversions.** Faster pages reliably convert better — speed reduces friction at exactly the moment someone decides whether to act.
+- **Worse rankings.** Core Web Vitals are part of Google's ranking system, so speed affects how much traffic you get in the first place.
+
+## The usual culprits
+
+### 1. Huge, unoptimized images
+The most common cause. Uploading a 4MB photo and letting the browser shrink it visually still downloads all 4MB. Fix: serve modern formats (AVIF/WebP), correctly sized and lazy-loaded.
+
+### 2. Too much JavaScript
+Heavy frameworks and third-party scripts (chat widgets, trackers, A/B tools) block the page from becoming usable. Fix: ship less JavaScript, defer non-critical scripts, and prefer architectures that send mostly HTML.
+
+### 3. Render-blocking resources
+Fonts and CSS that must load before anything appears delay the first paint. Fix: self-host fonts with `font-display: swap`, preload critical assets, and inline critical CSS.
+
+### 4. Slow hosting and no CDN
+If your server is far from your visitors, every request is slow. Fix: use a CDN so content is served from close to each user.
+
+### 5. Layout shift (CLS)
+Content that jumps as images and ads load feels broken and hurts your score. Fix: always set explicit width/height on images and reserve space for embeds.
+
+## How to know where you stand
+
+Run your site through Google PageSpeed Insights and look at the three Core Web Vitals:
+
+- **LCP** (largest contentful paint) — should be under **2.5s**.
+- **INP** (interaction to next paint) — under **200ms**.
+- **CLS** (cumulative layout shift) — under **0.1**.
+
+## The reliable fix
+
+For content and marketing sites, the most effective fix is often the architecture itself: building with a static-first framework (like Astro) that ships almost no JavaScript by default, optimizes images automatically, and serves clean HTML from a CDN. That's how you hit "Good" Core Web Vitals without constant firefighting.
+
+Want a fast, ranking site? See [web development](/services/web-development/) or [book a free call](/contact/). For the bigger picture, read [SEO basics that move the needle](/blog/seo-basics-for-service-businesses/).

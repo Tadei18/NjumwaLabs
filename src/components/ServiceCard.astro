@@ -1,0 +1,89 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Pillar } from "@data/services";
+
+interface Props {
+  pillar: Pillar;
+  index?: number;
+}
+const { pillar, index } = Astro.props;
+---
+
+<a href={pillar.href} class="service-card card" data-reveal>
+  {index !== undefined && <span class="card-num">{String(index + 1).padStart(2, "0")}</span>}
+  <span class="card-icon">
+    <Icon name={`lucide:${pillar.icon}`} />
+  </span>
+  <h3 class="card-title">{pillar.title}</h3>
+  <p class="card-outcome">{pillar.outcome}</p>
+  <span class="card-cta">
+    Explore
+    <Icon name="lucide:arrow-right" />
+  </span>
+</a>
+
+<style>
+  .service-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out),
+      border-color 0.22s var(--ease-out);
+  }
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-line));
+  }
+  .card-num {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+  .card-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+    color: var(--color-accent-ink);
+    margin-bottom: 1.1rem;
+  }
+  .card-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .card-title {
+    font-size: 1.2rem;
+  }
+  .card-outcome {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+  .card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-accent-ink);
+  }
+  .card-cta svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .service-card:hover .card-cta svg {
+    transform: translateX(4px);
+  }
+</style>

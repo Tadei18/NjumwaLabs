@@ -1,8 +1,11 @@
 ---
 import { Icon } from "astro-icon/components";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
+import ServiceIllustration from "@components/ServiceIllustration.astro";
+import { pillarBySlug } from "@data/services";
 
 interface Props {
+  slug: string;
   icon: string;
   eyebrow: string;
   title: string;
@@ -10,21 +13,23 @@ interface Props {
   priceFrom: string;
   breadcrumbs: { name: string; url: string }[];
 }
-const { icon, eyebrow, title, subtitle, priceFrom, breadcrumbs } = Astro.props;
+const { slug, icon, eyebrow, title, subtitle, priceFrom, breadcrumbs } = Astro.props;
+const accent = pillarBySlug(slug)?.accent ?? "#0FB5C4";
 ---
 
-<section class="pillar-hero">
+<section class="pillar-hero bg-dots" style={`--pillar:${accent}`}>
+  <span class="plh-glow" aria-hidden="true"></span>
   <div class="container-x">
     <Breadcrumbs items={breadcrumbs} />
-    <div class="ph-grid">
-      <div>
-        <span class="ph-icon" data-reveal>
+    <div class="plh-grid">
+      <div class="plh-copy">
+        <span class="plh-icon load-fade">
           <Icon name={`lucide:${icon}`} />
         </span>
-        <span class="eyebrow ph-eyebrow" data-reveal>{eyebrow}</span>
-        <h1 class="ph-title" data-reveal>{title}</h1>
-        <p class="ph-sub" data-reveal>{subtitle}</p>
-        <div class="ph-actions" data-reveal>
+        <span class="eyebrow plh-eyebrow load-fade d1">{eyebrow}</span>
+        <h1 class="plh-title load-fade d1">{title}</h1>
+        <p class="plh-sub load-fade d2">{subtitle}</p>
+        <div class="plh-actions load-fade d3">
           <a href="/contact/" class="btn btn-primary" data-track="book_call_pillar">
             <Icon name="lucide:calendar-check" />
             Book a free call
@@ -34,6 +39,9 @@ const { icon, eyebrow, title, subtitle, priceFrom, breadcrumbs } = Astro.props;
           </a>
         </div>
       </div>
+      <div class="plh-visual load-fade d2">
+        <ServiceIllustration slug={slug} />
+      </div>
     </div>
   </div>
 </section>
@@ -42,62 +50,84 @@ const { icon, eyebrow, title, subtitle, priceFrom, breadcrumbs } = Astro.props;
   .pillar-hero {
     position: relative;
     overflow: hidden;
-    padding-block: 1.5rem clamp(2.5rem, 6vw, 4rem);
+    padding-block: 1.25rem clamp(2rem, 5vw, 3.25rem);
   }
-  .pillar-hero::before {
-    content: "";
+  .plh-glow {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      45% 60% at 85% 0%,
-      color-mix(in srgb, var(--color-accent) 12%, transparent),
-      transparent 70%
-    );
+    top: -10rem;
+    right: -6rem;
+    width: 26rem;
+    height: 26rem;
+    border-radius: 50%;
+    filter: blur(60px);
+    background: color-mix(in srgb, var(--pillar) 45%, transparent);
+    opacity: 0.16;
     pointer-events: none;
   }
-  .ph-grid {
+  .plh-grid {
     position: relative;
-    margin-top: 1.5rem;
-    max-width: 56rem;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 1.25rem;
   }
-  .ph-icon {
+  .plh-icon {
     display: inline-flex;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3.25rem;
+    height: 3.25rem;
     align-items: center;
     justify-content: center;
     border-radius: 16px;
-    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
-    color: var(--color-accent-ink);
+    background: color-mix(in srgb, var(--pillar) 14%, var(--color-surface));
+    color: color-mix(in srgb, var(--pillar) 75%, var(--color-ink));
     border: 1px solid var(--color-line);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.1rem;
   }
-  .ph-icon svg {
-    width: 1.8rem;
-    height: 1.8rem;
+  .plh-icon svg {
+    width: 1.7rem;
+    height: 1.7rem;
   }
-  .ph-eyebrow {
+  .plh-eyebrow {
     display: block;
+    color: color-mix(in srgb, var(--pillar) 70%, var(--color-ink));
   }
-  .ph-title {
+  .plh-title {
     margin-top: 0.6rem;
     font-size: clamp(2rem, 5vw, 3.25rem);
   }
-  .ph-sub {
+  .plh-sub {
     margin-top: 1.1rem;
     font-size: clamp(1.05rem, 2.2vw, 1.3rem);
     color: var(--color-muted);
     line-height: 1.6;
     max-width: 50ch;
   }
-  .ph-actions {
+  .plh-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1.75rem;
   }
-  .ph-actions svg {
+  .plh-actions svg {
     width: 1.15rem;
     height: 1.15rem;
+  }
+  .plh-visual {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-lift);
+    max-width: 30rem;
+  }
+
+  @media (min-width: 900px) {
+    .plh-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+    }
+    .plh-visual {
+      justify-self: end;
+    }
   }
 </style>

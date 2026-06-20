@@ -216,6 +216,23 @@ state). Test with the OS reduced-motion setting before shipping motion changes.
 - **About headshot**: drop a real photo at `public/images/crispus-njumwa.jpg`; it replaces the
   "CN" monogram automatically (the `<img>` self-removes on 404, so no broken image).
 
+### Interior page heroes (Phase 2.3)
+
+`src/components/PageHero.astro` is the reusable two-column interior page-header
+pattern (copy left, visual right; textured pale backdrop + soft glow; entrance
+motion; reduced-motion safe). Pass the visual via the default slot and an optional
+CTA via the `cta` slot. Used by the Services hub (with `SystemsMapMini` — a compact,
+pure-CSS echo of the signature systems-map) and Portfolio (count-up results strip).
+`PillarHero.astro` follows the same pattern for the five service pillar pages, using
+each pillar's `ServiceIllustration` as the hero visual. Pricing, About and Contact
+already had two-column hero visuals from earlier phases.
+
+Two case studies were added so every pillar has proof (the Portfolio filter now shows
+all five categories): **`njumwalabs-website.mdx`** (this site — real/verifiable) and
+**`facial-recognition-attendance.mdx`** (a representative applied-ML project from the
+owner's portfolio — **confirm details before it stays live**). Both use the Phase 2.1
+illustrative `CaseCover`; drop a real screenshot via the `cover` frontmatter field.
+
 ### SEO / GEO (search + AI-engine optimization)
 
 Content types & where their data lives:

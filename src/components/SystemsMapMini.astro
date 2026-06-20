@@ -1,0 +1,225 @@
+---
+// Compact, non-interactive echo of the signature SystemsMap — for interior page
+// heroes. Pure CSS animation (draw-in + travelling pulse + breathing), no JS,
+// reduced-motion safe. Smaller than the home-hero version.
+import { pillars } from "@data/services";
+
+const C = { x: 150, y: 130 };
+const positions = [
+  { x: 150, y: 40 },
+  { x: 250, y: 105 },
+  { x: 212, y: 222 },
+  { x: 88, y: 222 },
+  { x: 50, y: 105 },
+];
+const nodes = pillars.map((p, i) => ({ ...p, ...positions[i] }));
+const ring = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+  [4, 0],
+];
+---
+
+<div class="smm-wrap">
+  <div class="smm-head">
+    <span class="pulse-dot"></span>
+    <span class="smm-head-label">one connected system</span>
+  </div>
+  <svg viewBox="0 0 300 270" class="smm" role="img" aria-label="The five services connected into one business operating system." xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="smm-hub" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#0fb5c4" stop-opacity="0.4" />
+        <stop offset="100%" stop-color="#0fb5c4" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    <g fill="none" stroke-linecap="round">
+      {nodes.map((n, i) => (
+        <line class="smm-edge" style={`--i:${i}`} pathLength="1" x1={C.x} y1={C.y} x2={n.x} y2={n.y} />
+      ))}
+      {ring.map(([a, b], i) => (
+        <line class="smm-ring" style={`--i:${i + 5}`} pathLength="1" x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} />
+      ))}
+    </g>
+    <g fill="none" stroke-linecap="round" aria-hidden="true">
+      {nodes.map((n, i) => (
+        <line class="smm-pulse" style={`--i:${i}`} pathLength="1" x1={C.x} y1={C.y} x2={n.x} y2={n.y} />
+      ))}
+    </g>
+
+    <circle cx={C.x} cy={C.y} r="48" fill="url(#smm-hub)" class="smm-glow" />
+    <circle cx={C.x} cy={C.y} r="30" class="smm-hub" />
+    <text x={C.x} y={C.y - 2} text-anchor="middle" class="smm-hub-sm">YOUR</text>
+    <text x={C.x} y={C.y + 10} text-anchor="middle" class="smm-hub-lg">OS</text>
+
+    {nodes.map((n, i) => (
+      <g class="smm-node" style={`--i:${i}`}>
+        <circle cx={n.x} cy={n.y} r="22" class="smm-circle" />
+        <text x={n.x} y={n.y + 3} text-anchor="middle" class="smm-label">{n.short.split(" ")[0]}</text>
+      </g>
+    ))}
+  </svg>
+</div>
+
+<style>
+  .smm-wrap {
+    background: linear-gradient(160deg, var(--color-night), var(--color-night-2));
+    border: 1px solid var(--color-night-line);
+    border-radius: 22px;
+    padding: 1rem 1rem 1.25rem;
+    box-shadow: var(--shadow-lift);
+  }
+  .smm-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid var(--color-night-line);
+  }
+  .smm-head-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .smm {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .smm-edge {
+    stroke: rgba(255, 255, 255, 0.14);
+    stroke-width: 1.4;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: smm-draw 0.9s var(--ease-out) forwards;
+    animation-delay: calc(0.2s + var(--i) * 0.08s);
+  }
+  .smm-ring {
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 1.2;
+    stroke-dasharray: 0.02 0.04;
+    opacity: 0;
+    animation: smm-fade 0.6s var(--ease-out) forwards;
+    animation-delay: calc(0.9s + var(--i) * 0.05s);
+  }
+  @keyframes smm-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes smm-fade {
+    to {
+      opacity: 0.5;
+    }
+  }
+  .smm-pulse {
+    stroke: var(--color-accent);
+    stroke-width: 2;
+    stroke-dasharray: 0.12 0.88;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    animation: smm-travel 3.2s linear infinite;
+    animation-delay: calc(1.3s + var(--i) * 0.5s);
+  }
+  @keyframes smm-travel {
+    0% {
+      stroke-dashoffset: 1;
+      opacity: 0;
+    }
+    15%,
+    85% {
+      opacity: 0.85;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+  }
+
+  .smm-glow {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: smm-breathe 4s var(--ease-out) infinite;
+  }
+  @keyframes smm-breathe {
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  .smm-hub {
+    fill: #0c1426;
+    stroke: var(--color-accent);
+    stroke-width: 1.4;
+  }
+  .smm-hub-sm {
+    fill: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 0.15em;
+  }
+  .smm-hub-lg {
+    fill: #fff;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .smm-node {
+    opacity: 0;
+    transform: scale(0.6);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: smm-pop 0.55s var(--ease-out) forwards;
+    animation-delay: calc(0.35s + var(--i) * 0.1s);
+  }
+  @keyframes smm-pop {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .smm-circle {
+    fill: #101a30;
+    stroke: rgba(255, 255, 255, 0.16);
+    stroke-width: 1.4;
+  }
+  .smm-label {
+    fill: #dbe4f5;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    font-weight: 500;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .smm-edge {
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+    .smm-ring {
+      opacity: 0.5;
+      animation: none;
+    }
+    .smm-pulse {
+      display: none;
+    }
+    .smm-node {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+    .smm-glow {
+      animation: none;
+      opacity: 0.8;
+    }
+  }
+</style>

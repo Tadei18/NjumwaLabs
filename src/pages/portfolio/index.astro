@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import Breadcrumbs from "@components/Breadcrumbs.astro";
+import PageHero from "@components/PageHero.astro";
 import CaseStudyCard from "@components/CaseStudyCard.astro";
 import CTASection from "@components/CTASection.astro";
 import { pillars } from "@data/services";
@@ -13,6 +13,13 @@ const items = (await getCollection("portfolio", ({ data }) => !data.draft)).sort
 
 // Only show filter chips for pillars that actually have work.
 const usedPillars = pillars.filter((p) => items.some((i) => i.data.pillar === p.slug));
+
+// Headline proof metrics for the hero (count up on load).
+const heroStats = [
+  { count: "200", prefix: "", suffix: "+", label: "users on a D365 go-live" },
+  { count: "62", prefix: "", suffix: "%", label: "faster app after tuning" },
+  { count: "6", prefix: "", suffix: " wks", label: "idea to shipped MVP" },
+];
 ---
 
 <BaseLayout
@@ -20,17 +27,28 @@ const usedPillars = pillars.filter((p) => items.some((i) => i.data.pillar === p.
   description="Selected software, automation, mobile and database projects — each one a real business problem solved, with measurable results."
   schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Portfolio", url: "/portfolio/" }])]}
 >
-  <section class="pf-hero">
-    <div class="container-x">
-      <Breadcrumbs items={[{ name: "Portfolio", url: "/portfolio/" }]} />
-      <span class="eyebrow pf-eyebrow" data-reveal>Portfolio</span>
-      <h1 class="pf-title" data-reveal>Real problems, measurable results.</h1>
-      <p class="pf-sub" data-reveal>
-        Each project below started as a business problem — slow systems, manual work, missed leads —
-        and ended as a working system that moved a number that mattered.
-      </p>
+  <PageHero
+    eyebrow="Portfolio"
+    title="Real problems, "
+    titleAccent="measurable results."
+    subtitle="Each project started as a business problem — slow systems, manual work, missed leads — and ended as a working system that moved a number that mattered."
+    breadcrumbs={[{ name: "Portfolio", url: "/portfolio/" }]}
+    visual="panel"
+  >
+    <div class="results">
+      <p class="results-label">Outcomes that mattered</p>
+      <div class="results-strip">
+        {heroStats.map((s) => (
+          <div class="result">
+            <span class="result-num" data-count={s.count} data-prefix={s.prefix} data-suffix={s.suffix}>
+              {s.prefix}{s.count}{s.suffix}
+            </span>
+            <span class="result-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
     </div>
-  </section>
+  </PageHero>
 
   <section class="section">
     <div class="container-x">
@@ -88,32 +106,40 @@ const usedPillars = pillars.filter((p) => items.some((i) => i.data.pillar === p.
 </script>
 
 <style>
-  .pf-hero {
-    position: relative;
-    overflow: hidden;
-    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  .results-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 1rem;
   }
-  .pf-hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
-    pointer-events: none;
+  .results-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
   }
-  .pf-eyebrow {
-    display: block;
-    margin-top: 1.5rem;
+  .result {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.9rem 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-night-line);
+    border-radius: 14px;
+    text-align: center;
   }
-  .pf-title {
-    margin-top: 0.6rem;
-    font-size: clamp(2rem, 5vw, 3.25rem);
+  .result-num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+    line-height: 1;
+    color: var(--color-accent);
   }
-  .pf-sub {
-    margin-top: 1rem;
-    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-    color: var(--color-muted);
-    line-height: 1.6;
-    max-width: 56ch;
+  .result-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.68);
+    line-height: 1.3;
   }
   .filters {
     display: flex;

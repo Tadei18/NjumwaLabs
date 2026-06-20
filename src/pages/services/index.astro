@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
-import Breadcrumbs from "@components/Breadcrumbs.astro";
+import PageHero from "@components/PageHero.astro";
+import SystemsMapMini from "@components/SystemsMapMini.astro";
 import SectionHeading from "@components/SectionHeading.astro";
 import ServiceCard from "@components/ServiceCard.astro";
 import CTASection from "@components/CTASection.astro";
@@ -49,17 +50,16 @@ const guide = [
   description="Five connected services — web development, AI automation, mobile apps, database administration and Dynamics 365 — delivered by a Microsoft-certified engineer at affordable prices."
   schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }])]}
 >
-  <section class="hub-hero">
-    <div class="container-x">
-      <Breadcrumbs items={[{ name: "Services", url: "/services/" }]} />
-      <span class="eyebrow hub-eyebrow" data-reveal>Services</span>
-      <h1 class="hub-title" data-reveal>Everything you need to build, automate and run your systems.</h1>
-      <p class="hub-sub" data-reveal>
-        Five capabilities that work on their own — or combine into one connected business operating
-        system. One certified partner, enterprise standards, globally affordable prices.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Services"
+    title="Everything you need to build, automate and"
+    titleAccent="run your systems."
+    subtitle="Five capabilities that work on their own — or combine into one connected business operating system. One certified partner, enterprise standards, globally affordable prices."
+    breadcrumbs={[{ name: "Services", url: "/services/" }]}
+    visual="bare"
+  >
+    <SystemsMapMini />
+  </PageHero>
 
   <section class="section">
     <div class="container-x">
@@ -119,35 +119,6 @@ const guide = [
 </BaseLayout>
 
 <style>
-  .hub-hero {
-    position: relative;
-    overflow: hidden;
-    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
-  }
-  .hub-hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
-    pointer-events: none;
-  }
-  .hub-eyebrow {
-    display: block;
-    margin-top: 1.5rem;
-  }
-  .hub-title {
-    margin-top: 0.6rem;
-    font-size: clamp(2rem, 5vw, 3.25rem);
-    max-width: 18ch;
-  }
-  .hub-sub {
-    margin-top: 1.1rem;
-    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-    color: var(--color-muted);
-    line-height: 1.6;
-    max-width: 56ch;
-  }
-
   .services-grid {
     display: grid;
     grid-template-columns: 1fr;

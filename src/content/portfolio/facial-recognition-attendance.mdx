@@ -1,0 +1,40 @@
+---
+title: "A facial-recognition attendance system in Python"
+description: "An applied computer-vision project that automates attendance with real-time face recognition — Python, OpenCV, DLIB and a Streamlit dashboard."
+client: "Applied ML project"
+industry: "Education / Applied AI"
+pillar: "ai-automation"
+pubDate: 2026-04-02
+stack: ["Python", "OpenCV", "DLIB", "scikit-learn", "Streamlit", "NumPy"]
+metrics:
+  - value: "Real-time"
+    label: "face recognition"
+  - value: "0"
+    label: "manual roll-call"
+featured: false
+draft: false
+---
+
+> Representative applied-AI/ML project from the owner's portfolio — included to show
+> hands-on machine-learning range. Confirm details before it stays live (see README).
+
+## The problem
+
+Manual attendance — calling names or passing a sheet — is slow, error-prone and easy to game. The goal was to automate it: identify who's present from a camera feed, accurately and in real time, and record it without any manual roll-call.
+
+## The approach
+
+I built a computer-vision pipeline around face detection and recognition:
+
+- **Enrolment** — capture reference images per person and compute face encodings (DLIB's deep-learning face embeddings).
+- **Detection & recognition** — process the live camera feed with OpenCV, detect faces frame by frame, and match each against the known encodings.
+- **Attendance logging** — when a known face is recognized, mark the person present once and write a timestamped record automatically.
+- **Dashboard** — a Streamlit interface to enrol people, run live recognition, and view/export the attendance log.
+
+## The stack
+
+Python with OpenCV and DLIB for the vision pipeline, scikit-learn and NumPy for the matching logic, and Streamlit for the interactive dashboard.
+
+## The result
+
+A working system that turns a camera feed into accurate, real-time attendance with zero manual roll-call — demonstrating applied machine learning end to end, from data capture and feature encoding to a usable interface. The same computer-vision and ML fundamentals underpin the AI-automation work I build for clients.

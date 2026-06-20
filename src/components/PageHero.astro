@@ -1,0 +1,132 @@
+---
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+
+// Reusable elevated interior page-hero: two columns on desktop (copy left,
+// visual right), textured pale backdrop with a soft glow, lighter than the home
+// hero. Pass the visual via the default slot; optional CTA via the "cta" slot.
+interface Props {
+  eyebrow: string;
+  title: string;
+  titleAccent?: string; // rendered as a gradient accent word/phrase after the title
+  subtitle?: string;
+  breadcrumbs: { name: string; url: string }[];
+  /** Visual emphasis: "panel" wraps the slot in a dark rounded panel; "bare" doesn't. */
+  visual?: "panel" | "bare";
+  /** Accent hue for the glow (defaults to brand cyan). */
+  accent?: string;
+}
+const {
+  eyebrow,
+  title,
+  titleAccent,
+  subtitle,
+  breadcrumbs,
+  visual = "bare",
+  accent,
+} = Astro.props;
+const hasVisual = Astro.slots.has("default");
+const hasCta = Astro.slots.has("cta");
+---
+
+<section class="page-hero bg-dots" style={accent ? `--ph-accent:${accent}` : undefined}>
+  <span class="glow glow-cyan ph-glow-1" aria-hidden="true"></span>
+  <span class="glow glow-amber ph-glow-2" aria-hidden="true"></span>
+
+  <div class="container-x ph-grid" class:list={[{ "no-visual": !hasVisual }]}>
+    <div class="ph-copy">
+      <Breadcrumbs items={breadcrumbs} />
+      <span class="eyebrow ph-eyebrow load-fade">{eyebrow}</span>
+      <h1 class="ph-title load-fade d1">
+        {title}{titleAccent && <> <span class="text-gradient">{titleAccent}</span></>}
+      </h1>
+      {subtitle && <p class="ph-sub load-fade d2">{subtitle}</p>}
+      {hasCta && (
+        <div class="ph-cta load-fade d3">
+          <slot name="cta" />
+        </div>
+      )}
+    </div>
+
+    {hasVisual && (
+      <div class:list={["ph-visual", "load-fade", "d2", visual]}>
+        <slot />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.25rem clamp(2rem, 5vw, 3.25rem);
+  }
+  .ph-glow-1 {
+    width: 26rem;
+    height: 26rem;
+    top: -10rem;
+    right: -6rem;
+    opacity: 0.16;
+    background: color-mix(in srgb, var(--ph-accent, var(--color-accent)) 55%, transparent);
+  }
+  .ph-glow-2 {
+    width: 22rem;
+    height: 22rem;
+    bottom: -12rem;
+    left: -8rem;
+    opacity: 0.1;
+  }
+
+  .ph-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 1.25rem;
+  }
+  .ph-eyebrow {
+    display: block;
+  }
+  .ph-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.04;
+  }
+  .ph-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+  .ph-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.6rem;
+  }
+
+  .ph-visual {
+    width: 100%;
+  }
+  .ph-visual.panel {
+    background: linear-gradient(160deg, var(--color-night), var(--color-night-2));
+    border: 1px solid var(--color-night-line);
+    border-radius: 22px;
+    padding: 1.1rem 1.1rem 1.4rem;
+    box-shadow: var(--shadow-lift);
+  }
+
+  @media (min-width: 900px) {
+    .ph-grid {
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 3rem;
+    }
+    .ph-grid.no-visual {
+      grid-template-columns: 1fr;
+      max-width: 60rem;
+    }
+  }
+</style>

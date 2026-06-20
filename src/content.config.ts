@@ -21,8 +21,9 @@ const blog = defineCollection({
       tags: z.array(z.string()).default([]),
       cover: image().optional(),
       coverAlt: z.string().optional(),
+      featured: z.boolean().default(false),
       draft: z.boolean().default(false),
-      author: z.string().default("Crispus Njumwa"),
+      author: z.string().default("Crispus Martin Njumwa"),
     }),
 });
 

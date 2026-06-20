@@ -131,6 +131,8 @@ export const blogPostingSchema = (opts: {
   dateModified?: string;
   image?: string;
   author: string;
+  wordCount?: number;
+  readingMinutes?: number;
 }) => ({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -143,6 +145,9 @@ export const blogPostingSchema = (opts: {
   image: opts.image ? abs(opts.image) : abs(site.ogImage),
   author: { "@type": "Person", name: opts.author, url: `${site.url}/about/` },
   publisher: { "@id": `${site.url}/#organization` },
+  ...(opts.wordCount ? { wordCount: opts.wordCount } : {}),
+  // ISO-8601 duration, e.g. 5 minutes -> PT5M
+  ...(opts.readingMinutes ? { timeRequired: `PT${opts.readingMinutes}M` } : {}),
 });
 
 export const caseStudySchema = (opts: {

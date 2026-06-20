@@ -1,86 +1,108 @@
 ---
 import { Icon } from "astro-icon/components";
-import { site } from "@data/site";
+import { site, whatsappLink, mailtoLink } from "@data/site";
 import { pillars } from "@data/services";
 
 // Web3Forms: works without JS (standard POST + redirect). JS adds inline
-// validation + async success state. Set PUBLIC_WEB3FORMS_KEY in .env.
+// validation + async success/error states. Set PUBLIC_WEB3FORMS_KEY in .env
+// (or the host dashboard). The setup note below is DEV-ONLY and never ships.
 const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+const isDev = import.meta.env.DEV;
 const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+", "Not sure yet"];
 ---
 
-<form
-  class="contact-form"
-  action="https://api.web3forms.com/submit"
-  method="POST"
-  novalidate
->
-  <input type="hidden" name="access_key" value={accessKey} />
-  <input type="hidden" name="subject" value="New inquiry from Njumwa Labs website" />
-  <input type="hidden" name="from_name" value="Njumwa Labs website" />
-  <input type="hidden" name="redirect" value={`${site.url}/contact/?sent=1`} />
-  {/* Honeypot — bots fill this, humans don't. */}
-  <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
+<div class="cf-wrap">
+  <form class="contact-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+    <input type="hidden" name="access_key" value={accessKey} />
+    <input type="hidden" name="subject" value="New inquiry from Njumwa Labs website" />
+    <input type="hidden" name="from_name" value="Njumwa Labs website" />
+    <input type="hidden" name="redirect" value={`${site.url}/contact/?sent=1`} />
+    {/* Honeypot — bots fill this, humans don't. */}
+    <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
 
-  <div class="field-row">
-    <div class="field">
-      <label for="cf-name">Name</label>
-      <input id="cf-name" name="name" type="text" required autocomplete="name" />
-      <span class="err" data-err="name"></span>
+    <div class="field-row">
+      <div class="field">
+        <label for="cf-name">Name</label>
+        <input id="cf-name" name="name" type="text" required autocomplete="name" placeholder="Your name" />
+        <span class="err" data-err="name"></span>
+      </div>
+      <div class="field">
+        <label for="cf-email">Email</label>
+        <input id="cf-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" />
+        <span class="err" data-err="email"></span>
+      </div>
     </div>
-    <div class="field">
-      <label for="cf-email">Email</label>
-      <input id="cf-email" name="email" type="email" required autocomplete="email" />
-      <span class="err" data-err="email"></span>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="cf-service">Service of interest</label>
+        <select id="cf-service" name="service">
+          <option value="">Select a service…</option>
+          {pillars.map((p) => (
+            <option value={p.title}>{p.title}</option>
+          ))}
+          <option value="Something else">Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="cf-budget">Budget range</label>
+        <select id="cf-budget" name="budget">
+          <option value="">Select a range…</option>
+          {budgets.map((b) => (
+            <option value={b}>{b}</option>
+          ))}
+        </select>
+      </div>
     </div>
+
+    <div class="field">
+      <label for="cf-message">How can I help?</label>
+      <textarea id="cf-message" name="message" rows="5" required placeholder="Tell me a little about your project, timeline or the problem you're solving…"></textarea>
+      <span class="err" data-err="message"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary form-submit" data-track="contact_submit">
+      <span class="spinner" aria-hidden="true"></span>
+      <Icon name="lucide:send" class="send-icon" />
+      <span class="submit-label">Send message</span>
+    </button>
+
+    <p class="form-status" role="status" aria-live="polite"></p>
+
+    {isDev && !accessKey && (
+      <p class="form-warn">
+        Dev note (hidden in production): set <code>PUBLIC_WEB3FORMS_KEY</code> to enable delivery.
+      </p>
+    )}
+    {!isDev && !accessKey && (
+      <p class="form-fallback">
+        Prefer not to use the form? Reach me directly on
+        <a href={whatsappLink} target="_blank" rel="noopener" data-track="whatsapp_formfallback">WhatsApp</a>
+        or <a href={mailtoLink}>email</a>.
+      </p>
+    )}
+  </form>
+
+  {/* Inline success panel (JS path). */}
+  <div class="cf-success" hidden role="status" aria-live="polite">
+    <span class="cf-success-icon"><Icon name="lucide:check-circle-2" /></span>
+    <h3 class="cf-success-title">Message sent — thank you.</h3>
+    <p class="cf-success-text">I'll reply within one business day. Need it sooner?</p>
+    <a href={whatsappLink} target="_blank" rel="noopener" class="btn btn-ghost" data-track="whatsapp_success">
+      <Icon name="lucide:message-circle" /> Message on WhatsApp
+    </a>
   </div>
-
-  <div class="field-row">
-    <div class="field">
-      <label for="cf-service">Service of interest</label>
-      <select id="cf-service" name="service">
-        <option value="">Select a service…</option>
-        {pillars.map((p) => (
-          <option value={p.title}>{p.title}</option>
-        ))}
-        <option value="Something else">Something else</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="cf-budget">Budget range</label>
-      <select id="cf-budget" name="budget">
-        <option value="">Select a range…</option>
-        {budgets.map((b) => (
-          <option value={b}>{b}</option>
-        ))}
-      </select>
-    </div>
-  </div>
-
-  <div class="field">
-    <label for="cf-message">How can I help?</label>
-    <textarea id="cf-message" name="message" rows="5" required></textarea>
-    <span class="err" data-err="message"></span>
-  </div>
-
-  <button type="submit" class="btn btn-primary form-submit" data-track="contact_submit">
-    <Icon name="lucide:send" />
-    <span class="submit-label">Send message</span>
-  </button>
-
-  <p class="form-status" role="status" aria-live="polite"></p>
-
-  {!accessKey && (
-    <p class="form-warn">
-      Note: set <code>PUBLIC_WEB3FORMS_KEY</code> in your environment to enable delivery.
-    </p>
-  )}
-</form>
+</div>
 
 <script>
   const initContactForm = () => {
-  const form = document.querySelector<HTMLFormElement>(".contact-form");
-  if (form) {
+    const wrap = document.querySelector<HTMLDivElement>(".cf-wrap");
+    if (!wrap) return;
+    const form = wrap.querySelector<HTMLFormElement>(".contact-form");
+    const successPanel = wrap.querySelector<HTMLDivElement>(".cf-success");
+    if (!form || !successPanel || form.dataset.bound === "1") return;
+    form.dataset.bound = "1";
+
     const status = form.querySelector<HTMLParagraphElement>(".form-status")!;
     const submit = form.querySelector<HTMLButtonElement>(".form-submit")!;
     const label = form.querySelector<HTMLSpanElement>(".submit-label")!;
@@ -98,11 +120,18 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
       const name = form.elements.namedItem("name") as HTMLInputElement;
       const email = form.elements.namedItem("email") as HTMLInputElement;
       const message = form.elements.namedItem("message") as HTMLTextAreaElement;
-      if (!name.value.trim()) (showErr("name", "Please enter your name"), (ok = false));
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value))
-        (showErr("email", "Please enter a valid email"), (ok = false));
-      if (message.value.trim().length < 10)
-        (showErr("message", "A little more detail helps (10+ characters)"), (ok = false));
+      if (!name.value.trim()) {
+        showErr("name", "Please add your name so I know who I'm replying to.");
+        ok = false;
+      }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value)) {
+        showErr("email", "A valid email means I can actually reach you back.");
+        ok = false;
+      }
+      if (message.value.trim().length < 10) {
+        showErr("message", "A line or two more helps me give a useful reply.");
+        ok = false;
+      }
       return ok;
     };
 
@@ -113,6 +142,7 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
       if (!validate()) return;
 
       submit.disabled = true;
+      submit.classList.add("is-loading");
       label.textContent = "Sending…";
 
       try {
@@ -123,23 +153,25 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          form.reset();
-          status.textContent = "Thanks! Your message is on its way — I'll reply within one business day.";
-          status.classList.add("ok");
-          label.textContent = "Sent";
           if ((window as any).gtag) (window as any).gtag("event", "contact_success");
+          if ((window as any).plausible) (window as any).plausible("contact_success");
+          form.hidden = true;
+          successPanel.hidden = false;
+          successPanel.scrollIntoView({ behavior: "smooth", block: "center" });
         } else {
           throw new Error(data.message || "Send failed");
         }
       } catch (err) {
-        status.textContent =
-          "Something went wrong. Please email crispusnjumwa@gmail.com or message on WhatsApp.";
+        status.innerHTML =
+          'Something went wrong sending that. Please try again, or reach me on ' +
+          '<a href="https://wa.me/254745278006" target="_blank" rel="noopener">WhatsApp</a> ' +
+          'or at <a href="mailto:crispusnjumwa@gmail.com">crispusnjumwa@gmail.com</a>.';
         status.classList.add("error");
         submit.disabled = false;
+        submit.classList.remove("is-loading");
         label.textContent = "Send message";
       }
     });
-  }
   };
   initContactForm();
   document.addEventListener("astro:page-load", initContactForm);
@@ -181,18 +213,23 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: 12px;
-    padding: 0.75rem 0.9rem;
+    padding: 0.8rem 0.95rem;
     transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: color-mix(in srgb, var(--color-muted) 70%, transparent);
   }
   input:focus,
   select:focus,
   textarea:focus {
     outline: none;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 24%, transparent);
   }
   textarea {
     resize: vertical;
+    min-height: 7.5rem;
   }
   .err {
     font-size: 0.8rem;
@@ -203,27 +240,55 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
     align-self: flex-start;
     margin-top: 0.25rem;
   }
-  .form-submit svg {
+  .form-submit .send-icon {
     width: 1.1rem;
     height: 1.1rem;
   }
   .form-submit:disabled {
-    opacity: 0.7;
+    opacity: 0.75;
     cursor: not-allowed;
   }
+  /* spinner */
+  .spinner {
+    display: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    border: 2px solid rgba(3, 34, 42, 0.35);
+    border-top-color: #03222a;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .form-submit.is-loading .spinner {
+    display: inline-block;
+  }
+  .form-submit.is-loading .send-icon {
+    display: none;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner {
+      animation-duration: 1.6s;
+    }
+  }
+
   .form-status {
     font-size: 0.92rem;
     margin: 0;
   }
-  .form-status.ok {
-    color: var(--color-accent-ink);
-    font-weight: 500;
-  }
   .form-status.error {
     color: #c0392b;
   }
-  .form-warn {
-    font-size: 0.82rem;
+  .form-status :global(a) {
+    color: var(--color-accent-ink);
+    text-decoration: underline;
+  }
+  .form-warn,
+  .form-fallback {
+    font-size: 0.85rem;
     color: var(--color-muted);
   }
   .form-warn code {
@@ -232,6 +297,44 @@ const budgets = ["Under $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000+"
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }
+  .form-fallback a {
+    color: var(--color-accent-ink);
+    text-decoration: underline;
+    margin: 0 0.15rem;
+  }
+
+  /* success panel */
+  .cf-success {
+    text-align: center;
+    padding: 2rem 1.5rem;
+  }
+  .cf-success-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+    color: var(--color-accent-ink);
+    margin-bottom: 1rem;
+  }
+  .cf-success-icon svg {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+  .cf-success-title {
+    font-size: 1.3rem;
+  }
+  .cf-success-text {
+    margin: 0.5rem 0 1.25rem;
+    color: var(--color-muted);
+  }
+  .cf-success .btn svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
   @media (min-width: 600px) {
     .field-row {
       grid-template-columns: 1fr 1fr;

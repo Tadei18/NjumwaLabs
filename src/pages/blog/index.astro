@@ -2,8 +2,11 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 import CTASection from "@components/CTASection.astro";
+import BlogCover from "@components/BlogCover.astro";
 import { Icon } from "astro-icon/components";
 import { categoryLabel } from "@/lib/categories";
+import { pillarBySlug } from "@data/services";
+import { readingTime } from "@/lib/reading";
 import { breadcrumbSchema } from "@/lib/schema";
 import { getCollection } from "astro:content";
 
@@ -11,8 +14,17 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
 
-const categories = [...new Set(posts.map((p) => p.data.category))];
-const [featured, ...rest] = posts;
+// Featured = first post flagged featured, else the most recent.
+const featured = posts.find((p) => p.data.featured) ?? posts[0];
+const rest = posts.filter((p) => p.id !== featured?.id);
+
+// Categories with counts for the filter pills.
+const counts = new Map<string, number>();
+posts.forEach((p) => counts.set(p.data.category, (counts.get(p.data.category) ?? 0) + 1));
+const categories = [...counts.entries()].map(([slug, n]) => ({ slug, n }));
+
+const accentFor = (cat: string) =>
+  cat === "general" ? "#0FB5C4" : (pillarBySlug(cat)?.accent ?? "#0FB5C4");
 
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -35,38 +47,118 @@ const fmt = (d: Date) =>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section bg-dots">
     <div class="container-x">
-      <div class="cats" data-reveal>
-        <span class="cats-label">Topics:</span>
-        {categories.map((c) => (
-          <span class="cat-chip">{categoryLabel(c)}</span>
-        ))}
-      </div>
-
       {featured && (
-        <a href={`/blog/${featured.id}/`} class="featured card" data-reveal>
+        <a
+          href={`/blog/${featured.id}/`}
+          class="featured card-hover"
+          data-reveal
+          style={`--pillar:${accentFor(featured.data.category)}`}
+        >
+          <div class="featured-cover">
+            <BlogCover
+              category={featured.data.category}
+              title={featured.data.title}
+              cover={featured.data.cover}
+              coverAlt={featured.data.coverAlt}
+            />
+            <span class="featured-badge">Latest</span>
+          </div>
           <div class="featured-body">
-            <span class="featured-tag">{categoryLabel(featured.data.category)}</span>
+            <span class="post-tag" style={`--pillar:${accentFor(featured.data.category)}`}>
+              {categoryLabel(featured.data.category)}
+            </span>
             <h2 class="featured-title">{featured.data.title}</h2>
             <p class="featured-desc">{featured.data.description}</p>
-            <span class="featured-meta">{fmt(featured.data.pubDate)} · Read article <Icon name="lucide:arrow-right" /></span>
+            <span class="featured-meta">
+              {fmt(featured.data.pubDate)} · {readingTime(featured.body)} min read
+            </span>
+            <span class="featured-cta">Read article <Icon name="lucide:arrow-right" /></span>
           </div>
         </a>
       )}
 
+      <div class="filter-bar" data-reveal>
+        <div class="filters" role="tablist" aria-label="Filter posts by topic">
+          <button class="filter active" data-filter="all" role="tab" aria-selected="true">
+            All <span class="filter-n">{posts.length}</span>
+          </button>
+          {categories.map((c) => (
+            <button class="filter" data-filter={c.slug} role="tab" aria-selected="false">
+              {categoryLabel(c.slug)} <span class="filter-n">{c.n}</span>
+            </button>
+          ))}
+        </div>
+        <p class="filter-count" aria-live="polite"></p>
+      </div>
+
       <div class="post-grid">
         {rest.map((post) => (
-          <a href={`/blog/${post.id}/`} class="post card" data-reveal>
-            <span class="post-tag">{categoryLabel(post.data.category)}</span>
-            <h3 class="post-title">{post.data.title}</h3>
-            <p class="post-desc">{post.data.description}</p>
-            <span class="post-meta">{fmt(post.data.pubDate)}</span>
+          <a
+            href={`/blog/${post.id}/`}
+            class="post card-hover"
+            data-post
+            data-category={post.data.category}
+            data-reveal
+            style={`--pillar:${accentFor(post.data.category)}`}
+          >
+            <div class="post-cover">
+              <BlogCover
+                category={post.data.category}
+                title={post.data.title}
+                cover={post.data.cover}
+                coverAlt={post.data.coverAlt}
+              />
+            </div>
+            <div class="post-body">
+              <span class="post-tag" style={`--pillar:${accentFor(post.data.category)}`}>
+                {categoryLabel(post.data.category)}
+              </span>
+              <h3 class="post-title">{post.data.title}</h3>
+              <p class="post-desc">{post.data.description}</p>
+              <span class="post-meta">{fmt(post.data.pubDate)} · {readingTime(post.body)} min read</span>
+            </div>
           </a>
         ))}
       </div>
+      <p class="no-results" hidden>No posts in this topic yet — <a href="/blog/">see all</a>.</p>
     </div>
   </section>
+
+  <script>
+    const initBlogFilter = () => {
+      const filters = document.querySelectorAll<HTMLButtonElement>(".filter");
+      const posts = document.querySelectorAll<HTMLElement>("[data-post]");
+      const count = document.querySelector<HTMLElement>(".filter-count");
+      const empty = document.querySelector<HTMLElement>(".no-results");
+      if (!filters.length) return;
+
+      const apply = (f: string) => {
+        let shown = 0;
+        posts.forEach((p) => {
+          const match = f === "all" || p.dataset.category === f;
+          p.style.display = match ? "" : "none";
+          if (match) shown++;
+        });
+        if (count) count.textContent = `${shown} ${shown === 1 ? "article" : "articles"}`;
+        if (empty) empty.hidden = shown !== 0;
+      };
+
+      filters.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filters.forEach((b) => {
+            const on = b === btn;
+            b.classList.toggle("active", on);
+            b.setAttribute("aria-selected", String(on));
+          });
+          apply(btn.dataset.filter || "all");
+        });
+      });
+    };
+    initBlogFilter();
+    document.addEventListener("astro:page-load", initBlogFilter);
+  </script>
 
   <CTASection />
 </BaseLayout>
@@ -101,97 +193,183 @@ const fmt = (d: Date) =>
     max-width: 56ch;
   }
 
-  .cats {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-  }
-  .cats-label {
-    font-size: 0.85rem;
-    color: var(--color-muted);
-  }
-  .cat-chip {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    padding: 0.3rem 0.7rem;
+  /* featured lead card */
+  .featured {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
     background: var(--color-surface);
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-pill);
-    color: var(--color-ink-soft);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
   }
-
-  .featured {
-    display: block;
+  .featured-cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
-    margin-bottom: 2rem;
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
   }
-  .featured:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lift);
+  .featured-cover :global(.bc),
+  .featured-cover :global(.bc-svg),
+  .featured-cover :global(.bc-img) {
+    width: 100%;
+    height: 100%;
+  }
+  .featured-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: #03222a;
+    font-weight: 600;
   }
   .featured-body {
-    padding: 2rem;
-    background:
-      radial-gradient(60% 100% at 100% 0%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 70%);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
-  .featured-tag,
   .post-tag {
+    align-self: flex-start;
     font-family: var(--font-mono);
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--color-accent-ink);
+    color: var(--pillar, var(--color-accent-ink));
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--pillar, var(--color-accent)) 12%, transparent);
   }
   .featured-title {
-    margin-top: 0.6rem;
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    max-width: 24ch;
+    margin-top: 0.8rem;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    max-width: 22ch;
   }
   .featured-desc {
-    margin-top: 0.6rem;
+    margin-top: 0.7rem;
     color: var(--color-muted);
     line-height: 1.6;
-    max-width: 60ch;
+    max-width: 56ch;
   }
   .featured-meta,
   .post-meta {
-    font-size: 0.85rem;
+    font-size: 0.83rem;
     color: var(--color-muted);
+    font-family: var(--font-mono);
   }
   .featured-meta {
+    margin-top: 1rem;
+  }
+  .featured-cta {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-weight: 600;
     color: var(--color-accent-ink);
-    font-weight: 500;
   }
-  .featured-meta svg {
-    width: 1rem;
-    height: 1rem;
+  .featured-cta svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .featured:hover .featured-cta svg {
+    transform: translateX(4px);
   }
 
+  /* filter bar */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    cursor: pointer;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    transition: all 0.15s;
+  }
+  .filter:hover {
+    border-color: var(--color-accent);
+    color: var(--color-ink);
+  }
+  .filter.active {
+    background: var(--color-ink);
+    color: #fff;
+    border-color: var(--color-ink);
+  }
+  .filter-n {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+  .filter-count {
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    margin: 0;
+  }
+
+  /* post cards */
   .post-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
   .post {
     display: flex;
     flex-direction: column;
-    padding: 1.6rem;
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), border-color 0.22s;
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
   }
   .post:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lift);
-    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-line));
+    border-color: color-mix(in srgb, var(--pillar) 45%, var(--color-line));
+  }
+  .post-cover {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .post-cover :global(.bc),
+  .post-cover :global(.bc-svg),
+  .post-cover :global(.bc-img) {
+    width: 100%;
+    height: 100%;
+  }
+  .post-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.4rem;
   }
   .post-title {
-    margin-top: 0.5rem;
+    margin-top: 0.7rem;
     font-size: 1.15rem;
     line-height: 1.3;
   }
@@ -205,13 +383,30 @@ const fmt = (d: Date) =>
   .post-meta {
     margin-top: 1.1rem;
   }
+  .no-results {
+    text-align: center;
+    color: var(--color-muted);
+    margin-top: 2rem;
+  }
+  .no-results a {
+    color: var(--color-accent-ink);
+  }
 
-  @media (min-width: 640px) {
+  @media (min-width: 760px) {
+    .featured {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: stretch;
+    }
+    .featured-cover {
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 22rem;
+    }
     .post-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  @media (min-width: 980px) {
+  @media (min-width: 1040px) {
     .post-grid {
       grid-template-columns: repeat(3, 1fr);
     }

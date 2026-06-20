@@ -1,0 +1,146 @@
+---
+import { Image } from "astro:assets";
+import { pillarBySlug } from "@data/services";
+import { categoryLabel } from "@/lib/categories";
+
+// On-brand illustrative blog cover keyed to the post category, reusing the
+// service-illustration visual language. Renders a real image if `cover` is set.
+interface Props {
+  category: string;
+  title: string;
+  cover?: ImageMetadata;
+  coverAlt?: string;
+  class?: string;
+}
+const { category, title, cover, coverAlt, class: className = "" } = Astro.props;
+const accent = category === "general" ? "#0FB5C4" : (pillarBySlug(category)?.accent ?? "#0FB5C4");
+const label = categoryLabel(category);
+const id = `bc-${category}`;
+---
+
+{cover ? (
+  <Image src={cover} alt={coverAlt ?? title} width={800} height={450} class:list={["bc-img", className]} />
+) : (
+  <div class:list={["bc", className]} style={`--a:${accent}`}>
+    <svg viewBox="0 0 360 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="bc-svg" role="img" aria-label={`${label} illustration`}>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0c1426" />
+          <stop offset="1" stop-color="#111d35" />
+        </linearGradient>
+      </defs>
+      <rect width="360" height="200" fill={`url(#${id})`} />
+      <g opacity="0.4" stroke="rgba(255,255,255,.05)">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <line x1={(i + 1) * 40} y1="0" x2={(i + 1) * 40} y2="200" />
+        ))}
+      </g>
+
+      {/* category label watermark */}
+      <text x="28" y="46" font-family="monospace" font-size="11" letter-spacing="3" fill="var(--a)" opacity="0.9">
+        {label.toUpperCase()}
+      </text>
+
+      {category === "ai-automation" && (
+        <g transform="translate(180,110)">
+          <line x1="0" y1="0" x2="-70" y2="-34" stroke="var(--a)" stroke-width="1.5" />
+          <line x1="0" y1="0" x2="78" y2="-26" stroke="var(--a)" stroke-width="1.5" />
+          <line x1="0" y1="0" x2="-58" y2="48" stroke="var(--a)" stroke-width="1.5" />
+          <line x1="0" y1="0" x2="74" y2="44" stroke="var(--a)" stroke-width="1.5" />
+          <circle cx="-70" cy="-34" r="9" fill="#0a1322" stroke="var(--a)" stroke-width="1.8" />
+          <circle cx="78" cy="-26" r="9" fill="#0a1322" stroke="var(--a)" stroke-width="1.8" />
+          <circle cx="-58" cy="48" r="9" fill="#0a1322" stroke="var(--a)" stroke-width="1.8" />
+          <circle cx="74" cy="44" r="9" fill="#0a1322" stroke="var(--a)" stroke-width="1.8" />
+          <rect x="-18" y="-18" width="36" height="36" rx="11" fill="#0c1730" stroke="var(--a)" stroke-width="2" />
+          <circle cx="-7" cy="-2" r="3" fill="var(--a)" />
+          <circle cx="7" cy="-2" r="3" fill="var(--a)" />
+          <path d="M-8 8 h16" stroke="var(--a)" stroke-width="2" stroke-linecap="round" />
+        </g>
+      )}
+
+      {category === "mobile-apps" && (
+        <g transform="translate(150,40)">
+          <rect x="0" y="0" width="60" height="118" rx="12" fill="#0a1322" stroke="rgba(255,255,255,.14)" />
+          <rect x="22" y="6" width="16" height="4" rx="2" fill="rgba(255,255,255,.25)" />
+          <rect x="8" y="18" width="44" height="30" rx="7" fill="var(--a)" opacity="0.9" />
+          <rect x="8" y="56" width="44" height="6" rx="3" fill="rgba(255,255,255,.22)" />
+          <rect x="8" y="68" width="30" height="6" rx="3" fill="rgba(255,255,255,.16)" />
+          <rect x="8" y="92" width="44" height="14" rx="7" fill="rgba(255,255,255,.12)" />
+          <circle cx="58" cy="8" r="11" fill="var(--a)" />
+          <text x="58" y="12" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#06121a">3</text>
+        </g>
+      )}
+
+      {category === "web-development" && (
+        <g transform="translate(96,58)">
+          <rect x="0" y="0" width="168" height="96" rx="10" fill="#0a1322" stroke="rgba(255,255,255,.1)" />
+          <rect x="0" y="0" width="168" height="18" rx="10" fill="#101d33" />
+          <circle cx="13" cy="9" r="3" fill="var(--a)" />
+          <circle cx="24" cy="9" r="3" fill="rgba(255,255,255,.25)" />
+          <rect x="16" y="34" width="68" height="10" rx="4" fill="var(--a)" />
+          <rect x="16" y="52" width="120" height="6" rx="3" fill="rgba(255,255,255,.2)" />
+          <rect x="16" y="64" width="96" height="6" rx="3" fill="rgba(255,255,255,.14)" />
+          <rect x="16" y="78" width="48" height="12" rx="6" fill="var(--a)" opacity=".85" />
+        </g>
+      )}
+
+      {category === "database-administration" && (
+        <g>
+          <g transform="translate(96,58)">
+            <ellipse cx="0" cy="0" rx="30" ry="9" fill="#101d33" stroke="var(--a)" stroke-width="1.5" />
+            <path d="M-30 0 v66 a30 9 0 0 0 60 0 v-66" fill="#0a1322" stroke="var(--a)" stroke-width="1.5" />
+            <ellipse cx="0" cy="0" rx="30" ry="9" fill="#0c1730" stroke="var(--a)" stroke-width="1.5" />
+            <ellipse cx="0" cy="33" rx="30" ry="9" fill="none" stroke="rgba(255,255,255,.12)" />
+          </g>
+          <polyline points="200,150 230,120 256,134 300,80" fill="none" stroke="var(--a)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M300 80 l-9 1 M300 80 l1 9" stroke="var(--a)" stroke-width="2.5" stroke-linecap="round" />
+        </g>
+      )}
+
+      {category === "dynamics-365-finance-operations" && (
+        <g>
+          <g transform="translate(60,74)">
+            <rect x="0" y="0" width="120" height="16" rx="4" fill="#101d33" stroke="var(--a)" stroke-width="1.2" />
+            <rect x="8" y="22" width="120" height="16" rx="4" fill="#101d33" stroke="rgba(255,255,255,.12)" />
+            <rect x="16" y="44" width="120" height="16" rx="4" fill="#101d33" stroke="rgba(255,255,255,.12)" />
+            <circle cx="10" cy="8" r="3" fill="var(--a)" />
+            <circle cx="18" cy="30" r="3" fill="rgba(255,255,255,.4)" />
+            <circle cx="26" cy="52" r="3" fill="rgba(255,255,255,.4)" />
+          </g>
+          <g transform="translate(232,70)">
+            <rect x="0" y="44" width="16" height="40" rx="3" fill="rgba(255,255,255,.2)" />
+            <rect x="24" y="24" width="16" height="60" rx="3" fill="rgba(255,255,255,.28)" />
+            <rect x="48" y="0" width="16" height="84" rx="3" fill="var(--a)" />
+          </g>
+        </g>
+      )}
+
+      {category === "general" && (
+        <g transform="translate(180,108)">
+          <path d="M0 -46 L40 -23 V23 L0 46 L-40 23 V-23 Z" fill="none" stroke="var(--a)" stroke-width="2" />
+          <circle cx="0" cy="0" r="7" fill="var(--a)" />
+          <circle cx="0" cy="-46" r="4" fill="#fff" opacity=".7" />
+          <circle cx="40" cy="23" r="4" fill="#fff" opacity=".7" />
+          <circle cx="-40" cy="23" r="4" fill="#fff" opacity=".7" />
+          <line x1="0" y1="0" x2="0" y2="-46" stroke="var(--a)" stroke-width="1.2" />
+          <line x1="0" y1="0" x2="40" y2="23" stroke="var(--a)" stroke-width="1.2" />
+          <line x1="0" y1="0" x2="-40" y2="23" stroke="var(--a)" stroke-width="1.2" />
+        </g>
+      )}
+    </svg>
+  </div>
+)}
+
+<style>
+  .bc,
+  .bc-svg,
+  .bc-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .bc-svg,
+  .bc-img {
+    object-fit: cover;
+  }
+</style>

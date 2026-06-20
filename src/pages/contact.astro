@@ -11,9 +11,23 @@ import { organizationSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
 const calendly = import.meta.env.PUBLIC_CALENDLY_URL ?? site.calendly;
 
 const methods = [
-  { icon: "calendar-check", title: "Book a call", text: "Grab a free 20-minute slot.", href: calendly, cta: "Open calendar", track: "book_call_contact", external: true },
-  { icon: "message-circle", title: "WhatsApp", text: site.phoneDisplay, href: whatsappLink, cta: "Start a chat", track: "whatsapp_contact", external: true },
-  { icon: "mail", title: "Email", text: site.email, href: mailtoLink, cta: "Send an email", track: "email_contact", external: false },
+  { icon: "calendar-check", title: "Book a call", text: "Grab a free 20-minute slot — the fastest way to get clarity.", href: calendly, cta: "Open calendar", track: "book_call_contact", external: true, featured: true },
+  { icon: "message-circle", title: "WhatsApp", text: site.phoneDisplay, href: whatsappLink, cta: "Start a chat", track: "whatsapp_contact", external: true, featured: false },
+  { icon: "mail", title: "Email", text: site.email, href: mailtoLink, cta: "Send an email", track: "email_contact", external: false, featured: false },
+];
+
+const nextSteps = [
+  { title: "You reach out", text: "Send a note below or book a call — whatever's easiest." },
+  { title: "Free discovery call", text: "We talk through your goals, constraints and what success looks like." },
+  { title: "Clear scope & price", text: "You get a written scope, timeline and fixed or milestone price." },
+  { title: "We build & ship", text: "Focused iterations with regular demos — then launch and support." },
+];
+
+const trustChips = [
+  { icon: "badge-check", label: "Microsoft Certified" },
+  { icon: "award", label: "Solution Architect Expert ×3" },
+  { icon: "building-2", label: "200+ user ERP go-live" },
+  { icon: "clock", label: "Replies < 1 business day" },
 ];
 
 const faqs = [
@@ -53,15 +67,16 @@ const ogSchemas = [
   <section class="section methods-section">
     <div class="container-x">
       <div class="methods">
-        {methods.map((m) => (
+        {methods.map((m, i) => (
           <a
             href={m.href}
-            class="method card"
+            class:list={["method", "card-hover", m.featured ? "card-gradient" : "card"]}
             data-track={m.track}
             data-reveal
+            data-delay={String(i + 1)}
             {...(m.external ? { target: "_blank", rel: "noopener" } : {})}
           >
-            <span class="method-icon"><Icon name={`lucide:${m.icon}`} /></span>
+            <span class:list={["method-icon", { feat: m.featured }]}><Icon name={`lucide:${m.icon}`} /></span>
             <h2 class="method-title">{m.title}</h2>
             <p class="method-text">{m.text}</p>
             <span class="method-cta">{m.cta} <Icon name="lucide:arrow-up-right" /></span>
@@ -71,40 +86,88 @@ const ogSchemas = [
     </div>
   </section>
 
-  <!-- Form + booking -->
-  <section class="section form-section">
+  <!-- Form + trust panel -->
+  <section class="section form-section bg-dots">
     <div class="container-x">
       <div class="form-grid">
-        <div data-reveal>
-          <span class="eyebrow">Send a message</span>
-          <h2 class="form-title">Tell me what you're building.</h2>
-          <p class="form-sub">
-            The more detail you share, the better I can help. No detail too small — and no obligation.
-          </p>
-          <div id="form-success" class="form-success" hidden>
-            <Icon name="lucide:check-circle-2" />
-            <p>Thanks — your message came through. I'll be in touch within one business day.</p>
+        <div class="form-col" data-reveal>
+          <div class="form-card">
+            <span class="eyebrow">Send a message</span>
+            <h2 class="form-title">Tell me what you're building.</h2>
+            <p class="form-sub">
+              The more detail you share, the better I can help. No detail too small — and no
+              obligation.
+            </p>
+            <div id="form-success" class="form-success" hidden>
+              <Icon name="lucide:check-circle-2" />
+              <p>Thanks — your message came through. I'll be in touch within one business day.</p>
+            </div>
+            <ContactForm />
           </div>
-          <ContactForm />
         </div>
 
-        <aside class="booking" data-reveal>
-          <h2 class="booking-title">Prefer to book directly?</h2>
-          <p class="booking-sub">Choose a free 20-minute slot that suits you.</p>
-          <div class="calendly-wrap">
-            <iframe
-              src={`${calendly}?hide_gdpr_banner=1`}
-              title="Book a call with Crispus Njumwa"
-              loading="lazy"
-              width="100%"
-              height="630"
-            ></iframe>
+        <aside class="trust-col" data-reveal data-delay="1">
+          <div class="trust-panel card-dark">
+            <div class="trust-person">
+              <span class="trust-avatar">
+                <span class="trust-monogram" aria-hidden="true">CN</span>
+                <img
+                  class="trust-photo"
+                  src="/images/crispus-njumwa.jpg"
+                  alt={site.founder}
+                  loading="lazy"
+                  width="64"
+                  height="64"
+                  onerror="this.remove()"
+                />
+              </span>
+              <div>
+                <p class="trust-name">{site.founder}</p>
+                <p class="trust-line">You'll be talking to me directly — not a sales team.</p>
+              </div>
+            </div>
+
+            <h2 class="trust-title">What happens next</h2>
+            <ol class="next-steps">
+              {nextSteps.map((s) => (
+                <li class="next-step">
+                  <span class="ns-title">{s.title}</span>
+                  <span class="ns-text">{s.text}</span>
+                </li>
+              ))}
+            </ol>
+
+            <ul class="trust-chips">
+              {trustChips.map((c) => (
+                <li class="trust-chip"><Icon name={`lucide:${c.icon}`} /> {c.label}</li>
+              ))}
+            </ul>
           </div>
-          <p class="booking-fallback">
-            Calendar not loading? <a href={calendly} target="_blank" rel="noopener" class="link-underline">Open it in a new tab</a>.
-          </p>
         </aside>
       </div>
+    </div>
+  </section>
+
+  <!-- Calendly booking -->
+  <section class="section booking-section">
+    <div class="container-x">
+      <SectionHeading
+        eyebrow="Or book directly"
+        title="Grab a free 20-minute slot."
+        text="Pick a time that suits you — no back-and-forth."
+        align="center"
+      />
+      <div class="calendly-wrap" data-reveal>
+        <button class="calendly-load" type="button" aria-label="Load booking calendar">
+          <Icon name="lucide:calendar-check" />
+          <span>Load the booking calendar</span>
+          <small>Loads Calendly — opens in this page</small>
+        </button>
+        <template class="calendly-tpl" data-src={`${calendly}?hide_gdpr_banner=1`}></template>
+      </div>
+      <p class="booking-fallback">
+        Prefer a new tab? <a href={calendly} target="_blank" rel="noopener" class="link-underline">Open the calendar</a>.
+      </p>
     </div>
   </section>
 
@@ -120,8 +183,8 @@ const ogSchemas = [
 </BaseLayout>
 
 <script>
-  // Show success banner when redirected back with ?sent=1 (no-JS fallback path).
-  const showSent = () => {
+  const initContactPage = () => {
+    // Success banner on the no-JS redirect path (?sent=1).
     if (new URLSearchParams(window.location.search).get("sent") === "1") {
       const el = document.getElementById("form-success");
       if (el) {
@@ -129,9 +192,29 @@ const ogSchemas = [
         el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
+
+    // Lazy-load the Calendly embed only when the visitor asks for it (protects LCP/INP).
+    const wrap = document.querySelector<HTMLDivElement>(".calendly-wrap");
+    const btn = wrap?.querySelector<HTMLButtonElement>(".calendly-load");
+    const tpl = wrap?.querySelector<HTMLTemplateElement>(".calendly-tpl");
+    if (btn && tpl && wrap) {
+      const load = () => {
+        const src = tpl.dataset.src;
+        if (!src) return;
+        const iframe = document.createElement("iframe");
+        iframe.src = src;
+        iframe.title = "Book a call with Crispus Njumwa";
+        iframe.loading = "lazy";
+        iframe.width = "100%";
+        iframe.height = "640";
+        iframe.style.border = "0";
+        btn.replaceWith(iframe);
+      };
+      btn.addEventListener("click", load, { once: true });
+    }
   };
-  showSent();
-  document.addEventListener("astro:page-load", showSent);
+  initContactPage();
+  document.addEventListener("astro:page-load", initContactPage);
 </script>
 
 <style>
@@ -175,12 +258,6 @@ const ogSchemas = [
     display: flex;
     flex-direction: column;
     padding: 1.6rem;
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out), border-color 0.22s;
-  }
-  .method:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lift);
-    border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-line));
   }
   .method-icon {
     display: inline-flex;
@@ -192,6 +269,10 @@ const ogSchemas = [
     background: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent-ink);
     margin-bottom: 1rem;
+  }
+  .method-icon.feat {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-accent);
   }
   .method-icon svg {
     width: 1.5rem;
@@ -205,6 +286,9 @@ const ogSchemas = [
     color: var(--color-muted);
     flex-grow: 1;
   }
+  .card-gradient .method-text {
+    color: rgba(255, 255, 255, 0.8);
+  }
   .method-cta {
     display: inline-flex;
     align-items: center;
@@ -215,19 +299,27 @@ const ogSchemas = [
     font-size: 0.9rem;
     color: var(--color-accent-ink);
   }
+  .card-gradient .method-cta {
+    color: var(--color-accent);
+  }
   .method-cta svg {
     width: 1rem;
     height: 1rem;
   }
 
-  .form-section {
-    background: var(--color-surface-2);
-  }
+  /* form + trust two-column */
   .form-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    gap: 1.5rem;
     align-items: start;
+  }
+  .form-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-lift);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
   }
   .form-title {
     margin-top: 0.5rem;
@@ -261,26 +353,185 @@ const ogSchemas = [
     font-weight: 500;
   }
 
-  .booking-title {
-    font-size: clamp(1.5rem, 3vw, 2.1rem);
+  /* trust panel */
+  .trust-panel {
+    padding: clamp(1.5rem, 4vw, 2rem);
   }
-  .booking-sub {
-    margin-top: 0.6rem;
-    color: var(--color-muted);
+  .trust-person {
+    display: flex;
+    gap: 0.85rem;
+    align-items: center;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-night-line);
+  }
+  .trust-avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #0a1322;
+    border: 2px solid transparent;
+    background-image: linear-gradient(#0a1322, #0a1322),
+      linear-gradient(140deg, var(--color-accent), var(--color-accent-2));
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
+  .trust-monogram {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+  .trust-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .trust-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: #fff;
+  }
+  .trust-line {
+    margin-top: 0.15rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+  }
+  .trust-title {
+    font-size: 1.1rem;
+    color: #fff;
+  }
+  .next-steps {
+    list-style: none;
+    counter-reset: ns;
+    padding: 0;
+    margin: 1rem 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .next-step {
+    counter-increment: ns;
+    position: relative;
+    padding-left: 2.4rem;
+  }
+  .next-step::before {
+    content: counter(ns);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.7rem;
+    height: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .ns-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+  }
+  .ns-text {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.45;
+  }
+  .trust-chips {
+    list-style: none;
+    padding: 1.25rem 0 0;
+    margin: 0;
+    border-top: 1px solid var(--color-night-line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .trust-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.76rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--color-night-line);
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .trust-chip svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: var(--color-accent);
+  }
+
+  /* calendly */
+  .booking-section {
+    background: var(--color-surface-2);
   }
   .calendly-wrap {
-    margin-top: 1.25rem;
+    max-width: 52rem;
+    margin: 1.5rem auto 0;
     border-radius: var(--radius-card);
     overflow: hidden;
     border: 1px solid var(--color-line);
     background: var(--color-surface);
   }
-  .calendly-wrap iframe {
+  .calendly-load {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 16rem;
+    padding: 2rem;
+    border: 0;
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-ink);
+    transition: background-color 0.18s;
+  }
+  .calendly-load:hover {
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
+  }
+  .calendly-load svg {
+    width: 2.2rem;
+    height: 2.2rem;
+    color: var(--color-accent-ink);
+  }
+  .calendly-load span {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .calendly-load small {
+    font-size: 0.82rem;
+    color: var(--color-muted);
+  }
+  .calendly-wrap :global(iframe) {
     display: block;
     border: 0;
   }
   .booking-fallback {
-    margin-top: 0.75rem;
+    margin-top: 0.85rem;
+    text-align: center;
     font-size: 0.85rem;
     color: var(--color-muted);
   }
@@ -303,7 +554,8 @@ const ogSchemas = [
   }
   @media (min-width: 980px) {
     .form-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.25fr 0.85fr;
+      gap: 2rem;
     }
   }
 </style>

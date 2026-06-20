@@ -1,13 +1,14 @@
 ---
-import { Image } from "astro:assets";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Prose from "@components/Prose.astro";
 import CTASection from "@components/CTASection.astro";
+import BlogCover from "@components/BlogCover.astro";
 import { Icon } from "astro-icon/components";
 import { site } from "@data/site";
 import { categoryLabel } from "@/lib/categories";
 import { pillarBySlug } from "@data/services";
+import { readingTime } from "@/lib/reading";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
 import { getCollection, render } from "astro:content";
 
@@ -28,7 +29,11 @@ const related = [
 ].slice(0, 3);
 
 const pillar = data.category !== "general" ? pillarBySlug(data.category) : undefined;
-const toc = headings.filter((h) => h.depth === 2);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const accent = data.category === "general" ? "#0FB5C4" : (pillar?.accent ?? "#0FB5C4");
+
+const minutes = readingTime(post.body);
+const words = (post.body ?? "").split(/\s+/).filter(Boolean).length;
 
 const url = `/blog/${post.id}/`;
 const fmt = (d: Date) =>
@@ -43,6 +48,8 @@ const schemas = [
     dateModified: data.updatedDate?.toISOString(),
     image: data.cover?.src,
     author: data.author,
+    wordCount: words,
+    readingMinutes: minutes,
   }),
   breadcrumbSchema([
     { name: "Home", url: "/" },
@@ -61,24 +68,32 @@ const schemas = [
   modifiedTime={data.updatedDate?.toISOString()}
   schemas={schemas}
 >
-  <article class="article">
+  <div class="read-progress" aria-hidden="true"><span></span></div>
+  <article class="article" style={`--pillar:${accent}`}>
     <div class="container-x">
       <Breadcrumbs items={[{ name: "Blog", url: "/blog/" }, { name: data.title, url }]} />
 
       <header class="art-head">
-        <span class="art-tag">{categoryLabel(data.category)}</span>
+        <span class="art-tag" style={`--pillar:${accent}`}>{categoryLabel(data.category)}</span>
         <h1 class="art-title" data-reveal>{data.title}</h1>
         <p class="art-desc" data-reveal>{data.description}</p>
         <div class="art-meta" data-reveal>
-          <span><Icon name="lucide:user" /> {data.author}</span>
+          <span class="art-author">
+            <span class="art-avatar">
+              <span aria-hidden="true">CN</span>
+              <img src="/images/crispus-njumwa.jpg" alt={data.author} loading="lazy" width="32" height="32" onerror="this.remove()" />
+            </span>
+            {data.author}
+          </span>
           <span><Icon name="lucide:calendar" /> {fmt(data.pubDate)}</span>
+          <span><Icon name="lucide:clock" /> {minutes} min read</span>
           {data.updatedDate && <span>Updated {fmt(data.updatedDate)}</span>}
         </div>
       </header>
 
-      {data.cover && (
-        <Image src={data.cover} alt={data.coverAlt ?? data.title} width={1100} height={620} class="art-cover" />
-      )}
+      <div class="art-cover" data-reveal>
+        <BlogCover category={data.category} title={data.title} cover={data.cover} coverAlt={data.coverAlt} />
+      </div>
 
       <div class="art-grid">
         {toc.length > 2 && (
@@ -86,7 +101,7 @@ const schemas = [
             <p class="toc-title">On this page</p>
             <ul>
               {toc.map((h) => (
-                <li><a href={`#${h.slug}`}>{h.text}</a></li>
+                <li class:list={[{ "toc-sub": h.depth === 3 }]}><a href={`#${h.slug}`}>{h.text}</a></li>
               ))}
             </ul>
           </aside>
@@ -126,12 +141,16 @@ const schemas = [
           </div>
 
           <div class="author-box">
-            <div class="author-avatar" aria-hidden="true">CN</div>
+            <div class="author-avatar">
+              <span aria-hidden="true">CN</span>
+              <img src="/images/crispus-njumwa.jpg" alt={data.author} loading="lazy" width="56" height="56" onerror="this.remove()" />
+            </div>
             <div>
               <p class="author-name">{data.author}</p>
               <p class="author-bio">
-                Software engineer and Dynamics 365 F&O technical consultant. I build software, AI
-                automation, mobile apps and data systems for businesses worldwide.
+                Microsoft-certified Dynamics 365 Finance & Operations technical consultant
+                (Solution Architect Expert ×3). I build software, AI automation, mobile apps and data
+                systems for businesses worldwide.
                 <a href="/about/" class="link-underline">More about me</a> ·
                 <a href={site.socials.linkedin} target="_blank" rel="noopener" class="link-underline">LinkedIn</a>
               </p>
@@ -158,9 +177,14 @@ const schemas = [
         <h2 class="related-h">Keep reading</h2>
         <div class="related-grid">
           {related.map((p) => (
-            <a href={`/blog/${p.id}/`} class="rel card">
-              <span class="rel-tag">{categoryLabel(p.data.category)}</span>
-              <h3 class="rel-title">{p.data.title}</h3>
+            <a href={`/blog/${p.id}/`} class="rel card-hover">
+              <div class="rel-cover">
+                <BlogCover category={p.data.category} title={p.data.title} cover={p.data.cover} coverAlt={p.data.coverAlt} />
+              </div>
+              <div class="rel-body">
+                <span class="rel-tag">{categoryLabel(p.data.category)}</span>
+                <h3 class="rel-title">{p.data.title}</h3>
+              </div>
             </a>
           ))}
         </div>
@@ -169,6 +193,26 @@ const schemas = [
   )}
 
   <CTASection />
+
+  <script>
+    // Re-queries elements on each scroll so it stays correct across View Transitions;
+    // the window listener is attached only once.
+    const updateProgress = () => {
+      const bar = document.querySelector<HTMLElement>(".read-progress span");
+      const article = document.querySelector<HTMLElement>(".art-body");
+      if (!bar || !article) return;
+      const rect = article.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const scrolled = Math.min(Math.max(-rect.top, 0), Math.max(total, 0));
+      bar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + "%";
+    };
+    if (!(window as any).__progressBound) {
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      (window as any).__progressBound = true;
+    }
+    updateProgress();
+    document.addEventListener("astro:page-load", updateProgress);
+  </script>
 </BaseLayout>
 
 <style>
@@ -179,16 +223,62 @@ const schemas = [
     max-width: 52rem;
     margin: 1.5rem auto 0;
   }
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 60;
+    background: transparent;
+  }
+  .read-progress span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2));
+  }
   .art-tag {
+    display: inline-block;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--color-accent-ink);
+    color: var(--pillar, var(--color-accent-ink));
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--pillar, var(--color-accent)) 12%, transparent);
   }
   .art-title {
-    margin-top: 0.6rem;
+    margin-top: 0.8rem;
     font-size: clamp(1.9rem, 5vw, 3rem);
+  }
+  .art-author {
+    font-weight: 500;
+    color: var(--color-ink-soft);
+  }
+  .art-avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-night);
+    color: var(--color-accent);
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-right: 0.1rem;
+  }
+  .art-avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .art-desc {
     margin-top: 1rem;
@@ -217,11 +307,18 @@ const schemas = [
   }
   .art-cover {
     width: 100%;
-    height: auto;
-    max-width: 64rem;
+    max-width: 60rem;
+    aspect-ratio: 16 / 8;
+    overflow: hidden;
     margin: 2rem auto 0;
     border-radius: var(--radius-card);
     border: 1px solid var(--color-line);
+  }
+  .art-cover :global(.bc),
+  .art-cover :global(.bc-svg),
+  .art-cover :global(.bc-img) {
+    width: 100%;
+    height: 100%;
   }
 
   .art-grid {
@@ -257,6 +354,11 @@ const schemas = [
     font-size: 0.88rem;
     color: var(--color-muted);
     line-height: 1.4;
+  }
+  .toc .toc-sub a {
+    padding-left: 1.6rem;
+    font-size: 0.82rem;
+    opacity: 0.85;
   }
   .toc a:hover {
     color: var(--color-accent-ink);
@@ -297,17 +399,26 @@ const schemas = [
     border-radius: var(--radius-card);
   }
   .author-avatar {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
+    width: 3.25rem;
+    height: 3.25rem;
     flex-shrink: 0;
     border-radius: 50%;
+    overflow: hidden;
     background: var(--color-night);
     color: var(--color-accent);
     font-family: var(--font-display);
     font-weight: 600;
+  }
+  .author-avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .author-name {
     font-family: var(--font-display);
@@ -371,15 +482,29 @@ const schemas = [
   .related-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
   .rel {
-    padding: 1.4rem;
-    transition: transform 0.18s var(--ease-out), border-color 0.18s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
   }
-  .rel:hover {
-    transform: translateY(-3px);
-    border-color: var(--color-accent);
+  .rel-cover {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .rel-cover :global(.bc),
+  .rel-cover :global(.bc-svg),
+  .rel-cover :global(.bc-img) {
+    width: 100%;
+    height: 100%;
+  }
+  .rel-body {
+    padding: 1.3rem;
   }
   .rel-tag {
     font-family: var(--font-mono);
@@ -398,10 +523,20 @@ const schemas = [
       grid-template-columns: repeat(3, 1fr);
     }
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 1080px) {
     .art-grid {
-      grid-template-columns: 1fr;
-      max-width: 52rem;
+      grid-template-columns: 210px 1fr;
+      gap: 3rem;
+      max-width: 62rem;
+    }
+    .toc {
+      position: sticky;
+      top: 5.5rem;
+      order: -1;
+    }
+    .toc ul {
+      max-height: 70vh;
+      overflow-y: auto;
     }
   }
 </style>

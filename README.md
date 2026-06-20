@@ -216,6 +216,21 @@ state). Test with the OS reduced-motion setting before shipping motion changes.
 - **About headshot**: drop a real photo at `public/images/crispus-njumwa.jpg`; it replaces the
   "CN" monogram automatically (the `<img>` self-removes on 404, so no broken image).
 
+### Blog & contact (Phase 2.2)
+
+- **Blog covers**: `src/components/BlogCover.astro` renders an on-brand illustrative cover
+  keyed to each post's `category` (or a real image via the post's `cover` field). Used on the
+  index (featured lead card + grid), post headers, and related-post cards.
+- **Reading time**: `src/lib/reading.ts` computes minutes from the post body; surfaced on
+  cards and post headers, and emitted as `wordCount` / `timeRequired` in BlogPosting JSON-LD.
+- **Blog index**: featured lead card + interactive category filter pills (with counts) + a
+  reading-progress bar and sticky table of contents on post pages.
+- **Contact form**: posts to **Web3Forms** — set `PUBLIC_WEB3FORMS_KEY` (`.env` or host
+  dashboard) or the form can't deliver. The setup hint is **dev-only** and never ships; in
+  production without a key, the form shows a WhatsApp/email fallback instead. Submit states:
+  spinner → inline success panel → error with WhatsApp/email fallback. Calendly is lazy-loaded
+  on click to protect LCP/INP.
+
 ### Credentials
 
 `src/components/CredentialsBand.astro` renders the verified Microsoft certifications

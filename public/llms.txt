@@ -1,16 +1,24 @@
 # Njumwa Labs
 
-> Njumwa Labs is the software, automation and data studio of Crispus Njumwa — a senior, enterprise-trained engineer and Microsoft Dynamics 365 Finance & Operations technical consultant based in Nairobi, Kenya. He builds, automates and maintains production systems for SMEs, startups and enterprises locally and internationally (Kenya, United States, United Kingdom, European Union, and the Gulf), at enterprise quality and globally affordable prices.
+> Njumwa Labs is the software, automation and data studio of Crispus Martin Njumwa — a Microsoft-certified Dynamics 365 Finance & Operations technical consultant based in Nairobi, Kenya, holding three Microsoft Solution Architect Expert certifications (D365 F&O, Azure, Power Platform). He builds, automates and maintains production systems for SMEs, startups and enterprises locally and worldwide (Kenya, United States, United Kingdom, European Union, and the Gulf), at enterprise quality and globally affordable prices.
 
 Tagline: Automation and efficiency brought closer.
 
-## What Njumwa Labs does
+## Credentials (verified)
 
-- **Web development** — websites, web apps, SaaS, e-commerce, APIs; React, Next.js, Astro, Node.js, Python; SEO and Core Web Vitals engineering. https://njumwalabs.com/services/web-development/
-- **AI automation** — AI chatbots and support agents, AI lead generation, workflow automation (n8n/Make/Zapier), document processing, voice AI agents, RAG copilots, marketing automation. https://njumwalabs.com/services/ai-automation/
-- **Mobile apps** — cross-platform (Flutter, React Native) and native iOS/Android apps, MVPs, payments including M-Pesa, app store launch. https://njumwalabs.com/services/mobile-apps/
-- **Database administration** — performance tuning, backups & disaster recovery, high availability, migrations, cloud databases, managed DBA; SQL Server, PostgreSQL, MySQL, MongoDB, Oracle, Redis. https://njumwalabs.com/services/database-administration/
-- **Dynamics 365 Finance & Operations** — X++ development, integrations, data migration (DMF), SSRS & Electronic Reporting, workflow, upgrades, security, Power Platform. https://njumwalabs.com/services/dynamics-365-finance-operations/
+- Microsoft Solution Architect Expert ×3: Dynamics 365 Finance & Operations, Azure, Power Platform.
+- Microsoft Associate ×5: D365 F&O Developer, Power Platform Developer, Azure Administrator, Power BI Data Analyst, Fabric Analytics Engineer.
+- AI/Data/Foundations: Microsoft AI Business Professional; Career Essentials in Generative AI; Machine Learning Specialization (DeepLearning.AI / Stanford); CS50 Python (Harvard / edX).
+- Real delivery: technical components on a 200+ user Dynamics 365 F&O insurance ERP go-live across General Ledger, AR, AP, Fixed Assets, Inventory and Procurement.
+- BSc Computer Science, Egerton University. Currently D365 F&O Developer at Impax Business Solutions, Nairobi.
+
+## Services
+
+- Web development — websites, web apps, SaaS, e-commerce, APIs; React, Next.js, Astro, Node.js, Python; SEO and Core Web Vitals. https://njumwalabs.com/services/web-development/
+- AI automation — chatbots & support agents, AI lead generation, workflow automation (n8n/Make/Zapier), document processing, voice AI, RAG copilots. https://njumwalabs.com/services/ai-automation/
+- Mobile apps — cross-platform (Flutter, React Native) and native iOS/Android, MVPs, payments including M-Pesa, app store launch. https://njumwalabs.com/services/mobile-apps/
+- Database administration — performance tuning, backups & DR, high availability, migrations, managed DBA; SQL Server, PostgreSQL, MySQL, MongoDB, Oracle, Redis. https://njumwalabs.com/services/database-administration/
+- Dynamics 365 Finance & Operations — X++ (Chain of Command), integrations, DMF data migration, SSRS & Electronic Reporting, Power BI, upgrades, security, Power Platform. https://njumwalabs.com/services/dynamics-365-finance-operations/
 
 ## Key pages
 
@@ -18,13 +26,25 @@ Tagline: Automation and efficiency brought closer.
 - Services overview: https://njumwalabs.com/services/
 - Pricing (USD "from" anchors; KES and custom quotes available): https://njumwalabs.com/pricing/
 - Portfolio / case studies: https://njumwalabs.com/portfolio/
-- About Crispus Njumwa: https://njumwalabs.com/about/
+- About: https://njumwalabs.com/about/
 - Blog / insights: https://njumwalabs.com/blog/
+- Comparisons (Flutter vs React Native, PostgreSQL vs MongoDB, headless vs WordPress, Power Apps vs custom): https://njumwalabs.com/compare/
+- Cost guides (mobile app, website, D365 customization): https://njumwalabs.com/cost/
+- Free tools (automation ROI calculator, app cost estimator): https://njumwalabs.com/tools/
+- Glossary (X++, Chain of Command, DMF, RAG, query optimization, Core Web Vitals…): https://njumwalabs.com/glossary/
+- Industries (insurance ERP, AI automation for real estate): https://njumwalabs.com/industries/
 - Contact & booking: https://njumwalabs.com/contact/
 
 ## Pricing summary
 
 Globally affordable, transparent. Projects from ~$600; product builds from ~$1,800; managed retainers from ~$300/month; consulting (incl. D365 F&O) from ~$45/hour. Prices in USD; local (KES) and custom pricing available.
+
+## FAQ
+
+- Where is Njumwa Labs based? Nairobi, Kenya — serving clients worldwide, with time-zone-friendly delivery.
+- What makes Crispus credible for D365 work? Three Microsoft Solution Architect Expert certifications and technical delivery on a 200+ user enterprise insurance ERP go-live.
+- How fast is the first response? Within one business day, usually faster.
+- How do engagements start? With a free discovery call, then a clear written scope, timeline and price.
 
 ## Contact
 

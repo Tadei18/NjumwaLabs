@@ -10,6 +10,7 @@ export type PillarContent = {
   h1: string;
   subtitle: string;
   serviceType: string;
+  takeaways: string[];
   problem: { title: string; text: string };
   offerings: Offering[];
   benefits: { icon: string; title: string; text: string }[];
@@ -29,6 +30,12 @@ export const pillarContent: Record<string, PillarContent> = {
     subtitle:
       "From marketing sites to full SaaS platforms — designed for speed, search visibility and conversions, and built on a stack you won't outgrow.",
     serviceType: "Web design and development",
+    takeaways: [
+      "Custom websites, web apps and SaaS built for speed, search visibility and conversions.",
+      "Built on React, Next.js, Astro and Node.js — with SEO and Core Web Vitals engineered in, not bolted on.",
+      "Payments (Stripe, M-Pesa, Paystack), CMS, integrations and ongoing maintenance covered.",
+      "From <a href='/pricing/'>$600</a>, with local (KES) and custom quotes available.",
+    ],
     problem: {
       title: "Your website should be your hardest-working employee.",
       text: "Too many sites are slow, invisible in search, and built on code no one wants to touch. That quietly costs you traffic, leads and trust every single day. I build sites that are fast, easy to find, easy to change, and engineered to turn visitors into customers.",
@@ -70,6 +77,12 @@ export const pillarContent: Record<string, PillarContent> = {
     subtitle:
       "AI agents, chatbots, lead generation and workflow automation that respond in seconds, never miss an inquiry, and free your team from busywork — measured in leads, hours and cost saved.",
     serviceType: "AI automation and workflow automation",
+    takeaways: [
+      "AI agents, chatbots and workflow automation that respond in seconds and never miss an inquiry.",
+      "Measured in outcomes: more qualified leads, faster response, hours of manual work removed.",
+      "Built on OpenAI/Claude, n8n/Make/Zapier, RAG and WhatsApp — integrated with your existing stack.",
+      "Backed by Microsoft AI certification and an applied ML Specialization (DeepLearning.AI / Stanford).",
+    ],
     problem: {
       title: "Your team is doing work software should be doing.",
       text: "Leads sit unanswered. The same data gets copied between apps. Support questions repeat all day. Every hour spent on this is an hour not spent growing. AI automation handles the repetitive work reliably and instantly — so your people focus on what actually needs a human.",
@@ -116,6 +129,12 @@ export const pillarContent: Record<string, PillarContent> = {
     subtitle:
       "Cross-platform apps that look and feel native, ship faster, and cost less to build and maintain — with the payments and integrations your market needs.",
     serviceType: "Mobile application development",
+    takeaways: [
+      "iOS and Android apps from a single Flutter or React Native codebase — roughly 30–50% cheaper than two native apps.",
+      "MVPs, fintech, marketplaces and business tools, with payments including M-Pesa, Stripe and Flutterwave.",
+      "Native (Swift/Kotlin) only when there's a real technical reason; PWA when an app store isn't essential.",
+      "App Store and Play Store launch, ASO and ongoing maintenance included.",
+    ],
     problem: {
       title: "Two native apps cost twice as much to build and maintain.",
       text: "Most businesses don't need separate iOS and Android teams. A single modern codebase reaches both platforms, ships faster, and costs roughly 30–50% less to build and keep updated — without the clunky feel of older cross-platform tools.",
@@ -156,6 +175,12 @@ export const pillarContent: Record<string, PillarContent> = {
     subtitle:
       "Slow queries fixed, data protected, downtime eliminated and reporting made clean — on SQL Server, PostgreSQL, MySQL, MongoDB and more.",
     serviceType: "Database administration and optimization",
+    takeaways: [
+      "Slow queries fixed, data protected, downtime eliminated and reporting made clean.",
+      "Covers SQL Server, PostgreSQL, MySQL, MongoDB, Oracle and Redis — on-prem and cloud.",
+      "Performance tuning, backups & DR, high availability, migrations and managed DBA retainers.",
+      "Emergency 'database down' incident response available.",
+    ],
     problem: {
       title: "A struggling database slows your whole business down.",
       text: "When queries crawl, reports time out, or backups fail, everything built on top suffers — apps lag, teams wait, and a single outage can be very expensive. I make databases fast, reliable and safe, so the rest of your stack can be too.",
@@ -197,6 +222,12 @@ export const pillarContent: Record<string, PillarContent> = {
     subtitle:
       "Solution Architect Expert (×3), proven on a 200+ user enterprise ERP go-live. Upgrade-safe X++ development, integrations, data migration and reporting that make your ERP do exactly what your business needs.",
     serviceType: "Dynamics 365 Finance & Operations technical consulting",
+    takeaways: [
+      "Microsoft-certified D365 F&O technical consulting — Solution Architect Expert ×3.",
+      "Proven on a 200+ user enterprise insurance ERP go-live across six finance & operations modules.",
+      "Upgrade-safe X++ (Chain of Command), integrations, DMF data migration, SSRS & Power BI reporting.",
+      "Works as the specialist technical resource alongside your team or implementation partner.",
+    ],
     problem: {
       title: "Your ERP should fit your business — not the other way around.",
       text: "Standard D365 rarely matches how a business actually runs. The gap shows up as manual workarounds, brittle integrations and reports no one trusts. I bridge the functional and technical sides to make F&O work the way your operation really works.",

@@ -1,0 +1,139 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import ServiceIllustration from "@components/ServiceIllustration.astro";
+import { Icon } from "astro-icon/components";
+import { usecases } from "@data/usecases";
+import { breadcrumbSchema } from "@/lib/schema";
+---
+
+<BaseLayout
+  title="Industry solutions — software & automation by sector"
+  description="How software, AI automation and Dynamics 365 solve real problems by industry — insurance ERP, AI automation for real estate, and more, with unique, sector-specific detail."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Industries", url: "/industries/" }])]}
+>
+  <section class="i-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Industries", url: "/industries/" }]} />
+      <span class="eyebrow i-eyebrow" data-reveal>Industries</span>
+      <h1 class="i-title" data-reveal>Built for how your sector actually works.</h1>
+      <p class="i-sub" data-reveal>
+        Real, sector-specific solutions — not generic templates. Here's how the right systems solve
+        the problems particular industries face.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-dots">
+    <div class="container-x">
+      <div class="i-grid">
+        {usecases.map((u) => (
+          <a href={`/industries/${u.slug}/`} class="i-card card-hover" data-reveal>
+            <div class="i-illus"><ServiceIllustration slug={u.pillarSlug} /></div>
+            <div class="i-body">
+              <span class="i-tag">{u.industry}</span>
+              <h2 class="i-card-title">{u.h1}</h2>
+              <span class="i-cta">Explore <Icon name="lucide:arrow-right" /></span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .i-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .i-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .i-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .i-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .i-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+  .i-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .i-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .i-illus {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .i-illus :global(.illus) {
+    height: 100%;
+    border-radius: 0;
+  }
+  .i-illus :global(.illus-svg) {
+    height: 100%;
+    object-fit: cover;
+  }
+  .i-body {
+    padding: 1.5rem;
+  }
+  .i-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+  }
+  .i-card-title {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+  }
+  .i-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-accent-ink);
+  }
+  .i-cta svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .i-card:hover .i-cta svg {
+    transform: translateX(4px);
+  }
+  @media (min-width: 700px) {
+    .i-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

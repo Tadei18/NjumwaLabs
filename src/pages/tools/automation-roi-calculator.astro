@@ -1,0 +1,250 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import FAQ from "@components/FAQ.astro";
+import RelatedContent from "@components/RelatedContent.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+const url = "/tools/automation-roi-calculator/";
+const faqs = [
+  { q: "How is the automation saving calculated?", a: "Annual saving = hours saved per week × number of people × hourly cost × 52 weeks. It's a simple, honest estimate of the labour cost of repetitive work that automation removes." },
+  { q: "Is this an exact quote?", a: "No — it's a ballpark to show the scale of the opportunity. Real savings also include faster response, fewer errors and more captured leads, which this doesn't count." },
+  { q: "What kinds of tasks can be automated?", a: "Most repetitive, rules-based work: data entry, moving information between apps, answering common questions, qualifying and booking leads, reporting and document processing." },
+];
+
+const related: RelatedLink[] = [
+  { label: "AI automation service", href: "/services/ai-automation/", kind: "service" },
+  { label: "How AI automation cuts response time", href: "/blog/how-ai-automation-cuts-response-time/", kind: "post" },
+  { label: "Workflow automation — glossary", href: "/glossary/workflow-automation/", kind: "glossary" },
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Tools", url: "/tools/" },
+    { name: "Automation ROI calculator", url },
+  ]),
+  faqSchema(faqs),
+];
+---
+
+<BaseLayout
+  title="Automation ROI calculator — what could you save?"
+  description="Free automation ROI calculator: enter the hours your team spends on a repetitive task and your hourly cost to estimate the annual saving from automating it."
+  schemas={schemas}
+>
+  <article class="tool">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Tools", url: "/tools/" }, { name: "Automation ROI calculator", url }]} />
+      <span class="tool-eyebrow">Free tool</span>
+      <h1 class="tool-title" data-reveal>Automation ROI calculator</h1>
+      <p class="tool-intro" data-reveal>
+        Repetitive work has a real, recurring cost. Enter how much time a task takes and what an
+        hour of your team's time costs, and this calculator estimates what you'd save each year by
+        automating it.
+      </p>
+
+      <KeyTakeaways
+        items={[
+          "Annual saving = hours saved/week × people × hourly cost × 52.",
+          "Even small weekly time savings compound into thousands of dollars a year.",
+          "The real return also includes faster responses, fewer errors and more captured leads.",
+        ]}
+      />
+
+      <div class="calc card" data-reveal>
+        <div class="calc-fields">
+          <div class="calc-field">
+            <label for="hrs">Hours/week spent on the task</label>
+            <input id="hrs" type="number" min="0" step="0.5" value="10" inputmode="decimal" />
+          </div>
+          <div class="calc-field">
+            <label for="ppl">People doing it</label>
+            <input id="ppl" type="number" min="1" step="1" value="1" inputmode="numeric" />
+          </div>
+          <div class="calc-field">
+            <label for="rate">Hourly cost (USD)</label>
+            <input id="rate" type="number" min="0" step="1" value="15" inputmode="decimal" />
+          </div>
+          <div class="calc-field">
+            <label for="auto">% of it that's automatable</label>
+            <input id="auto" type="range" min="10" max="100" step="5" value="70" />
+            <output id="autoOut" class="calc-out-inline">70%</output>
+          </div>
+        </div>
+
+        <div class="calc-result" role="status" aria-live="polite">
+          <span class="calc-result-label">Estimated annual saving</span>
+          <span class="calc-result-value" id="result">$0</span>
+          <span class="calc-result-sub" id="resultSub">about 0 hours/year returned to the team</span>
+        </div>
+      </div>
+
+      <p class="tool-note">Estimates only — a quick call will give you a concrete plan and number.</p>
+
+      <RelatedContent links={related} title="Related" />
+
+      <section class="tool-faq">
+        <h2 class="tool-h2">Frequently asked questions</h2>
+        <FAQ items={faqs} />
+      </section>
+    </div>
+  </article>
+
+  <CTASection heading="See what's worth automating first." text="Book a free call and I'll map the highest-ROI automations for your business." />
+</BaseLayout>
+
+<script>
+  const init = () => {
+    const $ = (id: string) => document.getElementById(id) as HTMLInputElement | null;
+    const hrs = $("hrs"), ppl = $("ppl"), rate = $("rate"), auto = $("auto");
+    const result = document.getElementById("result");
+    const resultSub = document.getElementById("resultSub");
+    const autoOut = document.getElementById("autoOut");
+    if (!hrs || !ppl || !rate || !auto || !result || !resultSub || !autoOut) return;
+
+    const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    const calc = () => {
+      const h = Math.max(0, parseFloat(hrs.value) || 0);
+      const p = Math.max(0, parseFloat(ppl.value) || 0);
+      const r = Math.max(0, parseFloat(rate.value) || 0);
+      const a = (parseFloat(auto.value) || 0) / 100;
+      const hoursSaved = h * p * a;
+      const annual = hoursSaved * r * 52;
+      autoOut.textContent = Math.round(a * 100) + "%";
+      result.textContent = money.format(annual);
+      resultSub.textContent = `about ${Math.round(hoursSaved * 52).toLocaleString()} hours/year returned to the team`;
+    };
+    [hrs, ppl, rate, auto].forEach((el) => {
+      el.addEventListener("input", calc);
+    });
+    calc();
+  };
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  .tool {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .tool .container-x {
+    max-width: 50rem;
+  }
+  .tool-eyebrow {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .tool-title {
+    margin-top: 0.8rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .tool-intro {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .calc {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.75rem;
+    margin-top: 1rem;
+  }
+  .calc-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+  }
+  .calc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .calc-field label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+  }
+  .calc-field input[type="number"] {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .calc-field input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+  .calc-field input[type="range"] {
+    accent-color: var(--color-accent);
+    margin-top: 0.5rem;
+  }
+  .calc-out-inline {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-accent-ink);
+  }
+  .calc-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.3rem;
+    padding: 1.75rem;
+    border-radius: var(--radius-card);
+    background: var(--color-night);
+    color: #fff;
+  }
+  .calc-result-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 7vw, 3.2rem);
+    line-height: 1;
+    color: var(--color-accent);
+  }
+  .calc-result-sub {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .tool-note {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .tool-h2 {
+    font-size: 1.5rem;
+    margin: 2.5rem 0 1.25rem;
+  }
+  @media (min-width: 720px) {
+    .calc {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+    }
+  }
+</style>

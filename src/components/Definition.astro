@@ -1,0 +1,50 @@
+---
+import { Icon } from "astro-icon/components";
+
+// "What is X" definition callout — definition-first content that AI engines
+// cite heavily. Usable in .astro and MDX.
+interface Props {
+  term: string;
+}
+const { term } = Astro.props;
+---
+
+<div class="definition">
+  <p class="def-term"><Icon name="lucide:book-open" /> What is {term}?</p>
+  <div class="def-body"><slot /></div>
+</div>
+
+<style>
+  .definition {
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .def-term {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 0.5rem;
+  }
+  .def-term svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--color-accent-ink);
+  }
+  .def-body {
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+  }
+  .def-body :global(p) {
+    margin: 0;
+  }
+  .def-body :global(a) {
+    color: var(--color-accent-ink);
+    text-decoration: underline;
+  }
+</style>

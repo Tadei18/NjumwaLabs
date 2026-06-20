@@ -1,0 +1,229 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import FAQ from "@components/FAQ.astro";
+import RelatedContent from "@components/RelatedContent.astro";
+import CTASection from "@components/CTASection.astro";
+import ServiceIllustration from "@components/ServiceIllustration.astro";
+import { Icon } from "astro-icon/components";
+import { usecases, usecaseBySlug } from "@data/usecases";
+import { pillarBySlug } from "@data/services";
+import { serviceSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+export async function getStaticPaths() {
+  return usecases.map((u) => ({ params: { slug: u.slug } }));
+}
+
+const { slug } = Astro.params;
+const u = usecaseBySlug(slug!)!;
+const pillar = pillarBySlug(u.pillarSlug)!;
+const url = `/industries/${u.slug}/`;
+
+const related: RelatedLink[] = (u.relatedLinks ?? []).map((l) => ({
+  label: l.label,
+  href: l.href,
+  kind: l.href.startsWith("/services/")
+    ? ("service" as const)
+    : l.href.startsWith("/cost/")
+      ? ("cost" as const)
+      : l.href.startsWith("/portfolio/")
+        ? ("post" as const)
+        : ("post" as const),
+}));
+
+const schemas = [
+  serviceSchema({
+    name: `${pillar.title} for ${u.industry}`,
+    description: u.metaDescription,
+    url,
+    serviceType: `${pillar.title} for ${u.industry}`,
+  }),
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Industries", url: "/industries/" },
+    { name: u.industry, url },
+  ]),
+  faqSchema(u.faqs),
+];
+---
+
+<BaseLayout title={u.metaTitle} description={u.metaDescription} schemas={schemas}>
+  <section class="uc-hero" style={`--pillar:${pillar.accent}`}>
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Industries", url: "/industries/" }, { name: u.industry, url }]} />
+      <div class="uc-hero-grid">
+        <div>
+          <span class="uc-eyebrow">{u.industry} · {pillar.short}</span>
+          <h1 class="uc-title" data-reveal>{u.h1}</h1>
+          <p class="uc-intro" data-reveal>{u.intro}</p>
+          <a href="/contact/" class="btn btn-primary uc-cta" data-track="book_call_usecase">
+            <Icon name="lucide:calendar-check" /> Book a free call
+          </a>
+        </div>
+        <div class="uc-illus" data-reveal>
+          <ServiceIllustration slug={u.pillarSlug} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-x uc-body">
+      <KeyTakeaways items={u.takeaways} />
+
+      <h2 class="uc-h2">The challenges</h2>
+      <ul class="uc-problems">
+        {u.problems.map((p) => (
+          <li data-reveal><Icon name="lucide:alert-circle" /> <span>{p}</span></li>
+        ))}
+      </ul>
+
+      <h2 class="uc-h2">How I help</h2>
+      <div class="uc-solutions">
+        {u.solutions.map((s) => (
+          <div class="uc-sol" data-reveal>
+            <Icon name="lucide:check-circle-2" />
+            <div>
+              <span class="uc-sol-title">{s.title}</span>
+              <span class="uc-sol-text">{s.text}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <RelatedContent links={related} title="Related" />
+
+      <section class="uc-faq">
+        <h2 class="uc-h2">Frequently asked questions</h2>
+        <FAQ items={u.faqs} />
+      </section>
+    </div>
+  </section>
+
+  <CTASection heading={`Ready to put ${pillar.short.toLowerCase()} to work in ${u.industry.toLowerCase()}?`} />
+</BaseLayout>
+
+<style>
+  .uc-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .uc-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 90% 0%, color-mix(in srgb, var(--pillar) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .uc-hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+  .uc-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pillar);
+  }
+  .uc-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .uc-intro {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    max-width: 52ch;
+  }
+  .uc-cta {
+    margin-top: 1.5rem;
+  }
+  .uc-cta svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .uc-illus {
+    max-width: 22rem;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-lift);
+  }
+  .uc-body {
+    max-width: 54rem;
+  }
+  .uc-h2 {
+    font-size: 1.5rem;
+    margin: 2rem 0 1.25rem;
+  }
+  .uc-problems {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .uc-problems li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    color: var(--color-ink-soft);
+    line-height: 1.55;
+  }
+  .uc-problems svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-accent-2);
+  }
+  .uc-solutions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .uc-sol {
+    display: flex;
+    gap: 0.8rem;
+    padding: 1.2rem 1.3rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+  }
+  .uc-sol svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-accent-ink);
+  }
+  .uc-sol-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .uc-sol-text {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--color-muted);
+    font-size: 0.93rem;
+    line-height: 1.5;
+  }
+  .uc-faq {
+    margin-top: 1rem;
+  }
+  @media (min-width: 900px) {
+    .uc-hero-grid {
+      grid-template-columns: 1.3fr 0.7fr;
+    }
+  }
+</style>

@@ -22,6 +22,7 @@ export const site = {
   socials: {
     linkedin: "https://www.linkedin.com/in/crispus-njumwa-692741267",
     github: "", // optional — add later
+    crunchbase: "", // optional — add later
   },
   // 1200×630 PNG OG card (rendered from public/og/default.svg via sharp).
   // To refresh: edit the SVG, then run `npm run og` (see README).

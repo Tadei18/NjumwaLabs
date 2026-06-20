@@ -4,12 +4,19 @@ import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Prose from "@components/Prose.astro";
 import CTASection from "@components/CTASection.astro";
 import BlogCover from "@components/BlogCover.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import FAQ from "@components/FAQ.astro";
 import { Icon } from "astro-icon/components";
 import { site } from "@data/site";
 import { categoryLabel } from "@/lib/categories";
 import { pillarBySlug } from "@data/services";
 import { readingTime } from "@/lib/reading";
-import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
+import {
+  blogPostingSchema,
+  breadcrumbSchema,
+  faqSchema,
+  howToSchema,
+} from "@/lib/schema";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -39,7 +46,7 @@ const url = `/blog/${post.id}/`;
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-const schemas = [
+const schemas: Record<string, unknown>[] = [
   blogPostingSchema({
     title: data.title,
     description: data.description,
@@ -57,6 +64,19 @@ const schemas = [
     { name: data.title, url },
   ]),
 ];
+if (data.faqs?.length) {
+  schemas.push(faqSchema(data.faqs.map((f) => ({ q: f.q, a: f.a.replace(/<[^>]+>/g, "") }))));
+}
+if (data.howto) {
+  schemas.push(
+    howToSchema({
+      name: data.howto.name,
+      description: data.description,
+      totalTime: data.howto.totalTime,
+      steps: data.howto.steps,
+    })
+  );
+}
 ---
 
 <BaseLayout
@@ -108,9 +128,17 @@ const schemas = [
         )}
 
         <div class="art-body">
+          {data.takeaways?.length && <KeyTakeaways items={data.takeaways} />}
           <Prose>
             <Content />
           </Prose>
+
+          {data.faqs?.length && (
+            <section class="post-faq">
+              <h2 class="post-faq-h">Frequently asked questions</h2>
+              <FAQ items={data.faqs} />
+            </section>
+          )}
 
           <div class="share">
             <span>Share:</span>
@@ -362,6 +390,16 @@ const schemas = [
   }
   .toc a:hover {
     color: var(--color-accent-ink);
+  }
+
+  .post-faq {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .post-faq-h {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .share {

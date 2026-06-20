@@ -11,6 +11,13 @@ const company = [
   { label: "Blog", href: "/blog/" },
   { label: "Contact", href: "/contact/" },
 ];
+const resources = [
+  { label: "Compare", href: "/compare/" },
+  { label: "Cost guides", href: "/cost/" },
+  { label: "Free tools", href: "/tools/" },
+  { label: "Glossary", href: "/glossary/" },
+  { label: "Industries", href: "/industries/" },
+];
 ---
 
 <footer class="site-footer">
@@ -57,6 +64,15 @@ const company = [
         <h2 class="footer-heading">Company</h2>
         <ul>
           {company.map((c) => (
+            <li><a href={c.href} class="link-underline">{c.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav class="footer-col" aria-label="Resources">
+        <h2 class="footer-heading">Resources</h2>
+        <ul>
+          {resources.map((c) => (
             <li><a href={c.href} class="link-underline">{c.label}</a></li>
           ))}
         </ul>
@@ -246,7 +262,12 @@ const company = [
 
   @media (min-width: 640px) {
     .footer-top {
-      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 900px) {
+    .footer-top {
+      grid-template-columns: 1.6fr 1fr 1fr 1fr 1.2fr;
     }
     .footer-bottom {
       flex-direction: row;

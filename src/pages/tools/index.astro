@@ -1,0 +1,148 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { breadcrumbSchema } from "@/lib/schema";
+
+const tools = [
+  {
+    icon: "calculator",
+    title: "Automation ROI calculator",
+    text: "Estimate the annual saving from automating a repetitive task.",
+    href: "/tools/automation-roi-calculator/",
+  },
+  {
+    icon: "smartphone",
+    title: "App cost estimator",
+    text: "Ballpark your mobile app budget by platform, features and complexity.",
+    href: "/tools/app-cost-estimator/",
+  },
+];
+---
+
+<BaseLayout
+  title="Free tools — calculators for software & automation decisions"
+  description="Free, no-signup tools to help you plan: an automation ROI calculator and a mobile app cost estimator. Get a ballpark in seconds, then book a call for a precise quote."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Tools", url: "/tools/" }])]}
+>
+  <section class="t-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Tools", url: "/tools/" }]} />
+      <span class="eyebrow t-eyebrow" data-reveal>Free tools</span>
+      <h1 class="t-title" data-reveal>Quick answers before you commit.</h1>
+      <p class="t-sub" data-reveal>
+        No sign-up, no email wall — just useful calculators to help you plan, with a ballpark in
+        seconds. When you're ready for a precise number, book a call.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-dots">
+    <div class="container-x">
+      <div class="t-grid">
+        {tools.map((t) => (
+          <a href={t.href} class="t-card card-hover" data-reveal>
+            <span class="t-icon"><Icon name={`lucide:${t.icon}`} /></span>
+            <h2 class="t-card-title">{t.title}</h2>
+            <p class="t-card-text">{t.text}</p>
+            <span class="t-cta">Open tool <Icon name="lucide:arrow-right" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .t-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .t-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .t-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .t-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .t-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+  .t-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .t-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .t-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    margin-bottom: 1rem;
+  }
+  .t-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .t-card-title {
+    font-size: 1.2rem;
+  }
+  .t-card-text {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+  .t-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-accent-ink);
+  }
+  .t-cta svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .t-card:hover .t-cta svg {
+    transform: translateX(4px);
+  }
+  @media (min-width: 700px) {
+    .t-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

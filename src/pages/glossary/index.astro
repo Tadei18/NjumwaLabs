@@ -1,0 +1,146 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { glossary } from "@data/glossary";
+import { breadcrumbSchema } from "@/lib/schema";
+
+// Group terms by category for a scannable index.
+const groups = [...new Set(glossary.map((t) => t.category))].map((cat) => ({
+  cat,
+  terms: glossary.filter((t) => t.category === cat),
+}));
+---
+
+<BaseLayout
+  title="Glossary — software, AI, data & Dynamics 365 terms explained"
+  description="Plain-English definitions of the software, AI automation, database and Dynamics 365 terms that come up when building business systems — X++, Chain of Command, DMF, RAG, query optimization and more."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Glossary", url: "/glossary/" }])]}
+>
+  <section class="g-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Glossary", url: "/glossary/" }]} />
+      <span class="eyebrow g-eyebrow" data-reveal>Glossary</span>
+      <h1 class="g-title" data-reveal>The terms behind the systems, in plain English.</h1>
+      <p class="g-sub" data-reveal>
+        Clear, definition-first explanations of the software, AI, database and Dynamics 365 concepts
+        that come up when building business systems — written to be genuinely useful, not jargon for
+        jargon's sake.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-dots">
+    <div class="container-x">
+      {groups.map((g) => (
+        <div class="g-group">
+          <h2 class="g-group-title">{g.cat}</h2>
+          <div class="g-grid">
+            {g.terms.map((t) => (
+              <a href={`/glossary/${t.slug}/`} class="g-card card-hover" data-reveal>
+                <h3 class="g-term">{t.term}</h3>
+                <p class="g-def">{t.short}</p>
+                <span class="g-cta">Read definition <Icon name="lucide:arrow-right" /></span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <CTASection heading="Need this built, not just defined?" />
+</BaseLayout>
+
+<style>
+  .g-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .g-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .g-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .g-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    max-width: 20ch;
+  }
+  .g-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 58ch;
+  }
+  .g-group + .g-group {
+    margin-top: 3rem;
+  }
+  .g-group-title {
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .g-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .g-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .g-term {
+    font-size: 1.15rem;
+  }
+  .g-def {
+    margin-top: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.93rem;
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+  .g-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-accent-ink);
+  }
+  .g-cta svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .g-card:hover .g-cta svg {
+    transform: translateX(4px);
+  }
+  @media (min-width: 640px) {
+    .g-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 980px) {
+    .g-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

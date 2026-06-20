@@ -9,11 +9,44 @@ import CaseStudyCard from "@components/CaseStudyCard.astro";
 import FAQ from "@components/FAQ.astro";
 import CTASection from "@components/CTASection.astro";
 import CredentialsBand from "@components/CredentialsBand.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import RelatedContent from "@components/RelatedContent.astro";
 import { Icon } from "astro-icon/components";
 import { pillars, pillarBySlug } from "@data/services";
 import { pillarContent } from "@data/pillarContent";
 import { serviceSchema, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { getCollection } from "astro:content";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+// Cross-links from each pillar to relevant comparison/cost/glossary resources.
+const resourceLinks: Record<string, RelatedLink[]> = {
+  "web-development": [
+    { label: "How much does a website cost?", href: "/cost/website-cost/", kind: "cost" },
+    { label: "Headless CMS vs WordPress", href: "/compare/headless-vs-wordpress/", kind: "compare" },
+    { label: "Core Web Vitals — glossary", href: "/glossary/core-web-vitals/", kind: "glossary" },
+  ],
+  "ai-automation": [
+    { label: "Automation ROI calculator", href: "/tools/automation-roi-calculator/", kind: "tool" },
+    { label: "Power Apps vs custom app", href: "/compare/power-apps-vs-custom-app/", kind: "compare" },
+    { label: "RAG & AI agents — glossary", href: "/glossary/rag/", kind: "glossary" },
+    { label: "AI automation for real estate", href: "/industries/ai-automation-for-real-estate/", kind: "post" },
+  ],
+  "mobile-apps": [
+    { label: "App cost estimator", href: "/tools/app-cost-estimator/", kind: "tool" },
+    { label: "How much does a mobile app cost?", href: "/cost/mobile-app-cost/", kind: "cost" },
+    { label: "Flutter vs React Native", href: "/compare/flutter-vs-react-native/", kind: "compare" },
+  ],
+  "database-administration": [
+    { label: "PostgreSQL vs MongoDB", href: "/compare/postgresql-vs-mongodb/", kind: "compare" },
+    { label: "Query optimization — glossary", href: "/glossary/query-optimization/", kind: "glossary" },
+    { label: "High availability — glossary", href: "/glossary/high-availability/", kind: "glossary" },
+  ],
+  "dynamics-365-finance-operations": [
+    { label: "D365 customization cost", href: "/cost/d365-customization-cost/", kind: "cost" },
+    { label: "Dynamics 365 ERP for insurance", href: "/industries/erp-for-insurance/", kind: "post" },
+    { label: "X++ & Chain of Command — glossary", href: "/glossary/x-plus-plus/", kind: "glossary" },
+  ],
+};
 
 export async function getStaticPaths() {
   return pillars.map((p) => ({ params: { slug: p.slug } }));
@@ -72,6 +105,10 @@ const schemas = [
     priceFrom={pillar.priceFrom}
     breadcrumbs={breadcrumbs}
   />
+
+  <div class="container-x tldr-wrap">
+    <KeyTakeaways items={content.takeaways} />
+  </div>
 
   {isD365 && (
     <>
@@ -230,6 +267,13 @@ const schemas = [
     </div>
   </section>
 
+  <!-- Related resources -->
+  <section class="section">
+    <div class="container-x related-wrap">
+      <RelatedContent links={resourceLinks[slug!] ?? []} title="Helpful resources" />
+    </div>
+  </section>
+
   <!-- FAQ -->
   <section class="section faq-section">
     <div class="container-x">
@@ -244,6 +288,9 @@ const schemas = [
 </BaseLayout>
 
 <style>
+  .tldr-wrap {
+    max-width: 56rem;
+  }
   .ai-cred-wrap {
     padding-top: 1.5rem;
   }
@@ -432,6 +479,9 @@ const schemas = [
     gap: 0.75rem;
   }
 
+  .related-wrap {
+    max-width: 48rem;
+  }
   .faq-section {
     background: var(--color-surface-2);
   }

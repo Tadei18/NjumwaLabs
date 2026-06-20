@@ -1,0 +1,292 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import FAQ from "@components/FAQ.astro";
+import RelatedContent from "@components/RelatedContent.astro";
+import CTASection from "@components/CTASection.astro";
+import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+const url = "/tools/app-cost-estimator/";
+
+const features = [
+  { id: "auth", label: "User accounts & login", low: 300, high: 700 },
+  { id: "payments", label: "Payments (M-Pesa, Stripe)", low: 500, high: 1500 },
+  { id: "chat", label: "Chat / messaging", low: 600, high: 1800 },
+  { id: "maps", label: "Maps & geolocation", low: 300, high: 900 },
+  { id: "push", label: "Push notifications", low: 200, high: 500 },
+  { id: "admin", label: "Admin dashboard", low: 600, high: 2000 },
+  { id: "realtime", label: "Real-time updates", low: 500, high: 1600 },
+  { id: "ai", label: "AI features", low: 600, high: 2200 },
+];
+
+const faqs = [
+  { q: "How accurate is this app cost estimate?", a: "It's a ballpark to set expectations, built from typical 2026 ranges. Your real quote depends on exact scope, design and integrations — which I confirm in writing before any work." },
+  { q: "Why is cross-platform cheaper?", a: "Building once with Flutter or React Native covers both iOS and Android, so you avoid building and maintaining two separate native apps — typically a 30–50% saving." },
+  { q: "What's the cheapest way to start?", a: "An MVP: the single core action, on both platforms, from one codebase. Validate with real users, then expand the features that earn their place." },
+];
+
+const related: RelatedLink[] = [
+  { label: "Mobile app development service", href: "/services/mobile-apps/", kind: "service" },
+  { label: "How much does a mobile app cost?", href: "/cost/mobile-app-cost/", kind: "cost" },
+  { label: "Flutter vs React Native", href: "/compare/flutter-vs-react-native/", kind: "compare" },
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Tools", url: "/tools/" },
+    { name: "App cost estimator", url },
+  ]),
+  faqSchema(faqs),
+];
+---
+
+<BaseLayout
+  title="App cost estimator — ballpark your mobile app budget"
+  description="Free mobile app cost estimator: pick your platform, features and complexity to get a ballpark price range for building your iOS and Android app in 2026."
+  schemas={schemas}
+>
+  <article class="tool">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Tools", url: "/tools/" }, { name: "App cost estimator", url }]} />
+      <span class="tool-eyebrow">Free tool</span>
+      <h1 class="tool-title" data-reveal>App cost estimator</h1>
+      <p class="tool-intro" data-reveal>
+        Get a realistic ballpark for your mobile app. Choose your platform, the features you need and
+        the complexity, and this estimator returns a price range based on typical 2026 build costs.
+      </p>
+
+      <KeyTakeaways
+        items={[
+          "Cross-platform (one codebase for iOS + Android) is typically 30–50% cheaper than native.",
+          "Each feature — payments, chat, dashboards, AI — adds design, build and testing time.",
+          "Start with an MVP, then expand the features that earn their place.",
+        ]}
+      />
+
+      <div class="est card" data-reveal>
+        <div class="est-fields">
+          <div class="est-field">
+            <label for="platform">Platform</label>
+            <select id="platform">
+              <option value="cross" data-base-low="1500" data-base-high="3000">Cross-platform (iOS + Android)</option>
+              <option value="native" data-base-low="3000" data-base-high="6000">Native (separate iOS & Android)</option>
+              <option value="pwa" data-base-low="900" data-base-high="2000">PWA (web app)</option>
+            </select>
+          </div>
+          <div class="est-field">
+            <label for="complexity">Design & complexity</label>
+            <select id="complexity">
+              <option value="1" >Simple / standard</option>
+              <option value="1.4" selected>Polished</option>
+              <option value="2">Complex / custom</option>
+            </select>
+          </div>
+        </div>
+
+        <fieldset class="est-features">
+          <legend>Features</legend>
+          <div class="est-feature-grid">
+            {features.map((f) => (
+              <label class="est-check">
+                <input type="checkbox" data-low={f.low} data-high={f.high} />
+                <span>{f.label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div class="est-result" role="status" aria-live="polite">
+          <span class="est-result-label">Estimated range</span>
+          <span class="est-result-value" id="estResult">$2,100 – $4,200</span>
+        </div>
+      </div>
+
+      <p class="tool-note">Ballpark only — book a call for a precise, written quote tailored to your app.</p>
+
+      <RelatedContent links={related} title="Related" />
+
+      <section class="tool-faq">
+        <h2 class="tool-h2">Frequently asked questions</h2>
+        <FAQ items={faqs} />
+      </section>
+    </div>
+  </article>
+
+  <CTASection heading="Want a precise quote for your app?" />
+</BaseLayout>
+
+<script>
+  const init = () => {
+    const platform = document.getElementById("platform") as HTMLSelectElement | null;
+    const complexity = document.getElementById("complexity") as HTMLSelectElement | null;
+    const result = document.getElementById("estResult");
+    const checks = Array.from(document.querySelectorAll<HTMLInputElement>(".est-check input"));
+    if (!platform || !complexity || !result) return;
+
+    const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    const calc = () => {
+      const opt = platform.selectedOptions[0];
+      let low = parseFloat(opt.dataset.baseLow || "0");
+      let high = parseFloat(opt.dataset.baseHigh || "0");
+      checks.forEach((c) => {
+        if (c.checked) {
+          low += parseFloat(c.dataset.low || "0");
+          high += parseFloat(c.dataset.high || "0");
+        }
+      });
+      const mult = parseFloat(complexity.value) || 1;
+      low = Math.round((low * mult) / 100) * 100;
+      high = Math.round((high * mult) / 100) * 100;
+      result.textContent = `${money.format(low)} – ${money.format(high)}`;
+    };
+    [platform, complexity, ...checks].forEach((el) => el.addEventListener("input", calc));
+    calc();
+  };
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  .tool {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .tool .container-x {
+    max-width: 50rem;
+  }
+  .tool-eyebrow {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .tool-title {
+    margin-top: 0.8rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .tool-intro {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .est {
+    padding: 1.75rem;
+    margin-top: 1rem;
+  }
+  .est-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  .est-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .est-field label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+  }
+  .est-field select {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+  .est-field select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+  .est-features {
+    border: 0;
+    padding: 0;
+    margin: 1.4rem 0 0;
+  }
+  .est-features legend {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+    margin-bottom: 0.7rem;
+  }
+  .est-feature-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .est-check {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.92rem;
+  }
+  .est-check input {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--color-accent);
+  }
+  .est-check:has(input:checked) {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+  }
+  .est-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+    margin-top: 1.5rem;
+    padding: 1.75rem;
+    border-radius: var(--radius-card);
+    background: var(--color-night);
+    color: #fff;
+  }
+  .est-result-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .est-result-value {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    line-height: 1;
+    color: var(--color-accent);
+  }
+  .tool-note {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .tool-h2 {
+    font-size: 1.5rem;
+    margin: 2.5rem 0 1.25rem;
+  }
+  @media (min-width: 620px) {
+    .est-fields {
+      grid-template-columns: 1fr 1fr;
+    }
+    .est-feature-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

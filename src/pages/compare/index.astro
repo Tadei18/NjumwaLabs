@@ -1,0 +1,139 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { comparisons } from "@data/comparisons";
+import { breadcrumbSchema } from "@/lib/schema";
+---
+
+<BaseLayout
+  title="Tech comparisons — make the right build decision"
+  description="Clear, practical comparisons to help you choose the right technology: Flutter vs React Native, PostgreSQL vs MongoDB, headless vs WordPress, Power Apps vs custom — with comparison tables and verdicts."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Compare", url: "/compare/" }])]}
+>
+  <section class="c-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Compare", url: "/compare/" }]} />
+      <span class="eyebrow c-eyebrow" data-reveal>Compare</span>
+      <h1 class="c-title" data-reveal>Make the right build decision.</h1>
+      <p class="c-sub" data-reveal>
+        Honest, practical comparisons of the technologies you're weighing — each with a clear
+        comparison table and a "which should you choose?" verdict.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-dots">
+    <div class="container-x">
+      <div class="c-grid">
+        {comparisons.map((c) => (
+          <a href={`/compare/${c.slug}/`} class="c-card card-hover" data-reveal>
+            <div class="c-vs">
+              <span class="c-opt">{c.a}</span>
+              <span class="c-vs-label">vs</span>
+              <span class="c-opt">{c.b}</span>
+            </div>
+            <p class="c-card-sub">{c.h1}</p>
+            <span class="c-cta">Compare <Icon name="lucide:arrow-right" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection heading="Still not sure? Let's talk it through." />
+</BaseLayout>
+
+<style>
+  .c-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .c-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .c-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .c-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .c-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+  .c-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .c-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .c-vs {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .c-opt {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+  .c-vs-label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-accent-ink);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .c-card-sub {
+    margin-top: 0.7rem;
+    color: var(--color-muted);
+    font-size: 0.93rem;
+    line-height: 1.5;
+    flex-grow: 1;
+  }
+  .c-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-accent-ink);
+  }
+  .c-cta svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .c-card:hover .c-cta svg {
+    transform: translateX(4px);
+  }
+  @media (min-width: 700px) {
+    .c-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

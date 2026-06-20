@@ -2,8 +2,37 @@
 title: "MongoDB to PostgreSQL migration: when and how"
 description: "When it makes sense to move from MongoDB to PostgreSQL, the risks to plan for, and a safe, zero-data-loss migration approach."
 pubDate: 2026-01-28
+updatedDate: 2026-06-18
 category: "database-administration"
 tags: ["mongodb", "postgresql", "database migration", "dba"]
+takeaways:
+  - "Migrate when your data is relational, you need joins and complex queries, you want strong ACID transactions, or licensing/cost is a concern."
+  - "Don't migrate just for fashion — if MongoDB serves document-shaped data well, stay put."
+  - "A safe migration uses schema mapping, validation at every step, and a dual-write/CDC window so you can roll back instantly."
+  - "Small datasets migrate in days; large production systems take a few weeks because of validation, not the data copy."
+howto:
+  name: "How to migrate from MongoDB to PostgreSQL with zero data loss"
+  totalTime: "P3W"
+  steps:
+    - name: "Model the target schema"
+      text: "Map collections and embedded documents to tables and relationships, using jsonb where flexibility genuinely helps."
+    - name: "Build the migration scripts"
+      text: "Transform and load existing data from MongoDB into PostgreSQL."
+    - name: "Validate"
+      text: "Compare row counts, checksums and sample records between systems until they match exactly."
+    - name: "Sync the gap"
+      text: "Use dual-writes or change-data-capture so new writes land in both databases during the transition."
+    - name: "Cut over"
+      text: "Switch reads to PostgreSQL during a low-traffic window, keeping MongoDB available as instant rollback."
+    - name: "Monitor and tune"
+      text: "Watch performance, add the right indexes, and decommission MongoDB only once you're confident."
+faqs:
+  - q: "Is migrating from MongoDB to PostgreSQL risky?"
+    a: "Not when done methodically. Validation at every step and a dual-write window with an instant rollback path protect your data."
+  - q: "Can it be done with zero downtime?"
+    a: "In most cases, yes — using replication or change-data-capture and a careful cutover during a low-traffic window."
+  - q: "How long does a MongoDB to PostgreSQL migration take?"
+    a: "Small datasets can be days; large, busy production systems take a few weeks, mostly for validation and the dual-write window."
 ---
 
 **The short answer:** Move from MongoDB to PostgreSQL when your data is actually relational, you need complex queries and joins, you want strong transactional guarantees, or licensing/cost has become a concern. Done properly — with schema mapping, dual-write or replication, and thorough validation — the migration can happen with zero data loss and minimal downtime.

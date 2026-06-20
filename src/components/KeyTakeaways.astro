@@ -1,0 +1,70 @@
+---
+import { Icon } from "astro-icon/components";
+
+// Answer-first TL;DR block placed directly under an H1. AI engines preferentially
+// extract these. Usable in .astro pages and MDX.
+interface Props {
+  items: string[];
+  title?: string;
+}
+const { items, title = "Key takeaways" } = Astro.props;
+---
+
+<aside class="tldr" aria-label={title}>
+  <p class="tldr-title"><Icon name="lucide:zap" /> {title}</p>
+  <ul class="tldr-list">
+    {items.map((it) => (
+      <li><Icon name="lucide:check" /> <span set:html={it} /></li>
+    ))}
+  </ul>
+</aside>
+
+<style>
+  .tldr {
+    background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, var(--color-line));
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .tldr-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-ink);
+    margin: 0 0 0.75rem;
+  }
+  .tldr-title svg {
+    width: 1rem;
+    height: 1rem;
+  }
+  .tldr-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .tldr-list li {
+    display: flex;
+    gap: 0.6rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .tldr-list svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-accent-ink);
+  }
+  .tldr-list :global(a) {
+    color: var(--color-accent-ink);
+    text-decoration: underline;
+  }
+</style>

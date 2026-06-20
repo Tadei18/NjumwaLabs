@@ -216,6 +216,32 @@ state). Test with the OS reduced-motion setting before shipping motion changes.
 - **About headshot**: drop a real photo at `public/images/crispus-njumwa.jpg`; it replaces the
   "CN" monogram automatically (the `<img>` self-removes on 404, so no broken image).
 
+### SEO / GEO (search + AI-engine optimization)
+
+Content types & where their data lives:
+
+- **Service pillars** — `src/data/services.ts` + `src/data/pillarContent.ts` (emits Service + FAQPage + a TL;DR).
+- **Comparison pages** (`/compare/`) — `src/data/comparisons.ts` (comparison table + verdict + FAQPage).
+- **Cost guides** (`/cost/`) — `src/data/costs.ts` (ranges + drivers + FAQPage).
+- **Glossary** (`/glossary/`) — `src/data/glossary.ts` (definition-first, DefinedTerm schema).
+- **Industry / use-case pages** (`/industries/`) — `src/data/usecases.ts` (Service + FAQPage).
+- **Free tools** (`/tools/`) — `automation-roi-calculator` and `app-cost-estimator` (tiny vanilla-JS islands, each on its own indexable page with FAQPage schema + CTA).
+- **Blog** — MDX in `src/content/blog/` with `takeaways`, `faqs` and optional `howto` frontmatter that emit TL;DR, FAQPage and HowTo schema. `wordCount`/`timeRequired` are added automatically.
+
+GEO content primitives (usable in `.astro` and MDX): `KeyTakeaways` (TL;DR), `StatCallout`, `Definition`, `FAQ`, `RelatedContent`.
+
+**Where key data lives:**
+- **Author / byline** — `src/data/author.ts`.
+- **Reviews / ratings** — built from `src/data/testimonials.ts`; `reviewsSchema()` in `src/lib/schema.ts` only emits Review/AggregateRating once real (non-placeholder) reviews exist, so no fake ratings ship.
+- **sameAs links** — `src/data/site.ts` (`socials`) + `verificationUrl` in `src/data/credentials.ts` (Credly/MS Learn).
+- All JSON-LD builders are in `src/lib/schema.ts` (Organization, WebSite, Person+hasCredential, Service, FAQPage, BlogPosting, HowTo, DefinedTerm, Review, Breadcrumb).
+
+**Search-engine plumbing:**
+- **Google Search Console / Bing** — set `PUBLIC_GSC_VERIFICATION` / `PUBLIC_BING_VERIFICATION` (rendered as `<meta>` verification tags).
+- **IndexNow** — key file is `public/a3f9c1e84b7d4e2f9c6a1b8d5e3f7a20.txt`. After deploy, run `npm run build && npm run indexnow` (set `SITE_HOST` env if the host differs) to submit all sitemap URLs to Bing/IndexNow. Wire it into your deploy hook for automatic pings.
+- **Sitemap `lastmod`** comes from each content file's `updatedDate`/`pubDate` (see `astro.config.mjs`); other pages use the build date.
+- `robots.txt` explicitly allows Googlebot, Bingbot and the major AI crawlers, and links the sitemap. `llms.txt` is a rich, current summary for LLM crawlers — keep it in sync when adding pages.
+
 ### Blog & contact (Phase 2.2)
 
 - **Blog covers**: `src/components/BlogCover.astro` renders an on-brand illustrative cover

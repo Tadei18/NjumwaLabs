@@ -1,11 +1,17 @@
 // JSON-LD builders. Keep output minimal and valid (Rich Results Test clean).
 import { site } from "@data/site";
 import { allCerts, verificationUrl } from "@data/credentials";
+import { testimonials } from "@data/testimonials";
 
 const abs = (path: string) => new URL(path, site.url).href;
 
 export const organizationSchema = () => {
-  const sameAs = [site.socials.linkedin, site.socials.github].filter(Boolean);
+  const sameAs = [
+    site.socials.linkedin,
+    site.socials.github,
+    site.socials.crunchbase,
+    verificationUrl, // Credly / Microsoft Learn, when supplied
+  ].filter(Boolean);
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -98,7 +104,7 @@ export const serviceSchema = (opts: {
   serviceType: opts.serviceType,
   url: abs(opts.url),
   provider: { "@id": `${site.url}/#organization` },
-  areaServed: site.areaServed,
+  areaServed: ["Kenya", "Worldwide", ...site.areaServed],
   audience: { "@type": "BusinessAudience", audienceType: "SMEs, startups and enterprises" },
 });
 
@@ -148,6 +154,67 @@ export const blogPostingSchema = (opts: {
   ...(opts.wordCount ? { wordCount: opts.wordCount } : {}),
   // ISO-8601 duration, e.g. 5 minutes -> PT5M
   ...(opts.readingMinutes ? { timeRequired: `PT${opts.readingMinutes}M` } : {}),
+});
+
+// Review + AggregateRating — only emits once REAL reviews exist (placeholder:false),
+// so we never ship fake ratings. Attaches to the Organization entity.
+export const reviewsSchema = () => {
+  const real = testimonials.filter((t) => !t.placeholder);
+  if (real.length === 0) return null;
+  const avg = (real.reduce((a, r) => a + r.rating, 0) / real.length).toFixed(1);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${site.url}/#organization`,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: avg,
+      reviewCount: real.length,
+      bestRating: 5,
+    },
+    review: real.map((r) => ({
+      "@type": "Review",
+      reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
+      author: { "@type": "Person", name: r.name },
+      reviewBody: r.quote,
+    })),
+  };
+};
+
+export const howToSchema = (opts: {
+  name: string;
+  description: string;
+  steps: { name: string; text: string }[];
+  totalTime?: string; // ISO-8601 duration, e.g. "P2W"
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: opts.name,
+  description: opts.description,
+  ...(opts.totalTime ? { totalTime: opts.totalTime } : {}),
+  step: opts.steps.map((s, i) => ({
+    "@type": "HowToStep",
+    position: i + 1,
+    name: s.name,
+    text: s.text,
+  })),
+});
+
+export const definedTermSchema = (opts: {
+  term: string;
+  description: string;
+  url: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  name: opts.term,
+  description: opts.description,
+  url: abs(opts.url),
+  inDefinedTermSet: {
+    "@type": "DefinedTermSet",
+    name: "Njumwa Labs Glossary",
+    url: abs("/glossary/"),
+  },
 });
 
 export const caseStudySchema = (opts: {

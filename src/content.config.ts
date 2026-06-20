@@ -24,6 +24,18 @@ const blog = defineCollection({
       featured: z.boolean().default(false),
       draft: z.boolean().default(false),
       author: z.string().default("Crispus Martin Njumwa"),
+      // Optional answer-first TL;DR bullets rendered under the H1 (GEO).
+      takeaways: z.array(z.string()).optional(),
+      // Optional FAQ block (emits FAQPage schema).
+      faqs: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
+      // Optional HowTo steps (emits HowTo schema) for step-by-step guides.
+      howto: z
+        .object({
+          name: z.string(),
+          totalTime: z.string().optional(),
+          steps: z.array(z.object({ name: z.string(), text: z.string() })),
+        })
+        .optional(),
     }),
 });
 

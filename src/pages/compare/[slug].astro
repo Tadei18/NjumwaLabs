@@ -1,0 +1,191 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import FAQ from "@components/FAQ.astro";
+import RelatedContent from "@components/RelatedContent.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { comparisons, comparisonBySlug } from "@data/comparisons";
+import { pillarBySlug } from "@data/services";
+import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+export async function getStaticPaths() {
+  return comparisons.map((c) => ({ params: { slug: c.slug } }));
+}
+
+const { slug } = Astro.params;
+const c = comparisonBySlug(slug!)!;
+const pillar = c.related ? pillarBySlug(c.related) : undefined;
+const url = `/compare/${c.slug}/`;
+
+const related: RelatedLink[] = [
+  ...(pillar ? [{ label: pillar.title, href: pillar.href, kind: "service" as const }] : []),
+  ...(c.relatedPosts ?? []).map((p) => ({ label: p.label, href: p.href, kind: "post" as const })),
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Compare", url: "/compare/" },
+    { name: `${c.a} vs ${c.b}`, url },
+  ]),
+  faqSchema(c.faqs),
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDescription} schemas={schemas}>
+  <article class="cmp">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Compare", url: "/compare/" }, { name: `${c.a} vs ${c.b}`, url }]} />
+      <span class="cmp-eyebrow">Comparison</span>
+      <h1 class="cmp-title" data-reveal>{c.h1}</h1>
+      <p class="cmp-intro" data-reveal>{c.intro}</p>
+
+      <KeyTakeaways items={c.takeaways} />
+
+      <h2 class="cmp-h2">{c.a} vs {c.b}, at a glance</h2>
+      <div class="table-wrap" data-reveal>
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>{c.a}</th>
+              <th>{c.b}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {c.rows.map((r) => (
+              <tr>
+                <th scope="row">{r.feature}</th>
+                <td>{r.a}</td>
+                <td>{r.b}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="verdict" data-reveal>
+        <h2 class="verdict-h"><Icon name="lucide:check-circle-2" /> Which should you choose?</h2>
+        {c.verdict.map((p) => (
+          <p>{p}</p>
+        ))}
+      </div>
+
+      <RelatedContent links={related} title="Go deeper" />
+
+      <section class="cmp-faq">
+        <h2 class="cmp-h2">Frequently asked questions</h2>
+        <FAQ items={c.faqs} />
+      </section>
+    </div>
+  </article>
+
+  <CTASection heading={pillar ? `Want help with ${pillar.title.toLowerCase()}?` : "Want a second opinion?"} />
+</BaseLayout>
+
+<style>
+  .cmp {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .cmp .container-x {
+    max-width: 54rem;
+  }
+  .cmp-eyebrow {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .cmp-title {
+    margin-top: 0.8rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .cmp-intro {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .cmp-h2 {
+    font-size: 1.5rem;
+    margin: 2.5rem 0 1.25rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    min-width: 32rem;
+  }
+  .cmp-table th,
+  .cmp-table td {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-line);
+    vertical-align: top;
+  }
+  .cmp-table thead th {
+    font-family: var(--font-display);
+    background: var(--color-surface-2);
+    position: sticky;
+    top: 0;
+  }
+  .cmp-table thead th:nth-child(2) {
+    color: var(--color-accent-ink);
+  }
+  .cmp-table tbody th {
+    font-weight: 600;
+    color: var(--color-ink);
+    width: 11rem;
+  }
+  .cmp-table td {
+    color: var(--color-ink-soft);
+  }
+  .cmp-table tbody tr:last-child th,
+  .cmp-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .verdict {
+    margin-top: 2.5rem;
+    padding: 1.5rem 1.75rem;
+    background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, var(--color-line));
+    border-radius: var(--radius-card);
+  }
+  .verdict-h {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+  .verdict-h svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--color-accent-ink);
+  }
+  .verdict p {
+    color: var(--color-ink-soft);
+    line-height: 1.65;
+  }
+  .verdict p + p {
+    margin-top: 0.85rem;
+  }
+  .cmp-faq {
+    margin-top: 1rem;
+  }
+</style>

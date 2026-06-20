@@ -1,0 +1,196 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import KeyTakeaways from "@components/KeyTakeaways.astro";
+import FAQ from "@components/FAQ.astro";
+import RelatedContent from "@components/RelatedContent.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { costs, costBySlug } from "@data/costs";
+import { pillarBySlug } from "@data/services";
+import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+export async function getStaticPaths() {
+  return costs.map((c) => ({ params: { slug: c.slug } }));
+}
+
+const { slug } = Astro.params;
+const c = costBySlug(slug!)!;
+const pillar = c.related ? pillarBySlug(c.related) : undefined;
+const url = `/cost/${c.slug}/`;
+
+const related: RelatedLink[] = [
+  ...(pillar ? [{ label: pillar.title, href: pillar.href, kind: "service" as const }] : []),
+  ...(c.relatedLinks ?? []).map((l) => ({ label: l.label, href: l.href, kind: "post" as const })),
+];
+
+const schemas = [
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Cost guides", url: "/cost/" },
+    { name: c.h1, url },
+  ]),
+  faqSchema(c.faqs),
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDescription} schemas={schemas}>
+  <article class="cost">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Cost guides", url: "/cost/" }, { name: c.h1, url }]} />
+      <span class="cost-eyebrow">Cost guide</span>
+      <h1 class="cost-title" data-reveal>{c.h1}</h1>
+      <p class="cost-intro" data-reveal>{c.intro}</p>
+
+      <KeyTakeaways items={c.takeaways} />
+
+      <h2 class="cost-h2">Typical price ranges</h2>
+      <div class="tiers">
+        {c.tiers.map((t) => (
+          <div class="tier" data-reveal>
+            <span class="tier-name">{t.name}</span>
+            <span class="tier-range">{t.range}</span>
+            <span class="tier-note">{t.note}</span>
+          </div>
+        ))}
+      </div>
+      <p class="cost-fine">Ranges are guides, not quotes — your actual number depends on scope. Prices in USD; local (KES) and custom quotes available.</p>
+
+      <h2 class="cost-h2">What drives the price</h2>
+      <ul class="drivers">
+        {c.drivers.map((d) => (
+          <li class="driver" data-reveal>
+            <Icon name="lucide:check" />
+            <div>
+              <span class="driver-title">{d.title}</span>
+              <span class="driver-text">{d.text}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <RelatedContent links={related} title="Related" />
+
+      <section class="cost-faq">
+        <h2 class="cost-h2">Frequently asked questions</h2>
+        <FAQ items={c.faqs} />
+      </section>
+    </div>
+  </article>
+
+  <CTASection heading="Get a clear, honest quote." text="Tell me what you're building and I'll come back with a fair price — usually within a day." />
+</BaseLayout>
+
+<style>
+  .cost {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .cost .container-x {
+    max-width: 54rem;
+  }
+  .cost-eyebrow {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .cost-title {
+    margin-top: 0.8rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .cost-intro {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .cost-h2 {
+    font-size: 1.5rem;
+    margin: 2.5rem 0 1.25rem;
+  }
+  .tiers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .tier {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .tier-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .tier-range {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--color-accent-ink);
+  }
+  .tier-note {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    line-height: 1.45;
+  }
+  .cost-fine {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .drivers {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .driver {
+    display: flex;
+    gap: 0.8rem;
+    padding: 1.2rem 1.3rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+  }
+  .driver svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--color-accent-ink);
+  }
+  .driver-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .driver-text {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--color-muted);
+    font-size: 0.93rem;
+    line-height: 1.5;
+  }
+  .cost-faq {
+    margin-top: 1rem;
+  }
+  @media (min-width: 760px) {
+    .tiers {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

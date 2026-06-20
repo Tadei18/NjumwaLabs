@@ -1,0 +1,104 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import RelatedContent from "@components/RelatedContent.astro";
+import { glossary, glossaryBySlug } from "@data/glossary";
+import { pillarBySlug } from "@data/services";
+import { definedTermSchema, breadcrumbSchema } from "@/lib/schema";
+import type { RelatedLink } from "@components/RelatedContent.astro";
+
+export async function getStaticPaths() {
+  return glossary.map((t) => ({ params: { slug: t.slug } }));
+}
+
+const { slug } = Astro.params;
+const term = glossaryBySlug(slug!)!;
+const pillar = term.related ? pillarBySlug(term.related) : undefined;
+const url = `/glossary/${term.slug}/`;
+
+// A few sibling terms in the same category for internal linking.
+const siblings = glossary
+  .filter((t) => t.category === term.category && t.slug !== term.slug)
+  .slice(0, 3);
+
+const related: RelatedLink[] = [
+  ...(pillar ? [{ label: pillar.title, href: pillar.href, kind: "service" as const }] : []),
+  ...siblings.map((s) => ({ label: s.term, href: `/glossary/${s.slug}/`, kind: "glossary" as const })),
+];
+
+const schemas = [
+  definedTermSchema({ term: term.term, description: term.short, url }),
+  breadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Glossary", url: "/glossary/" },
+    { name: term.term, url },
+  ]),
+];
+---
+
+<BaseLayout
+  title={`${term.term} — definition & how it's used`}
+  description={term.short}
+  schemas={schemas}
+>
+  <article class="term">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Glossary", url: "/glossary/" }, { name: term.term, url }]} />
+      <span class="t-cat">{term.category}</span>
+      <h1 class="t-title" data-reveal>{term.term}</h1>
+      <p class="t-answer" data-reveal>{term.short}</p>
+
+      <div class="t-body">
+        {term.body.map((p) => (
+          <p data-reveal>{p}</p>
+        ))}
+      </div>
+
+      <RelatedContent links={related} title="Related" />
+    </div>
+  </article>
+
+  <CTASection heading={pillar ? `Need ${pillar.title.toLowerCase()}?` : "Need this built?"} />
+</BaseLayout>
+
+<style>
+  .term {
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .term .container-x {
+    max-width: 52rem;
+  }
+  .t-cat {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent-ink);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .t-title {
+    margin-top: 0.8rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .t-answer {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+    font-weight: 500;
+  }
+  .t-body {
+    margin-top: 1.5rem;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+  .t-body p + p {
+    margin-top: 1.15rem;
+  }
+</style>

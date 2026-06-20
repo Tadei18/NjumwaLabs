@@ -1,0 +1,135 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import CTASection from "@components/CTASection.astro";
+import { Icon } from "astro-icon/components";
+import { costs } from "@data/costs";
+import { breadcrumbSchema } from "@/lib/schema";
+---
+
+<BaseLayout
+  title="What does it cost? — transparent pricing guides"
+  description="Honest, answer-first cost guides: what a mobile app, a website, and Dynamics 365 customization actually cost in 2026 — with ranges and what drives the price."
+  schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Cost guides", url: "/cost/" }])]}
+>
+  <section class="co-hero">
+    <div class="container-x">
+      <Breadcrumbs items={[{ name: "Cost guides", url: "/cost/" }]} />
+      <span class="eyebrow co-eyebrow" data-reveal>Cost guides</span>
+      <h1 class="co-title" data-reveal>What does it actually cost?</h1>
+      <p class="co-sub" data-reveal>
+        Straight answers on what software costs in 2026 — real ranges and the factors that move the
+        price, so you can budget with confidence.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-dots">
+    <div class="container-x">
+      <div class="co-grid">
+        {costs.map((c) => (
+          <a href={`/cost/${c.slug}/`} class="co-card card-hover" data-reveal>
+            <span class="co-icon"><Icon name="lucide:calculator" /></span>
+            <h2 class="co-card-title">{c.h1}</h2>
+            <p class="co-from">{c.tiers[0].range}</p>
+            <span class="co-cta">See the breakdown <Icon name="lucide:arrow-right" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection heading="Want a real quote for your project?" />
+</BaseLayout>
+
+<style>
+  .co-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: 1.5rem clamp(2rem, 5vw, 3rem);
+  }
+  .co-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(45% 60% at 85% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .co-eyebrow {
+    display: block;
+    margin-top: 1.5rem;
+  }
+  .co-title {
+    margin-top: 0.6rem;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+  }
+  .co-sub {
+    margin-top: 1rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+  .co-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .co-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .co-icon {
+    display: inline-flex;
+    width: 2.8rem;
+    height: 2.8rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent-ink);
+    margin-bottom: 1rem;
+  }
+  .co-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  .co-card-title {
+    font-size: 1.15rem;
+    flex-grow: 1;
+  }
+  .co-from {
+    margin-top: 0.6rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--color-accent-ink);
+  }
+  .co-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-accent-ink);
+  }
+  .co-cta svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .co-card:hover .co-cta svg {
+    transform: translateX(4px);
+  }
+  @media (min-width: 760px) {
+    .co-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

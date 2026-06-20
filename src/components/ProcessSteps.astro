@@ -1,7 +1,10 @@
 ---
+import { Icon } from "astro-icon/components";
+
 interface Step {
   title: string;
   text: string;
+  icon: string;
 }
 interface Props {
   steps?: Step[];
@@ -9,18 +12,22 @@ interface Props {
 
 const defaultSteps: Step[] = [
   {
+    icon: "compass",
     title: "Discovery",
     text: "A free call to understand your goals, constraints and what success looks like. You leave with clarity even if we don't work together.",
   },
   {
+    icon: "file-text",
     title: "Proposal",
     text: "A clear scope, timeline and fixed or milestone-based price. No surprises, no padded hours.",
   },
   {
+    icon: "hammer",
     title: "Build & ship",
     text: "I build in focused iterations with regular demos, so you see progress and steer early — not at the end.",
   },
   {
+    icon: "life-buoy",
     title: "Support",
     text: "Launch, monitoring and ongoing care. Systems need upkeep; I keep yours running and improving.",
   },
@@ -29,10 +36,13 @@ const defaultSteps: Step[] = [
 const { steps = defaultSteps } = Astro.props;
 ---
 
-<ol class="steps">
+<ol class="steps" data-reveal>
   {steps.map((step, i) => (
     <li class="step" data-reveal data-delay={String(i + 1)}>
-      <span class="step-num">{String(i + 1).padStart(2, "0")}</span>
+      <span class="step-top">
+        <span class="step-icon"><Icon name={`lucide:${step.icon}`} /></span>
+        <span class="step-num">{String(i + 1).padStart(2, "0")}</span>
+      </span>
       <h3 class="step-title">{step.title}</h3>
       <p class="step-text">{step.text}</p>
     </li>
@@ -63,21 +73,48 @@ const { steps = defaultSteps } = Astro.props;
     box-shadow: var(--shadow-lift);
     border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
   }
-  /* connecting progress line across the row (desktop) */
+  /* connecting progress line across the row (desktop), draws in on reveal */
   .steps::before {
     content: "";
     position: absolute;
     display: none;
-    top: 2.6rem;
+    top: 3.1rem;
     left: 12%;
     right: 12%;
     height: 2px;
     background: linear-gradient(90deg, var(--color-accent), color-mix(in srgb, var(--color-accent) 20%, transparent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1s var(--ease-out) 0.3s;
     z-index: 0;
+  }
+  .steps.is-visible::before {
+    transform: scaleX(1);
   }
   .step > * {
     position: relative;
     z-index: 1;
+  }
+  .step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+  }
+  .step-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+    color: var(--color-accent-ink);
+    box-shadow: 0 0 0 5px var(--color-surface);
+  }
+  .step-icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
   }
   .step-num {
     font-family: var(--font-mono);

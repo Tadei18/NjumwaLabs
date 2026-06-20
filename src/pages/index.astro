@@ -74,7 +74,7 @@ const description =
   </section>
 
   <!-- Services overview -->
-  <section class="section">
+  <section class="section bg-dots">
     <div class="container-x">
       <SectionHeading
         eyebrow="What I do"
@@ -85,9 +85,22 @@ const description =
         {pillars.map((p, i) => (
           <ServiceCard pillar={p} index={i} />
         ))}
-        <a href="/services/" class="service-all card" data-reveal>
-          <span>See how they fit together</span>
-          <Icon name="lucide:arrow-right" />
+        <a href="/services/" class="service-all card-gradient card-hover" data-reveal>
+          <svg class="sa-nodes" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+            <line x1="60" y1="60" x2="60" y2="22" stroke="currentColor" stroke-width="1.5" />
+            <line x1="60" y1="60" x2="94" y2="44" stroke="currentColor" stroke-width="1.5" />
+            <line x1="60" y1="60" x2="84" y2="96" stroke="currentColor" stroke-width="1.5" />
+            <line x1="60" y1="60" x2="30" y2="92" stroke="currentColor" stroke-width="1.5" />
+            <line x1="60" y1="60" x2="24" y2="40" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="60" cy="22" r="6" fill="currentColor" />
+            <circle cx="94" cy="44" r="6" fill="currentColor" />
+            <circle cx="84" cy="96" r="6" fill="currentColor" />
+            <circle cx="30" cy="92" r="6" fill="currentColor" />
+            <circle cx="24" cy="40" r="6" fill="currentColor" />
+            <circle cx="60" cy="60" r="9" fill="#0a1322" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span class="sa-label">See how they fit together</span>
+          <span class="sa-arrow">Explore the system <Icon name="lucide:arrow-right" /></span>
         </a>
       </div>
     </div>
@@ -212,7 +225,7 @@ const description =
   </section>
 
   <!-- Testimonials -->
-  <section class="section">
+  <section class="section bg-dots">
     <div class="container-x">
       <SectionHeading
         eyebrow="In their words"
@@ -272,25 +285,45 @@ const description =
     gap: 1.25rem;
   }
   .service-all {
+    position: relative;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.4rem;
     padding: 1.6rem;
-    background: var(--color-night);
-    color: #fff;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.1rem;
-    transition: transform 0.22s var(--ease-out);
+    min-height: 14rem;
   }
-  .service-all:hover {
-    transform: translateY(-4px);
-  }
-  .service-all svg {
-    width: 1.4rem;
-    height: 1.4rem;
+  .sa-nodes {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 6.5rem;
+    height: 6.5rem;
     color: var(--color-accent);
+    opacity: 0.8;
+  }
+  .sa-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    max-width: 12ch;
+  }
+  .sa-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-accent);
+  }
+  .sa-arrow svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .service-all:hover .sa-arrow svg {
+    transform: translateX(4px);
   }
 
   .why {

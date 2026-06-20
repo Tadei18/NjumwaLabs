@@ -201,6 +201,21 @@ cross-page fades. Because of this, interactive component scripts re-init on the
 **Every motion has a `prefers-reduced-motion` fallback** (content appears in its final
 state). Test with the OS reduced-motion setting before shipping motion changes.
 
+### Visual richness (Phase 2.1)
+
+- **Card variants** (in `global.css`): `card` (default), `card-hover` (lift), `card-dark`,
+  `card-gradient`, `card-accent` (set `--pillar` inline). Mix them so grids aren't uniform.
+- **Section textures**: `bg-dots`, `bg-grid`, `bg-wash` — low-opacity texture utilities for
+  otherwise-flat light sections.
+- **Per-service illustrations**: `src/components/ServiceIllustration.astro` — one animated
+  duotone SVG per pillar (indigo + the pillar's accent), used on service cards. Each pillar's
+  accent hex lives in `src/data/services.ts` (`accent`).
+- **Case-study covers**: `src/components/CaseCover.astro` renders a rich illustrative mockup
+  per category (wallet / latency dashboard / ERP dashboard / browser) with the headline metric
+  overlaid — or a **real screenshot** if you set the `cover` field in the case-study frontmatter.
+- **About headshot**: drop a real photo at `public/images/crispus-njumwa.jpg`; it replaces the
+  "CN" monogram automatically (the `<img>` self-removes on 404, so no broken image).
+
 ### Credentials
 
 `src/components/CredentialsBand.astro` renders the verified Microsoft certifications

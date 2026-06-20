@@ -179,6 +179,97 @@
     box-shadow: var(--shadow-soft);
   }
 
+  /* ---- Card variant system (Phase 2.1) ---- */
+  /* Reusable lift-on-hover for any .card. */
+  .card-hover {
+    transition:
+      transform 0.22s var(--ease-out),
+      box-shadow 0.22s var(--ease-out),
+      border-color 0.22s var(--ease-out);
+  }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
+  }
+
+  /* Deep-indigo feature card with inner glow. */
+  .card-dark {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--color-night);
+    border: 1px solid var(--color-night-line);
+    border-radius: var(--radius-card);
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .card-dark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      80% 60% at 80% 0%,
+      color-mix(in srgb, var(--color-accent) 22%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  /* Restrained indigo→accent gradient "hero" card. */
+  .card-gradient {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid var(--color-night-line);
+    border-radius: var(--radius-card);
+    color: #fff;
+    background: linear-gradient(150deg, var(--color-night) 35%, var(--color-accent-ink));
+  }
+  .card-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      70% 80% at 100% 100%,
+      color-mix(in srgb, var(--color-accent-2) 30%, transparent),
+      transparent 65%
+    );
+    pointer-events: none;
+  }
+
+  /* White card with a pillar-colour left accent (set --pillar inline). */
+  .card-accent {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--pillar, var(--color-accent));
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* ---- Section texture utilities ---- */
+  .bg-dots {
+    background-image: radial-gradient(var(--color-line) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--color-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent);
+    mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent);
+  }
+  .bg-wash {
+    background-image: linear-gradient(180deg, var(--color-surface-2), transparent 60%);
+  }
+  /* dot texture for dark sections */
+  .section-dark.bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
   .link-underline {
     background-image: linear-gradient(var(--color-accent), var(--color-accent));
     background-size: 0% 2px;

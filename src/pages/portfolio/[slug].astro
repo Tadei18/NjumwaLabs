@@ -1,8 +1,8 @@
 ---
-import { Image } from "astro:assets";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Prose from "@components/Prose.astro";
+import CaseCover from "@components/CaseCover.astro";
 import CTASection from "@components/CTASection.astro";
 import { Icon } from "astro-icon/components";
 import { pillarBySlug } from "@data/services";
@@ -55,15 +55,15 @@ const schemas = [
         </dl>
       </header>
 
-      {data.cover && (
-        <Image
-          src={data.cover}
-          alt={data.coverAlt ?? data.title}
-          width={1100}
-          height={620}
-          class="case-cover"
+      <div class="case-cover" data-reveal>
+        <CaseCover
+          pillar={data.pillar}
+          title={data.title}
+          metric={data.metrics[0]}
+          cover={data.cover}
+          coverAlt={data.coverAlt}
         />
-      )}
+      </div>
 
       {data.metrics.length > 0 && (
         <div class="case-metrics" data-reveal>
@@ -161,10 +161,17 @@ const schemas = [
 
   .case-cover {
     width: 100%;
-    height: auto;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
     border-radius: var(--radius-card);
     margin: 2.5rem 0 0;
     border: 1px solid var(--color-line);
+  }
+  .case-cover :global(.cc),
+  .case-cover :global(.cc-svg),
+  .case-cover :global(.cc-img) {
+    width: 100%;
+    height: 100%;
   }
 
   .case-metrics {

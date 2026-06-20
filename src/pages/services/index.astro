@@ -14,28 +14,34 @@ const engagements = [
     title: "One-off project",
     text: "A defined build — a site, app, automation or migration — with a fixed scope, timeline and price.",
     best: "Best when you know what you need built.",
+    featured: false,
   },
   {
     icon: "repeat",
     title: "Managed retainer",
     text: "Ongoing care and improvement — monitoring, fixes, new features and managed DBA — month to month.",
     best: "Best for live systems that need upkeep.",
+    featured: false,
   },
   {
     icon: "compass",
     title: "Consulting",
     text: "Specialist advisory and technical work, including D365 F&O, architecture reviews and incident response.",
     best: "Best when you need expertise, not a full build.",
+    featured: true,
   },
 ];
 
 const guide = [
-  { need: "I need to get found and convert visitors", go: "Web development", href: "/services/web-development/" },
-  { need: "I'm drowning in repetitive work or slow lead follow-up", go: "AI automation", href: "/services/ai-automation/" },
-  { need: "I want an app my customers can use on their phones", go: "Mobile apps", href: "/services/mobile-apps/" },
-  { need: "My app/reports are slow or my data feels risky", go: "Database administration", href: "/services/database-administration/" },
-  { need: "My Dynamics 365 ERP needs customizing or integrating", go: "Dynamics 365 F&O", href: "/services/dynamics-365-finance-operations/" },
-];
+  { need: "I need to get found and convert visitors", slug: "web-development" },
+  { need: "I'm drowning in repetitive work or slow lead follow-up", slug: "ai-automation" },
+  { need: "I want an app my customers can use on their phones", slug: "mobile-apps" },
+  { need: "My app or reports are slow, or my data feels risky", slug: "database-administration" },
+  { need: "My Dynamics 365 ERP needs customizing or integrating", slug: "dynamics-365-finance-operations" },
+].map((g) => {
+  const p = pillars.find((x) => x.slug === g.slug)!;
+  return { ...g, go: p.short, href: p.href, icon: p.icon, accent: p.accent };
+});
 ---
 
 <BaseLayout
@@ -70,11 +76,13 @@ const guide = [
     <div class="container-x">
       <SectionHeading eyebrow="Not sure where to start?" title="Which service do I need?" align="center" />
       <ul class="guide-list">
-        {guide.map((g) => (
-          <li class="guide-item" data-reveal>
-            <span class="guide-need">"{g.need}"</span>
-            <Icon name="lucide:arrow-right" class="guide-arrow" />
-            <a href={g.href} class="guide-go link-underline">{g.go}</a>
+        {guide.map((g, i) => (
+          <li data-reveal data-delay={String((i % 3) + 1)}>
+            <a href={g.href} class="guide-item" style={`--pillar:${g.accent}`}>
+              <span class="guide-icon"><Icon name={`lucide:${g.icon}`} /></span>
+              <span class="guide-need">"{g.need}"</span>
+              <span class="guide-go">{g.go} <Icon name="lucide:arrow-right" /></span>
+            </a>
           </li>
         ))}
       </ul>
@@ -90,9 +98,14 @@ const guide = [
         text="Whether you need one thing built, an ongoing partner, or specialist advice, there's a model that fits."
       />
       <div class="eng-grid">
-        {engagements.map((e) => (
-          <div class="eng-card card" data-reveal>
-            <span class="eng-icon"><Icon name={`lucide:${e.icon}`} /></span>
+        {engagements.map((e, i) => (
+          <div
+            class:list={["eng-card", "card-hover", e.featured ? "card-gradient" : "card"]}
+            data-reveal
+            data-delay={String(i + 1)}
+          >
+            {e.featured && <span class="eng-badge">Most flexible</span>}
+            <span class:list={["eng-icon", { feat: e.featured }]}><Icon name={`lucide:${e.icon}`} /></span>
             <h3 class="eng-title">{e.title}</h3>
             <p class="eng-text">{e.text}</p>
             <p class="eng-best">{e.best}</p>
@@ -162,23 +175,53 @@ const guide = [
     padding: 1.1rem 1.4rem;
     background: var(--color-surface);
     border: 1px solid var(--color-line);
+    border-left: 3px solid var(--pillar);
     border-radius: 14px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+  }
+  .guide-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-lift);
+  }
+  .guide-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--pillar) 14%, transparent);
+    color: var(--pillar);
+  }
+  .guide-icon svg {
+    width: 1.3rem;
+    height: 1.3rem;
   }
   .guide-need {
     flex: 1;
-    min-width: 14rem;
+    min-width: 12rem;
     color: var(--color-ink-soft);
     font-style: italic;
   }
-  .guide-arrow {
-    width: 1.1rem;
-    height: 1.1rem;
-    color: var(--color-accent);
-  }
   .guide-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     font-family: var(--font-display);
     font-weight: 600;
-    color: var(--color-accent-ink);
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+  .guide-go svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--pillar);
+    transition: transform 0.2s var(--ease-out);
+  }
+  .guide-item:hover .guide-go svg {
+    transform: translateX(4px);
   }
 
   .eng-grid {
@@ -187,7 +230,22 @@ const guide = [
     gap: 1.25rem;
   }
   .eng-card {
+    position: relative;
     padding: 1.75rem;
+  }
+  .eng-badge {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.22rem 0.55rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: #03222a;
+    font-weight: 600;
   }
   .eng-icon {
     display: inline-flex;
@@ -199,6 +257,10 @@ const guide = [
     background: color-mix(in srgb, var(--color-accent) 12%, transparent);
     color: var(--color-accent-ink);
     margin-bottom: 1rem;
+  }
+  .eng-icon.feat {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--color-accent);
   }
   .eng-icon svg {
     width: 1.5rem;
@@ -217,6 +279,12 @@ const guide = [
     font-family: var(--font-mono);
     font-size: 0.82rem;
     color: var(--color-accent-ink);
+  }
+  .card-gradient .eng-text {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .card-gradient .eng-best {
+    color: var(--color-accent);
   }
 
   @media (min-width: 640px) {

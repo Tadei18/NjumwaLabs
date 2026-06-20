@@ -1,0 +1,140 @@
+---
+import { Image } from "astro:assets";
+import { pillarBySlug } from "@data/services";
+
+// Rich illustrative case-study cover per category (viewBox 320x200, 16:10).
+// Renders a real screenshot when `cover` is supplied, else a bespoke duotone
+// mockup. The headline metric is overlaid large where it suits the motif.
+interface Props {
+  pillar: string;
+  title: string;
+  metric?: { value: string; label: string };
+  cover?: ImageMetadata;
+  coverAlt?: string;
+}
+const { pillar, title, metric, cover, coverAlt } = Astro.props;
+const a = pillarBySlug(pillar)?.accent ?? "#0FB5C4";
+const id = pillar;
+---
+
+{cover ? (
+  <Image src={cover} alt={coverAlt ?? title} width={640} height={400} class="cc-img" />
+) : (
+  <div class="cc" style={`--a:${a}`}>
+    <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="cc-svg" role="img" aria-label={`Illustration for ${title}`}>
+      <defs>
+        <linearGradient id={`cc-${id}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0c1426" />
+          <stop offset="1" stop-color="#111d35" />
+        </linearGradient>
+      </defs>
+      <rect width="320" height="200" fill={`url(#cc-${id})`} />
+      <g opacity="0.5" stroke="rgba(255,255,255,.05)">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <line x1={(i + 1) * 40} y1="0" x2={(i + 1) * 40} y2="200" />
+        ))}
+        {Array.from({ length: 4 }).map((_, i) => (
+          <line x1="0" y1={(i + 1) * 40} x2="320" y2={(i + 1) * 40} />
+        ))}
+      </g>
+
+      {pillar === "mobile-apps" && (
+        <g>
+          <rect x="196" y="34" width="86" height="150" rx="14" fill="#0a1322" stroke="rgba(255,255,255,.14)" />
+          <rect x="226" y="42" width="26" height="5" rx="2.5" fill="rgba(255,255,255,.2)" />
+          <rect x="206" y="58" width="66" height="44" rx="9" fill="var(--a)" />
+          <text x="216" y="80" font-family="monospace" font-size="9" fill="#06121a" opacity=".8">BALANCE</text>
+          <text x="216" y="95" font-family="monospace" font-size="15" font-weight="700" fill="#06121a">$1,240</text>
+          <rect x="206" y="110" width="66" height="18" rx="5" fill="rgba(255,255,255,.08)" />
+          <circle cx="216" cy="119" r="4" fill="var(--a)" />
+          <rect x="226" y="116" width="38" height="5" rx="2.5" fill="rgba(255,255,255,.3)" />
+          <rect x="206" y="134" width="66" height="18" rx="5" fill="rgba(255,255,255,.08)" />
+          <circle cx="216" cy="143" r="4" fill="var(--a)" />
+          <rect x="226" y="140" width="30" height="5" rx="2.5" fill="rgba(255,255,255,.3)" />
+          <rect x="206" y="160" width="66" height="14" rx="7" fill="var(--a)" opacity=".85" />
+        </g>
+      )}
+
+      {pillar === "database-administration" && (
+        <g>
+          <rect x="150" y="40" width="140" height="120" rx="10" fill="#0a1322" stroke="rgba(255,255,255,.1)" />
+          <text x="164" y="62" font-family="monospace" font-size="9" fill="rgba(255,255,255,.5)">QUERY LATENCY</text>
+          <polyline points="164,72 188,76 210,96 234,128 258,144 276,148" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2" />
+          <polyline points="164,140 188,138 210,120 234,96 258,84 276,80" fill="none" stroke="var(--a)" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="276" cy="80" r="3.5" fill="var(--a)" />
+          <g class="d-cyl">
+            <ellipse cx="58" cy="64" rx="26" ry="8" fill="#101d33" stroke="var(--a)" stroke-width="1.4" />
+            <path d="M32 64 v60 a26 8 0 0 0 52 0 v-60" fill="#0a1322" stroke="var(--a)" stroke-width="1.4" />
+            <ellipse cx="58" cy="64" rx="26" ry="8" fill="#0c1730" stroke="var(--a)" stroke-width="1.4" />
+            <ellipse cx="58" cy="94" rx="26" ry="8" fill="none" stroke="rgba(255,255,255,.12)" />
+          </g>
+        </g>
+      )}
+
+      {pillar === "dynamics-365-finance-operations" && (
+        <g>
+          <rect x="26" y="40" width="120" height="18" rx="4" fill="#101d33" stroke="var(--a)" stroke-width="1.2" />
+          <rect x="26" y="64" width="120" height="18" rx="4" fill="#101d33" stroke="rgba(255,255,255,.12)" />
+          <rect x="26" y="88" width="120" height="18" rx="4" fill="#101d33" stroke="rgba(255,255,255,.12)" />
+          <rect x="26" y="112" width="120" height="18" rx="4" fill="#101d33" stroke="rgba(255,255,255,.12)" />
+          <circle cx="36" cy="49" r="3" fill="var(--a)" />
+          <circle cx="36" cy="73" r="3" fill="rgba(255,255,255,.4)" />
+          <circle cx="36" cy="97" r="3" fill="rgba(255,255,255,.4)" />
+          <circle cx="36" cy="121" r="3" fill="rgba(255,255,255,.4)" />
+          <rect x="46" y="45" width="60" height="6" rx="3" fill="rgba(255,255,255,.3)" />
+          <rect x="46" y="69" width="50" height="6" rx="3" fill="rgba(255,255,255,.18)" />
+          <rect x="46" y="93" width="56" height="6" rx="3" fill="rgba(255,255,255,.18)" />
+          <rect x="46" y="117" width="44" height="6" rx="3" fill="rgba(255,255,255,.18)" />
+          <g>
+            <rect x="186" y="120" width="16" height="40" rx="3" fill="rgba(255,255,255,.2)" />
+            <rect x="210" y="100" width="16" height="60" rx="3" fill="rgba(255,255,255,.28)" />
+            <rect x="234" y="74" width="16" height="86" rx="3" fill="var(--a)" />
+            <rect x="258" y="92" width="16" height="68" rx="3" fill="rgba(255,255,255,.28)" />
+            <line x1="180" y1="160" x2="282" y2="160" stroke="rgba(255,255,255,.18)" stroke-width="1.4" />
+          </g>
+        </g>
+      )}
+
+      {(pillar === "web-development" || pillar === "ai-automation") && (
+        <g>
+          <rect x="40" y="44" width="240" height="116" rx="10" fill="#0a1322" stroke="rgba(255,255,255,.1)" />
+          <rect x="40" y="44" width="240" height="20" rx="10" fill="#101d33" />
+          <circle cx="54" cy="54" r="3" fill="var(--a)" />
+          <circle cx="64" cy="54" r="3" fill="rgba(255,255,255,.25)" />
+          <rect x="56" y="80" width="92" height="10" rx="4" fill="var(--a)" />
+          <rect x="56" y="98" width="150" height="6" rx="3" fill="rgba(255,255,255,.22)" />
+          <rect x="56" y="110" width="130" height="6" rx="3" fill="rgba(255,255,255,.16)" />
+          <rect x="56" y="128" width="60" height="16" rx="8" fill="var(--a)" opacity=".85" />
+          <rect x="190" y="80" width="74" height="64" rx="8" fill="rgba(255,255,255,.06)" />
+        </g>
+      )}
+
+      {metric && (
+        <g>
+          <rect x="14" y="158" width="128" height="30" rx="8" fill="rgba(10,19,34,.74)" />
+          <text x="26" y="170" font-family="monospace" font-size="6.5" letter-spacing="1" fill="rgba(255,255,255,.55)">{metric.label.toUpperCase()}</text>
+          <text x="26" y="184" font-family="monospace" font-size="16" font-weight="700" fill="var(--a)">{metric.value}</text>
+        </g>
+      )}
+    </svg>
+  </div>
+)}
+
+<style>
+  .cc,
+  .cc-svg,
+  .cc-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .cc-svg,
+  .cc-img {
+    object-fit: cover;
+  }
+  .d-cyl {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.4s var(--ease-out);
+  }
+</style>

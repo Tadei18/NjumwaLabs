@@ -1,6 +1,6 @@
 ---
-import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
+import CaseCover from "@components/CaseCover.astro";
 import { pillarBySlug } from "@data/services";
 
 interface Props {
@@ -25,13 +25,7 @@ const p = pillarBySlug(pillar);
       <span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span>
     </span>
     <div class="cs-media">
-      {cover ? (
-        <Image src={cover} alt={coverAlt ?? title} width={640} height={400} class="cs-img" />
-      ) : (
-        <div class="cs-placeholder" aria-hidden="true">
-          {p && <Icon name={`lucide:${p.icon}`} />}
-        </div>
-      )}
+      <CaseCover pillar={pillar} title={title} metric={metrics[0]} cover={cover} coverAlt={coverAlt} />
       {p && <span class="cs-tag">{p.short}</span>}
     </div>
   </div>

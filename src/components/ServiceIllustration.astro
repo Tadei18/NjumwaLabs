@@ -1,0 +1,197 @@
+---
+// On-brand duotone spot illustrations, one per service pillar. Indigo base +
+// per-pillar accent. Subtle ambient motion; richer on hover. Replaces the
+// lone line-icon-in-a-tile. viewBox 160x108.
+import { pillarBySlug } from "@data/services";
+
+interface Props {
+  slug: string;
+  /** Override accent (defaults to the pillar accent). */
+  accent?: string;
+  class?: string;
+}
+const { slug, accent, class: className = "" } = Astro.props;
+const pillar = pillarBySlug(slug);
+const a = accent ?? pillar?.accent ?? "#0FB5C4";
+---
+
+<div class:list={["illus", `illus-${slug}`, className]} style={`--a:${a}`} aria-hidden="true">
+  <svg viewBox="0 0 160 108" fill="none" xmlns="http://www.w3.org/2000/svg" class="illus-svg">
+    <defs>
+      <linearGradient id={`g-${slug}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#16223e" />
+        <stop offset="1" stop-color="#0d1526" />
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="160" height="108" rx="14" fill={`url(#g-${slug})`} />
+
+    {slug === "web-development" && (
+      <g>
+        <rect x="24" y="22" width="112" height="68" rx="8" fill="#0a1322" stroke="rgba(255,255,255,.12)" />
+        <rect x="24" y="22" width="112" height="14" rx="7" fill="#101d33" />
+        <circle cx="33" cy="29" r="2.2" fill="var(--a)" />
+        <circle cx="41" cy="29" r="2.2" fill="rgba(255,255,255,.25)" />
+        <circle cx="49" cy="29" r="2.2" fill="rgba(255,255,255,.25)" />
+        <rect class="w-block" x="33" y="44" width="44" height="8" rx="3" fill="var(--a)" />
+        <rect x="33" y="58" width="94" height="4" rx="2" fill="rgba(255,255,255,.22)" />
+        <rect x="33" y="66" width="80" height="4" rx="2" fill="rgba(255,255,255,.16)" />
+        <rect x="95" y="44" width="32" height="22" rx="4" fill="rgba(255,255,255,.08)" />
+        <path class="w-cursor" d="M104 74 l0 16 l4.5 -4.5 l3 6 l3 -1.4 l-3 -6 l6.3 -0.5 z" fill="#fff" />
+      </g>
+    )}
+
+    {slug === "ai-automation" && (
+      <g>
+        <line class="n-edge" x1="80" y1="54" x2="44" y2="32" stroke="var(--a)" stroke-width="1.4" />
+        <line class="n-edge" x1="80" y1="54" x2="120" y2="34" stroke="var(--a)" stroke-width="1.4" />
+        <line class="n-edge" x1="80" y1="54" x2="40" y2="78" stroke="var(--a)" stroke-width="1.4" />
+        <line class="n-edge" x1="80" y1="54" x2="122" y2="80" stroke="var(--a)" stroke-width="1.4" />
+        <circle class="n-node" cx="44" cy="32" r="7" fill="#0a1322" stroke="var(--a)" stroke-width="1.6" />
+        <circle class="n-node" style="--d:.4s" cx="120" cy="34" r="7" fill="#0a1322" stroke="var(--a)" stroke-width="1.6" />
+        <circle class="n-node" style="--d:.8s" cx="40" cy="78" r="7" fill="#0a1322" stroke="var(--a)" stroke-width="1.6" />
+        <circle class="n-node" style="--d:1.2s" cx="122" cy="80" r="7" fill="#0a1322" stroke="var(--a)" stroke-width="1.6" />
+        <rect x="66" y="40" width="28" height="28" rx="9" fill="#0c1730" stroke="var(--a)" stroke-width="1.8" />
+        <circle cx="74" cy="53" r="2.4" fill="var(--a)" />
+        <circle cx="86" cy="53" r="2.4" fill="var(--a)" />
+        <path d="M74 60 h12" stroke="var(--a)" stroke-width="1.6" stroke-linecap="round" />
+        <path class="n-spark" d="M80 26 l1.6 4 l4 1.6 l-4 1.6 l-1.6 4 l-1.6 -4 l-4 -1.6 l4 -1.6 z" fill="#fff" />
+      </g>
+    )}
+
+    {slug === "mobile-apps" && (
+      <g>
+        <rect x="58" y="18" width="44" height="78" rx="9" fill="#0a1322" stroke="rgba(255,255,255,.14)" />
+        <rect x="74" y="22" width="12" height="3" rx="1.5" fill="rgba(255,255,255,.25)" />
+        <rect x="64" y="32" width="32" height="20" rx="5" fill="var(--a)" opacity="0.9" />
+        <rect x="64" y="57" width="32" height="5" rx="2.5" fill="rgba(255,255,255,.22)" />
+        <rect x="64" y="66" width="22" height="5" rx="2.5" fill="rgba(255,255,255,.16)" />
+        <rect x="64" y="80" width="32" height="9" rx="4.5" fill="rgba(255,255,255,.1)" />
+        <circle class="m-badge" cx="100" cy="24" r="9" fill="var(--a)" />
+        <text x="100" y="27.5" text-anchor="middle" font-family="monospace" font-size="9" font-weight="700" fill="#06121a">3</text>
+      </g>
+    )}
+
+    {slug === "database-administration" && (
+      <g>
+        <g class="d-stack">
+          <ellipse cx="56" cy="40" rx="22" ry="7" fill="#101d33" stroke="var(--a)" stroke-width="1.4" />
+          <path d="M34 40 v14 a22 7 0 0 0 44 0 v-14" fill="#0a1322" stroke="var(--a)" stroke-width="1.4" />
+          <path d="M34 54 v14 a22 7 0 0 0 44 0 v-14" fill="#0a1322" stroke="var(--a)" stroke-width="1.4" />
+          <ellipse cx="56" cy="40" rx="22" ry="7" fill="#0c1730" />
+          <ellipse cx="56" cy="40" rx="22" ry="7" fill="none" stroke="var(--a)" stroke-width="1.4" />
+        </g>
+        <polyline class="d-spark" points="92,74 104,62 114,68 128,44" fill="none" stroke="var(--a)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M128 44 l-7 1 M128 44 l1 7" stroke="var(--a)" stroke-width="2.2" stroke-linecap="round" />
+        <circle cx="92" cy="74" r="2.4" fill="#fff" />
+      </g>
+    )}
+
+    {slug === "dynamics-365-finance-operations" && (
+      <g>
+        <rect class="e-mod" x="22" y="30" width="50" height="14" rx="4" fill="#101d33" stroke="var(--a)" stroke-width="1.3" />
+        <rect class="e-mod" style="--d:.15s" x="28" y="48" width="50" height="14" rx="4" fill="#101d33" stroke="var(--a)" stroke-width="1.3" />
+        <rect class="e-mod" style="--d:.3s" x="34" y="66" width="50" height="14" rx="4" fill="#101d33" stroke="var(--a)" stroke-width="1.3" />
+        <circle cx="31" cy="37" r="2.4" fill="var(--a)" />
+        <circle cx="37" cy="55" r="2.4" fill="var(--a)" />
+        <circle cx="43" cy="73" r="2.4" fill="var(--a)" />
+        <g class="e-bars">
+          <rect x="100" y="66" width="9" height="18" rx="2" fill="rgba(255,255,255,.2)" />
+          <rect x="113" y="56" width="9" height="28" rx="2" fill="rgba(255,255,255,.28)" />
+          <rect x="126" y="42" width="9" height="42" rx="2" fill="var(--a)" />
+        </g>
+        <line x1="98" y1="84" x2="138" y2="84" stroke="rgba(255,255,255,.18)" stroke-width="1.4" />
+      </g>
+    )}
+  </svg>
+</div>
+
+<style>
+  .illus {
+    width: 100%;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .illus-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ambient + hover motion */
+  .w-cursor {
+    animation: cursor-move 4s var(--ease-out) infinite;
+  }
+  @keyframes cursor-move {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-6px, -8px); }
+  }
+  .w-block { transition: width 0.4s var(--ease-out); }
+  .illus:hover .w-block { width: 70px; }
+
+  .n-edge {
+    stroke-dasharray: 3 4;
+    animation: flow 3s linear infinite;
+  }
+  @keyframes flow {
+    to { stroke-dashoffset: -14; }
+  }
+  .n-node {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: node-breathe 3s var(--ease-out) infinite;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes node-breathe {
+    0%, 100% { opacity: 0.75; }
+    50% { opacity: 1; }
+  }
+  .n-spark {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: spark 3s var(--ease-out) infinite;
+  }
+  @keyframes spark {
+    0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.1) rotate(90deg); }
+  }
+
+  .m-badge {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: badge-pop 3.2s var(--ease-out) infinite;
+  }
+  @keyframes badge-pop {
+    0%, 70%, 100% { transform: scale(1); }
+    78% { transform: scale(1.18); }
+  }
+
+  .d-spark {
+    stroke-dasharray: 80;
+    stroke-dashoffset: 80;
+    animation: draw-spark 2.4s var(--ease-out) infinite;
+  }
+  @keyframes draw-spark {
+    0% { stroke-dashoffset: 80; }
+    40%, 100% { stroke-dashoffset: 0; }
+  }
+  .d-stack { transition: transform 0.4s var(--ease-out); }
+  .illus:hover .d-stack { transform: translateY(-2px); }
+
+  .e-bars rect { transform-box: fill-box; transform-origin: bottom; }
+  .illus:hover .e-bars rect { animation: grow 0.6s var(--ease-out); }
+  @keyframes grow {
+    from { transform: scaleY(0.4); }
+    to { transform: scaleY(1); }
+  }
+  .e-mod {
+    transition: transform 0.35s var(--ease-out);
+  }
+  .illus:hover .e-mod { transform: translateX(4px); }
+  .illus:hover .e-mod[style*="0.15s"], .illus:hover .e-mod[style*=".15s"] { transform: translateX(7px); }
+  .illus:hover .e-mod[style*="0.3s"], .illus:hover .e-mod[style*=".3s"] { transform: translateX(10px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .w-cursor, .n-edge, .n-node, .n-spark, .m-badge, .d-spark { animation: none; }
+    .d-spark { stroke-dashoffset: 0; }
+  }
+</style>

@@ -9,6 +9,7 @@ export type Pillar = {
   outcome: string; // one-line outcome for cards
   href: string;
   priceFrom: string; // USD "from" anchor
+  accent: string; // per-pillar accent hex (on-brand, for tints/illustrations)
 };
 
 export const pillars: Pillar[] = [
@@ -20,6 +21,7 @@ export const pillars: Pillar[] = [
     outcome: "Websites and web apps that load fast, rank well, and convert.",
     href: "/services/web-development/",
     priceFrom: "$600",
+    accent: "#0FB5C4",
   },
   {
     slug: "ai-automation",
@@ -29,6 +31,7 @@ export const pillars: Pillar[] = [
     outcome: "Put repetitive work on autopilot and turn more leads into customers.",
     href: "/services/ai-automation/",
     priceFrom: "$400",
+    accent: "#FFB020",
   },
   {
     slug: "mobile-apps",
@@ -38,6 +41,7 @@ export const pillars: Pillar[] = [
     outcome: "iOS and Android apps from a single, cost-efficient codebase.",
     href: "/services/mobile-apps/",
     priceFrom: "$1,500",
+    accent: "#14C7A8",
   },
   {
     slug: "database-administration",
@@ -47,6 +51,7 @@ export const pillars: Pillar[] = [
     outcome: "Faster, safer, always-available databases.",
     href: "/services/database-administration/",
     priceFrom: "$300",
+    accent: "#3D7DFF",
   },
   {
     slug: "dynamics-365-finance-operations",
@@ -56,6 +61,7 @@ export const pillars: Pillar[] = [
     outcome: "Microsoft-certified D365 Finance & Operations technical consulting.",
     href: "/services/dynamics-365-finance-operations/",
     priceFrom: "$45/hr",
+    accent: "#8A6BFF",
   },
 ];
 

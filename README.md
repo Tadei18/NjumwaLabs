@@ -128,6 +128,34 @@ featured: true               # show on home page
 ## The result
 ```
 
+#### Client case studies — two things still outstanding
+
+Five real client case studies were added under the **web-development** pillar:
+`mtalii-bush-camps`, `gts-risk-advisory`, `edge-tech-gurus`, `essay-writing-edge`,
+`elite-life-health`. Two items need the owner before they're finished:
+
+**1. Covers are pending real screenshots.** Every one of the five renders the
+illustrative `CaseCover` fallback, and because all five share the same pillar the
+fallback art is *identical across them* — the grid visibly repeats. Capture a
+homepage/hero screenshot of each live site (~1280×800), save it colocated beside
+the MDX file, then uncomment the `cover` / `coverAlt` lines already in each
+frontmatter. `CaseCover` picks the real image up automatically and sizes it
+(640×400), so CLS is unaffected.
+
+**2. Metrics are scope figures, not results.** No verified performance or business
+numbers were available, so rather than invent them each entry carries honest
+*scope* metrics describing what was built ("12+ African markets covered",
+"5 service types, one flow") — the same pattern as the real D365 case study.
+Replace or supplement them with real numbers when you have them:
+
+- Run PageSpeed Insights / Lighthouse on each live site and use the actual score,
+  e.g. `{ value: "98", label: "Lighthouse performance" }`.
+- Or real business figures the client has shared — enquiries, load time, organic
+  traffic.
+
+Never guess a figure here. An unverifiable number on a public portfolio is worth
+less than an empty results band, and costs more if a prospect checks it.
+
 ### A service offering
 Edit `src/data/pillarContent.ts` — add to the relevant pillar's `offerings`,
 `benefits`, or `faqs` arrays. To add a whole new pillar, also update

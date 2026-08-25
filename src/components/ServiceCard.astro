@@ -75,7 +75,9 @@ const { pillar, index } = Astro.props;
     font-family: var(--font-mono);
     font-weight: 600;
     font-size: 0.82rem;
-    color: var(--pillar);
+    /* Raw pillar accents (amber especially) fail WCAG AA as text on
+       their own tint — darken toward ink before using as a text colour. */
+    color: color-mix(in srgb, var(--pillar, var(--color-accent)) 45%, var(--color-ink));
     background: rgba(10, 19, 34, 0.55);
     padding: 0.15rem 0.45rem;
     border-radius: 6px;

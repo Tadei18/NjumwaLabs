@@ -35,10 +35,10 @@ const { heading = "Tools and platforms I build with", items = defaultItems, marq
   {heading && <p class="logo-heading">{heading}</p>}
 
   {marquee ? (
-    <div class="marquee" role="list" aria-label="Tools and platforms">
-      <ul class="marquee-track logo-row">
+    <div class="marquee">
+      <ul class="marquee-track logo-row" aria-label="Tools and platforms">
         {items.map((item) => (
-          <li class="logo-item" role="listitem">{item}</li>
+          <li class="logo-item">{item}</li>
         ))}
       </ul>
       <ul class="marquee-track logo-row" aria-hidden="true">

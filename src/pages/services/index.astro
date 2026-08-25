@@ -164,7 +164,9 @@ const guide = [
     flex-shrink: 0;
     border-radius: 10px;
     background: color-mix(in srgb, var(--pillar) 14%, transparent);
-    color: var(--pillar);
+    /* Raw pillar accents (amber especially) fail WCAG AA as text on
+       their own tint — darken toward ink before using as a text colour. */
+    color: color-mix(in srgb, var(--pillar, var(--color-accent)) 45%, var(--color-ink));
   }
   .guide-icon svg {
     width: 1.3rem;
@@ -188,7 +190,9 @@ const guide = [
   .guide-go svg {
     width: 1.05rem;
     height: 1.05rem;
-    color: var(--pillar);
+    /* Raw pillar accents (amber especially) fail WCAG AA as text on
+       their own tint — darken toward ink before using as a text colour. */
+    color: color-mix(in srgb, var(--pillar, var(--color-accent)) 45%, var(--color-ink));
     transition: transform 0.2s var(--ease-out);
   }
   .guide-item:hover .guide-go svg {

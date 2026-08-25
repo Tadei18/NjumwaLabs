@@ -28,12 +28,28 @@ Tagline: Automation and efficiency brought closer.
 - Portfolio / case studies: https://njumwalabs.com/portfolio/
 - About: https://njumwalabs.com/about/
 - Blog / insights: https://njumwalabs.com/blog/
-- Comparisons (Flutter vs React Native, PostgreSQL vs MongoDB, headless vs WordPress, Power Apps vs custom): https://njumwalabs.com/compare/
+- Comparisons (Flutter vs React Native, PostgreSQL vs MongoDB, headless vs WordPress, Power Apps vs custom, Copilot Studio vs Power Automate vs custom code): https://njumwalabs.com/compare/
 - Cost guides (mobile app, website, D365 customization): https://njumwalabs.com/cost/
 - Free tools (automation ROI calculator, app cost estimator): https://njumwalabs.com/tools/
-- Glossary (X++, Chain of Command, DMF, RAG, query optimization, Core Web Vitals…): https://njumwalabs.com/glossary/
+- Glossary (X++, Chain of Command, DMF, RAG, Copilot Studio, autonomous agent, agentic AI, MCP, generative orchestration, Copilot sidecar…): https://njumwalabs.com/glossary/
 - Industries (insurance ERP, AI automation for real estate): https://njumwalabs.com/industries/
 - Contact & booking: https://njumwalabs.com/contact/
+
+## Dynamics 365 & Copilot content cluster
+
+In-depth, source-verified guides on Dynamics 365 Finance & Operations, Microsoft Copilot and building agents with Copilot Studio. Written by Crispus (Microsoft-certified, Solution Architect Expert x3) and grounded in current Microsoft documentation; each article states whether a feature is generally available, in preview or planned.
+
+- Copilot in Dynamics 365 Finance & Operations: what it actually does — the sidecar, embedded AI summaries and agents; how Copilot is built on Copilot Studio and Azure-hosted LLMs via Dataverse. https://njumwalabs.com/blog/copilot-dynamics-365-finance-operations/
+- How to enable Copilot in Dynamics 365 Finance & Operations — Power Platform Integration in Lifecycle Services, required Dynamics 365 apps, the "Publish bots with AI features" tenant setting, Bing Search and cross-region data movement, and a troubleshooting order for when the Copilot button doesn't appear. https://njumwalabs.com/blog/enable-copilot-dynamics-365-finance-operations/
+- From Copilot chat to AI agents: the 2026 agentic shift in Dynamics 365 — the Dynamics 365 ERP MCP server, agent identities and security roles, agent management, what's GA vs production-ready preview, and how agents are billed. https://njumwalabs.com/blog/dynamics-365-ai-agents-2026-agentic-shift/
+- What is Microsoft Copilot Studio? A plain-English guide for businesses — agents, topics, knowledge, tools, triggers, generative orchestration, channels, and usage-based Copilot Credits pricing. https://njumwalabs.com/blog/what-is-copilot-studio/
+- How to build your first agent in Copilot Studio (step by step) — prerequisites and licensing, creating an agent from a description or template, knowledge, tools, testing and publishing. https://njumwalabs.com/blog/build-first-agent-copilot-studio/
+- Autonomous agents in Copilot Studio: triggers, tools and guardrails — event triggers, instruction writing, guardrails, the "agent reasons, flow executes" pattern, and a safe rollout sequence. https://njumwalabs.com/blog/autonomous-agents-copilot-studio/
+- How to keep up with Dynamics 365 and Copilot updates (without drowning) — release waves vs service updates, the One Version cadence, early access and previews, the Message Center, and building a Microsoft Learn MCP documentation agent. https://njumwalabs.com/blog/keep-up-dynamics-365-copilot-updates/
+- Comparison: Copilot Studio vs Power Automate vs custom code — reasoning vs rules vs control, cost models and a verdict. https://njumwalabs.com/compare/copilot-studio-vs-power-automate-vs-custom-code/
+- Definitions: https://njumwalabs.com/glossary/copilot-studio/ , https://njumwalabs.com/glossary/autonomous-agent/ , https://njumwalabs.com/glossary/agentic-ai/ , https://njumwalabs.com/glossary/model-context-protocol/ , https://njumwalabs.com/glossary/generative-orchestration/ , https://njumwalabs.com/glossary/copilot-sidecar/
+
+Note: these articles track fast-moving Microsoft features and are reviewed each release wave. Always confirm current availability, prerequisites and licensing against Microsoft Learn for your own tenant.
 
 ## Pricing summary
 

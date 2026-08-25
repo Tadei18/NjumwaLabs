@@ -1,0 +1,146 @@
+---
+title: "From Copilot chat to AI agents: the 2026 agentic shift in Dynamics 365"
+description: "Dynamics 365 is moving from a chat assistant to agents that operate the ERP. What's actually GA, what's preview, what it costs — and what finance teams should do about it."
+pubDate: 2026-08-25
+updatedDate: 2026-08-25
+category: "dynamics-365-finance-operations"
+tags: ["ai agents", "dynamics 365", "agentic erp", "copilot", "mcp", "d365 finance operations"]
+featured: false
+draft: false
+author: "Crispus Martin Njumwa"
+takeaways:
+  - "The shift isn't better chat — it's agents that hold their own identity, security role and audit trail inside the ERP."
+  - "The technical hinge is the Dynamics 365 ERP MCP server: it lets an agent read data, drive forms and invoke business logic, all scoped by security role."
+  - "Microsoft ships finance and operations agents today — reconciliation, procurement, expense, time, approvals — but several carry a <em>production ready preview</em> label."
+  - "Agents are billed per deployed agent from Copilot Studio credits. Run out of credits and agents can be temporarily deactivated."
+  - "The old static ERP MCP server is being retired on 1 October 2026 — if anyone on your team built against it, that's a dated migration task."
+faqs:
+  - q: "What's the difference between Copilot and an AI agent in Dynamics 365?"
+    a: "Copilot is prompted — a user asks, it answers or drafts. An agent has a goal and a trigger: it reacts to an event, decides what to do, and takes actions in the system without someone typing each request. In F&O this is a concrete distinction, not marketing: agents get their own agent user identity, their own security roles, and their own activity log in Dataverse."
+  - q: "Is agentic ERP actually generally available, or still preview?"
+    a: "It's mixed, and the labels matter. The Dynamics 365 ERP MCP server is documented as a shipping capability with version prerequisites. Agent management in F&O, Immersive Home and the Account Reconciliation Agent are documented as production ready preview. Building an agent with the ERP MCP server is also flagged production ready preview. Check the label on the specific feature you're relying on, not the category."
+  - q: "How are agents licensed and billed?"
+    a: "Agents run on Copilot Studio credits, set up through Billing in the Power Platform admin center. Microsoft's documentation states your organisation is billed for each deployed agent, and that if allocated credits are exhausted, agents might be temporarily deactivated. For MCP tool calls, agents built in Copilot Studio bill at a fixed Agent Action rate; agents built on other clients are charged 0.1 Copilot Credits per tool call plus that client's own token costs."
+  - q: "Do agents need a Dynamics 365 user licence?"
+    a: "Currently no, per Microsoft's documentation — agent identities are exempt from F&O user licence requirements when assigned the System agent security role, which grants no permissions and exists purely for that exemption. You still assign real security roles alongside it to give the agent the access it needs. Humans interacting with a chat-based agent still need their own app licence."
+  - q: "Can an agent do anything a user can do?"
+    a: "Nearly, but strictly within its security role. The MCP server's dynamic context is filtered by the agent's assigned role — menu items, entities and actions it can't access simply aren't returned, and explicit calls to them are rejected. There are also documented exclusions: system administration forms like feature management, user management and security configuration are off limits to the MCP server entirely."
+  - q: "What should a finance team do first?"
+    a: "Pick one high-volume, rules-shaped, checkable process — account reconciliation is the usual answer — and pilot a single agent on it in a sandbox. Assign it a tight security role, watch the agent activity log, and compare its output against your existing manual result for a full period before you widen scope."
+---
+
+import Definition from "../../components/Definition.astro";
+import StatCallout from "../../components/StatCallout.astro";
+import RelatedContent from "../../components/RelatedContent.astro";
+
+**The short answer:** Dynamics 365 is moving from an assistant you prompt to agents that act. The change that makes it real isn't a better chat box — it's that agents now get their own identity, their own security role, their own activity log, and a documented protocol (MCP) for reading ERP data, driving forms and invoking business logic. Several of the flagship pieces are labelled *production ready preview* rather than generally available, and they consume credits per deployed agent. Real, then — but real with a meter attached and a preview label on parts of it.
+
+I want to be careful here, because "agentic ERP" is currently the most over-claimed phrase in the Microsoft ecosystem. So this piece separates three things that usually get blurred together: what actually shipped, what's in preview, and what's still a roadmap slide.
+
+## How we got here: three phases in three years
+
+It's worth naming the phases, because they explain why people's mental model of Copilot is often two years out of date.
+
+**Phase one — the help panel.** Copilot arrived in F&O as a chat sidecar grounded in Microsoft's public documentation. Genuinely useful, but its job was answering "how do I do this?" from Microsoft Learn, not touching your data. Plenty of people formed their entire opinion of Copilot here and never revisited it.
+
+**Phase two — live data and summaries.** AI moved into the pages themselves: workflow history summaries, collections coordinator summaries, customer page summaries, purchase order change analysis in Supply Chain Management. Now the AI was reading your records — but a human still had to be sitting there, looking at the page.
+
+**Phase three — agents.** This is where we are. Microsoft now ships agents for finance and operations — Account Reconciliation, Procurement (supplier communications), Expense, Time, Approvals — deployed through an agent deployment wizard in the Power Platform admin center. Alongside them, agent management inside F&O gives users a place to discover, configure and monitor them, and an activity log records what they did.
+
+The philosophical break happens at phase three. In phases one and two, AI was a feature *of* the ERP. In phase three, the agent is a participant *in* the ERP, with an identity and a permission set — which is a governance question long before it's an AI question.
+
+## What actually makes agents possible: MCP
+
+<Definition term="the Dynamics 365 ERP MCP server">
+Model Context Protocol (MCP) is an open standard for connecting AI agents to data systems. Microsoft's **Dynamics 365 ERP MCP** server exposes finance and operations apps to agents through three families of tools: *data tools* for create/read/update/delete over data entities, *form tools* that let an agent open forms, set values and select actions the way a user would, and *action tools* that invoke X++ classes exposed as AI tools. Microsoft's stated goal is that developers can build agents performing nearly any function available to a user through the application interface, without custom code, connectors or APIs.
+</Definition>
+
+That's a bigger deal than it first sounds, and here's why: the form tools mean an agent isn't limited to whatever integration surface someone remembered to build. If a human can click a button on a form and trigger business logic, an agent can reach it too.
+
+The obvious follow-up question — "so an agent can do anything?" — has a reassuring answer. The MCP server updates the context it gives the agent on every tool call, filtered by the agent's security role. Menu items the role can't access aren't returned. Form view models contain only fields and actions that role can see. Calls to anything outside that are rejected. If you assign an agent the Purchasing Agent role, that's the ERP it perceives — not a redacted view of a bigger one.
+
+Microsoft also excludes system administration forms outright: feature management, user management, security configuration, separation-of-duties configuration and privileged access control are all documented as unavailable through the MCP server. An agent can do the work; it can't quietly grant itself more of it.
+
+<StatCallout
+  value="1 October 2026"
+  label="Retirement date for the older 'static' Dynamics 365 ERP MCP server (13 fixed tools). Anything built against it needs migrating to the dynamic server before then."
+  source="Microsoft Learn — Use Model Context Protocol for finance and operations apps"
+  sourceUrl="https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/copilot/copilot-mcp"
+/>
+
+If your team piloted an ERP agent in 2025, that date is a real item for your backlog, not a footnote. The static server had 13 fixed tools built on the Dataverse connector framework; the dynamic server is a different design, and moving isn't a config toggle.
+
+## GA, preview, or planned? Read the label
+
+This is the part I'd want a client to take away above everything else, because it's where business cases go wrong.
+
+**Shipping, with prerequisites:**
+- The Dynamics 365 ERP MCP server, requiring F&O 10.0.47 or later (or 10.0.46 PQU-2, or 10.0.45 PQU-7), a Tier 2+ or Unified Developer Environment, and your agent platform listed on the *Allowed MCP Clients* page. Notably, it's *not* supported on cloud-hosted environments.
+- The agent deployment wizard in Copilot Hub, for Microsoft-provided agents.
+- The everyday Copilot features: generative help, workflow history summary, the Finance and Supply Chain summaries.
+
+**Production ready preview** (a real step beyond experimental, but not a GA commitment):
+- Agent management in F&O.
+- Immersive Home — which is a prerequisite for agent management, so this preview label sits underneath your agent plans whether or not you noticed.
+- The Account Reconciliation Agent.
+- Building an agent with the Dynamics 365 ERP MCP server.
+
+**Preview:**
+- Chat with finance and operations data, which is what most people actually mean when they ask for "an agent that answers questions about our ERP".
+
+**Planned:** anything you read in a release plan. Microsoft's own disclaimer on those plans says it directly — release plans describe functionality that may not have been released yet, and timelines and projected functionality may change or may not ship. Dynamics 365 2026 release wave 1 covers April through September 2026; wave 2 covers October through March. A feature in a wave plan is an intention, not an inventory.
+
+None of this means "wait." It means: when someone in your organisation says "Microsoft has agents that do X", the useful next question is *which label is on X, and in which wave?*
+
+## What it costs, and the failure mode nobody plans for
+
+Agents consume Copilot Studio credits, configured through **Billing → Licenses → Copilot Studio** in the Power Platform admin center, with credits assigned to the environment.
+
+Two facts from Microsoft's documentation that belong in your business case, not in a surprise email later:
+
+- **You're billed for each deployed agent.** Deploying five agents "to see which sticks" is a spend decision.
+- **If your organisation exhausts its allocated credits, agents might be temporarily deactivated.** Think that through for a reconciliation agent during period end. Credit exhaustion is not a billing inconvenience; it's an unplanned process outage in the week you can least afford one.
+
+The MCP billing model is also worth understanding before you choose a platform, because it quietly favours one path. Agents built in Copilot Studio bill MCP tool calls as an *Agent Action* at a fixed rate, with the LLM orchestration cost included. Agents built on other clients — Microsoft Foundry, or a non-Microsoft platform — incur 0.1 Copilot Credits per tool call *plus* whatever that client charges for tokens. Premium licences (D365 Finance Premium, Supply Chain Management Premium) are exempt from the tool-execution charge for non-Copilot Studio clients.
+
+On licensing, there's a genuinely welcome piece of news: agent identities are currently exempt from F&O user licence requirements when assigned the **System agent** security role. That role deliberately grants nothing — no duties, no privileges — and exists purely for the licensing exemption. You then assign real security roles alongside it for the access the agent actually needs. Don't add permissions to System agent itself; that's not what it's for.
+
+## What this means for a finance team
+
+Strip away the platform detail and three things change in how a finance function works.
+
+**Reconciliation stops being an event.** The Account Reconciliation Agent's premise is that subledger-to-general-ledger reconciliation becomes proactive instead of a period-end pile-up — differences surfaced as they arise, with proposed resolutions. Microsoft's own release plan language describes evolving it from guided automation toward a fuller reconciliation orchestrator. That's an ambition, not a shipped state, but the direction is clear.
+
+**Approvals become supervision.** Expense, time and approvals agents shift a large class of routine decisions from "someone opens the queue" to "someone reviews what was decided." Immersive Home is Microsoft's attempt at the interface for that: a landing page organised around work items and agent activity rather than static workspaces.
+
+**Audit gets a new object to worry about.** Every agent action lands in the **Copilot for Finance and Operations Agent Activity** Dataverse entity, retained 90 days by default and adjustable. Your auditors will eventually ask who approved the agent's scope, who can change its instructions, and how you'd prove what it did in March. Better to have answers before they ask.
+
+And a limitation to be honest about: administrative oversight is still maturing. Microsoft lists no extensibility for agent management in the current version, and no direct UI-based override for individual user actions — administrators cancel agent actions by finding and deleting the associated batch jobs. That works. It is not yet a governance console, and if you're in a regulated industry you should plan compensating controls rather than assume the platform provides them.
+
+## The pragmatic path
+
+What I actually recommend to clients, in order:
+
+1. **Get your version current.** MCP needs 10.0.47+ (or the specified quality updates); agent management needs 10.0.44+. If you're behind, the agent conversation is premature — [staying current](/blog/keep-up-dynamics-365-copilot-updates/) is the prerequisite for all of it.
+2. **Enable the free layer properly first.** Generative help, workflow history summaries, the Finance summaries. No credits, immediate value, and it teaches your users that AI in the ERP is normal. If you haven't, [here's how to enable Copilot in F&O](/blog/enable-copilot-dynamics-365-finance-operations/).
+3. **Pilot exactly one agent.** Account reconciliation, in a sandbox, with a deliberately tight security role. Run it in parallel with your manual process for a full period and compare.
+4. **Decide your build platform deliberately.** If you're building custom agents, the MCP billing difference between Copilot Studio and other clients is a real cost input — and Copilot Studio is the lower-friction path for most finance teams. If you're weighing that choice, I've written a [plain-English guide to Copilot Studio](/blog/what-is-copilot-studio/) and a comparison of [Copilot Studio vs Power Automate vs custom code](/compare/copilot-studio-vs-power-automate-vs-custom-code/).
+5. **Write the governance down before you scale.** Who owns each agent, what role it holds, who may change its instructions, how you review the activity log. Ten agents without this is a problem you'll be unwinding for a year.
+
+<RelatedContent
+  title="Go deeper"
+  links={[
+    { label: "Dynamics 365 Finance & Operations consulting", href: "/services/dynamics-365-finance-operations/", kind: "service" },
+    { label: "Copilot in D365 F&O: what it actually does", href: "/blog/copilot-dynamics-365-finance-operations/", kind: "post" },
+    { label: "Autonomous agents in Copilot Studio", href: "/blog/autonomous-agents-copilot-studio/", kind: "post" },
+    { label: "Model Context Protocol (MCP) — definition", href: "/glossary/model-context-protocol/", kind: "glossary" },
+  ]}
+/>
+
+## Working out what's real for your business
+
+The gap between "Microsoft announced it" and "you can run it in production next quarter" is where most of the wasted money in this space lives. If you want a Microsoft-certified consultant to look at your version, licences and processes and tell you which agents are actually within reach — and which are a 2027 conversation — that's exactly the kind of assessment I do.
+
+See [Dynamics 365 Finance & Operations](/services/dynamics-365-finance-operations/) or [book a free call](/contact/).
+
+*Verified against Microsoft's documentation in August 2026. Agent capabilities, preview labels and billing rates change every release wave — confirm current status before committing budget.*

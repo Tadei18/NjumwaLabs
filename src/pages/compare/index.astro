@@ -9,7 +9,7 @@ import { breadcrumbSchema } from "@/lib/schema";
 
 <BaseLayout
   title="Tech comparisons — make the right build decision"
-  description="Clear, practical comparisons to help you choose the right technology: Flutter vs React Native, PostgreSQL vs MongoDB, headless vs WordPress, Power Apps vs custom — with comparison tables and verdicts."
+  description="Clear, practical comparisons to help you choose the right technology: Flutter vs React Native, PostgreSQL vs MongoDB, headless vs WordPress, Power Apps vs custom, Copilot Studio vs Power Automate vs custom code — with comparison tables and verdicts."
   schemas={[breadcrumbSchema([{ name: "Home", url: "/" }, { name: "Compare", url: "/compare/" }])]}
 >
   <section class="c-hero">
@@ -33,6 +33,12 @@ import { breadcrumbSchema } from "@/lib/schema";
               <span class="c-opt">{c.a}</span>
               <span class="c-vs-label">vs</span>
               <span class="c-opt">{c.b}</span>
+              {c.c && (
+                <Fragment>
+                  <span class="c-vs-label">vs</span>
+                  <span class="c-opt">{c.c}</span>
+                </Fragment>
+              )}
             </div>
             <p class="c-card-sub">{c.h1}</p>
             <span class="c-cta">Compare <Icon name="lucide:arrow-right" /></span>

@@ -131,6 +131,84 @@ export const glossary: Term[] = [
     related: "web-development",
     category: "Web",
   },
+  {
+    slug: "copilot-studio",
+    term: "Microsoft Copilot Studio",
+    short:
+      "Microsoft Copilot Studio is a low-code platform for building, managing and publishing AI agents that answer questions, use your business data and take actions.",
+    body: [
+      "Microsoft Copilot Studio is Microsoft's platform for building and managing AI agents. You describe what you want the agent to do in plain English, connect the knowledge it should answer from, add the tools it may use, test it in a panel beside the editor, and publish it to channels such as Microsoft Teams, Microsoft 365 Copilot, SharePoint, Power Pages or your own website.",
+      "Agents built in Copilot Studio range from simple prompt-and-response assistants to fully autonomous agents that react to events without anyone prompting them. The core building blocks are instructions (the agent's role and boundaries), knowledge sources, tools, topics (scripted conversation paths) and triggers. It runs on the Power Platform and needs a Dataverse environment, and it bills by usage in Copilot Credits.",
+      "Copilot Studio is also the orchestration layer beneath Microsoft's own products — Copilot in Dynamics 365 Finance & Operations, for example, is bound to a Copilot Studio agent that decides which tools to invoke for each prompt.",
+    ],
+    related: "ai-automation",
+    category: "AI & automation",
+  },
+  {
+    slug: "autonomous-agent",
+    term: "Autonomous agent",
+    short:
+      "An autonomous agent is an AI agent that acts without being prompted — an event fires, and it decides what to do and does it within the guardrails you set.",
+    body: [
+      "An autonomous agent perceives events, makes decisions and executes tasks independently, rather than waiting for someone to type a request. It's defined by three things: triggers (what wakes it up — a schedule, a new email, a changed record), instructions (what it should do and why), and guardrails (what it must never do).",
+      "The difference from ordinary automation is judgement. A rule-based automation follows a path someone drew in advance; an autonomous agent is given a goal and works out its own route, including for cases nobody scripted. In practice the most reliable designs split the work — the agent reasons and decides, while a deterministic flow performs the mechanical execution.",
+      "Because an autonomous agent acts when nobody is watching, the security decisions matter more than the AI ones: validate that triggers are authentic, scope the agent's permissions tightly, keep humans in the loop for consequential actions, and log everything it does.",
+    ],
+    related: "ai-automation",
+    category: "AI & automation",
+  },
+  {
+    slug: "agentic-ai",
+    term: "Agentic AI",
+    short:
+      "Agentic AI describes AI systems that pursue goals by taking actions in real systems — planning, using tools and adapting — rather than only generating text.",
+    body: [
+      "Agentic AI is the shift from AI that produces output to AI that produces outcomes. Instead of answering a question and stopping, an agentic system is given a goal, a set of tools and a set of boundaries, then plans a sequence of steps, calls the tools, checks the results and adapts.",
+      "In a business context that usually means an AI system with its own identity and permissions inside your software — able to read records, invoke business logic and complete a task, with its actions recorded for audit. Microsoft's Dynamics 365 agents follow exactly this pattern: each runs under a dedicated agent user identity with its own security roles and an activity log.",
+      "The practical implication is that agentic AI is a governance question as much as a technology one. Once software can act on your behalf, the important decisions are what it's allowed to do, who owns it, and how you would prove what it did.",
+    ],
+    related: "ai-automation",
+    category: "AI & automation",
+  },
+  {
+    slug: "model-context-protocol",
+    term: "Model Context Protocol (MCP)",
+    short:
+      "MCP is an open standard that connects AI agents to data systems and business logic through a common interface, instead of bespoke APIs for every integration.",
+    body: [
+      "The Model Context Protocol (MCP) is an open standard for how AI agents get context from, and take actions in, other systems. Rather than building a custom integration for each agent and each application, an application exposes an MCP server, and any compatible agent platform can connect to it.",
+      "For businesses the practical benefit is reuse and consistency: the same agent can work across systems, the same system can serve many agents, and data access, permissions and auditability follow one pattern rather than a dozen. Microsoft's Dynamics 365 ERP MCP server, for example, lets agents read and write data, drive application forms and invoke business logic — with everything scoped by the agent's security role, so it only ever sees what its role allows.",
+      "MCP servers can be added as tools inside Microsoft Copilot Studio, which is how an agent gains a whole application's capabilities in a single connection.",
+    ],
+    related: "ai-automation",
+    category: "AI & automation",
+  },
+  {
+    slug: "generative-orchestration",
+    term: "Generative orchestration",
+    short:
+      "Generative orchestration is an AI planning layer that interprets a request, breaks it into steps, and chooses which tools and knowledge to use to fulfil it.",
+    body: [
+      "Generative orchestration is the large-language-model-driven planning layer in Microsoft Copilot Studio. It interprets what a user actually wants, decomposes complex or multi-part requests, selects the right tools, topics, knowledge sources or other agents, and executes a multi-step plan with guardrails for safety and compliance.",
+      "It's the difference between an agent that matches your message to a pre-written conversation path and one that composes its own route. With generative orchestration enabled, an agent can handle a request that combines several intents, and can respond autonomously to events rather than only to typed messages.",
+      "It isn't always on by default. In Dynamics 365 Finance & Operations, for instance, generative orchestration is supported for the Copilot agent but disabled unless an administrator turns it on — typically when the agent has been extended with new capabilities that need it.",
+    ],
+    related: "ai-automation",
+    category: "AI & automation",
+  },
+  {
+    slug: "copilot-sidecar",
+    term: "Copilot sidecar (D365)",
+    short:
+      "The Copilot sidecar is the chat pane that opens beside a Dynamics 365 Finance & Operations page, giving users a natural-language assistant in context.",
+    body: [
+      "In Dynamics 365 Finance & Operations, the *sidecar* is the pane that opens on the right-hand side of a page when a user selects the Copilot button. Microsoft describes it as the primary Copilot interface in finance and operations apps: a natural-language conversation that runs alongside your work rather than a separate place you navigate to.",
+      "Behind it sits a Copilot Studio agent named 'Copilot for finance and operations apps', deployed into the Dataverse environment linked to the F&O environment through Power Platform Integration. When a user types a prompt, Copilot Studio interprets the intent, decides which tools or topics to invoke, runs them, and returns an answer in plain language.",
+      "Out of the box the sidecar's generative help and guidance feature is grounded in Microsoft's public documentation rather than your own records — it searches the learn.microsoft.com domain and composes an answer with citations. Administrators can extend it with custom knowledge sources in Copilot Studio so it can also answer from your own documents and data.",
+    ],
+    related: "dynamics-365-finance-operations",
+    category: "Dynamics 365",
+  },
 ];
 
 export const glossaryBySlug = (slug: string) => glossary.find((t) => t.slug === slug);

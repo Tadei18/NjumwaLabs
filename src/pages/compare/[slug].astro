@@ -19,6 +19,8 @@ const { slug } = Astro.params;
 const c = comparisonBySlug(slug!)!;
 const pillar = c.related ? pillarBySlug(c.related) : undefined;
 const url = `/compare/${c.slug}/`;
+// Two- or three-way: `c.c` is only set on three-way comparisons.
+const vsLabel = [c.a, c.b, c.c].filter(Boolean).join(" vs ");
 
 const related: RelatedLink[] = [
   ...(pillar ? [{ label: pillar.title, href: pillar.href, kind: "service" as const }] : []),
@@ -29,7 +31,7 @@ const schemas = [
   breadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Compare", url: "/compare/" },
-    { name: `${c.a} vs ${c.b}`, url },
+    { name: vsLabel, url },
   ]),
   faqSchema(c.faqs),
 ];
@@ -38,21 +40,22 @@ const schemas = [
 <BaseLayout title={c.metaTitle} description={c.metaDescription} schemas={schemas}>
   <article class="cmp">
     <div class="container-x">
-      <Breadcrumbs items={[{ name: "Compare", url: "/compare/" }, { name: `${c.a} vs ${c.b}`, url }]} />
+      <Breadcrumbs items={[{ name: "Compare", url: "/compare/" }, { name: vsLabel, url }]} />
       <span class="cmp-eyebrow">Comparison</span>
       <h1 class="cmp-title" data-reveal>{c.h1}</h1>
       <p class="cmp-intro" data-reveal>{c.intro}</p>
 
       <KeyTakeaways items={c.takeaways} />
 
-      <h2 class="cmp-h2">{c.a} vs {c.b}, at a glance</h2>
+      <h2 class="cmp-h2">{vsLabel}, at a glance</h2>
       <div class="table-wrap" data-reveal>
-        <table class="cmp-table">
+        <table class:list={["cmp-table", { "cmp-table-3": c.c }]}>
           <thead>
             <tr>
               <th>Feature</th>
               <th>{c.a}</th>
               <th>{c.b}</th>
+              {c.c && <th>{c.c}</th>}
             </tr>
           </thead>
           <tbody>
@@ -61,6 +64,7 @@ const schemas = [
                 <th scope="row">{r.feature}</th>
                 <td>{r.a}</td>
                 <td>{r.b}</td>
+                {c.c && <td>{r.c}</td>}
               </tr>
             ))}
           </tbody>
@@ -145,6 +149,10 @@ const schemas = [
   }
   .cmp-table thead th:nth-child(2) {
     color: var(--color-accent-ink);
+  }
+  /* Three-way comparisons need more room before the wrapper scrolls. */
+  .cmp-table-3 {
+    min-width: 46rem;
   }
   .cmp-table tbody th {
     font-weight: 600;

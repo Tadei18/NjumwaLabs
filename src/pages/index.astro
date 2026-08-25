@@ -5,7 +5,7 @@ import SectionHeading from "@components/SectionHeading.astro";
 import ServiceCard from "@components/ServiceCard.astro";
 import BenefitBlock from "@components/BenefitBlock.astro";
 import ProcessSteps from "@components/ProcessSteps.astro";
-import Testimonial from "@components/Testimonial.astro";
+import ClientBand from "@components/ClientBand.astro";
 import CaseStudyCard from "@components/CaseStudyCard.astro";
 import CredentialsBand from "@components/CredentialsBand.astro";
 import LogoCloud from "@components/LogoCloud.astro";
@@ -13,7 +13,7 @@ import Stat from "@components/Stat.astro";
 import CTASection from "@components/CTASection.astro";
 import { Icon } from "astro-icon/components";
 import { pillars } from "@data/services";
-import { testimonials } from "@data/testimonials";
+import { showcaseClientSlugs } from "@data/clients";
 import { getCollection } from "astro:content";
 import { reviewsSchema } from "@/lib/schema";
 
@@ -22,6 +22,20 @@ const homeSchemas = [reviewsSchema()].filter(Boolean) as Record<string, unknown>
 const featured = (await getCollection("portfolio", ({ data }) => !data.draft && data.featured))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
   .slice(0, 3);
+
+// Real, named clients for the client band. Names and industries come from the
+// case studies themselves, so there's one source of truth; `showcaseClientSlugs`
+// only curates which ones appear and in what order.
+const portfolio = await getCollection("portfolio", ({ data }) => !data.draft);
+const clients = showcaseClientSlugs
+  .map((slug) => portfolio.find((p) => p.id === slug))
+  .filter((p) => p !== undefined)
+  .map((p) => ({
+    name: p.data.client,
+    industry: p.data.industry,
+    href: `/portfolio/${p.id}/`,
+    pillar: p.data.pillar,
+  }));
 
 const why = [
   {
@@ -228,22 +242,22 @@ const description =
     </div>
   </section>
 
-  <!-- Testimonials -->
-  <section class="section bg-dots">
-    <div class="container-x">
-      <SectionHeading
-        eyebrow="In their words"
-        title="What working together feels like."
-        align="center"
-      />
-      <div class="testimonials-grid">
-        {testimonials.slice(0, 3).map((t) => (
-          <Testimonial testimonial={t} />
-        ))}
+  <!-- Clients. Real named brands, not testimonials: naming who the work was
+       for is verifiable, inventing what they said about it is not. Real quotes
+       replace this only when clients actually give them. -->
+  {clients.length > 0 && (
+    <section class="section bg-dots">
+      <div class="container-x">
+        <SectionHeading
+          eyebrow="Selected clients"
+          title="Brands I've built for."
+          text="Live sites and platforms delivered end to end — each one links through to what was built and why."
+          align="center"
+        />
+        <ClientBand clients={clients} />
       </div>
-      <p class="placeholder-note">Placeholder testimonials — real client quotes land here as projects wrap.</p>
-    </div>
-  </section>
+    </section>
+  )}
 
   <!-- Pricing teaser -->
   <section class="section pricing-teaser">
@@ -481,19 +495,6 @@ const description =
     background: var(--color-surface-2);
   }
 
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-  .placeholder-note {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.82rem;
-    color: var(--color-muted);
-    font-style: italic;
-  }
-
   .teaser-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -529,8 +530,7 @@ const description =
     }
     .services-grid,
     .why-grid,
-    .work-grid,
-    .testimonials-grid {
+    .work-grid {
       grid-template-columns: repeat(2, 1fr);
     }
     .teaser-grid {
@@ -539,8 +539,7 @@ const description =
   }
   @media (min-width: 980px) {
     .services-grid,
-    .work-grid,
-    .testimonials-grid {
+    .work-grid {
       grid-template-columns: repeat(3, 1fr);
     }
     .why-grid {

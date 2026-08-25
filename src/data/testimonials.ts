@@ -1,6 +1,20 @@
 // PLACEHOLDER testimonials — structured for easy real-data drop-in + Review schema.
-// Replace `quote`, `name`, `role`, `company` with real, attributable testimonials
-// before launch. Set `placeholder: false` once real to enable Review schema output.
+//
+// These are NOT shown on the site. The home page shows a real client band
+// instead (src/components/ClientBand.astro), because naming a client you
+// genuinely worked for is verifiable while inventing what they said is not.
+//
+// To go live with testimonials:
+//   1. Get the quote from the client, in writing, with permission to publish.
+//   2. Replace `quote`, `name`, `role`, `company` with their real words.
+//   3. Set `placeholder: false` — that is what enables Review/AggregateRating
+//      schema output in src/lib/schema.ts.
+//
+// Do NOT put a real company's name on a quote they did not give. A fabricated
+// review attributed to an identifiable business is a false endorsement, it is
+// the kind of thing Google's review policies and consumer-protection rules
+// exist to catch, and structured Review markup makes the claim machine-readable
+// — which is exactly the wrong thing to be confidently wrong about.
 
 export type Testimonial = {
   quote: string;

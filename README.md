@@ -70,7 +70,12 @@ Never commit `.env`. On Netlify/Cloudflare/Vercel, set these in the dashboard.
 4. **Add a favicon.ico / apple-touch-icon** if you want broader device coverage
    (an SVG favicon + maskable icon are already wired up).
 5. **Replace placeholder content:**
-   - Testimonials in `src/data/testimonials.ts` (set `placeholder: false` once real).
+   - Testimonials in `src/data/testimonials.ts` are **not rendered anywhere**. The
+     home page shows a real client band instead (`src/components/ClientBand.astro`,
+     curated by `src/data/clients.ts`). Naming a client you genuinely worked for is
+     verifiable; inventing what they said about you is not — never attach a quote
+     to a real company that didn't give it. When you have written, cleared quotes,
+     drop them in and set `placeholder: false` to enable Review schema.
    - **`insurance-d365-go-live.mdx` is a REAL case study but anonymized — confirm with the
      owner whether the client can be named, and that it's cleared for publication (NDA).**
    - The other case studies in `src/content/portfolio/` are realistic placeholders.

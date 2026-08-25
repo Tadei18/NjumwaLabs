@@ -1,0 +1,123 @@
+---
+import { Icon } from "astro-icon/components";
+import { pillarBySlug } from "@data/services";
+
+// A band of real, named clients — brand name, industry and a link through to
+// the case study. This is deliberately NOT a testimonial: it states who the
+// work was for, which is verifiable, rather than putting words in a real
+// company's mouth.
+export interface ClientEntry {
+  name: string;
+  industry: string;
+  href: string;
+  pillar: string;
+}
+interface Props {
+  clients: ClientEntry[];
+}
+const { clients } = Astro.props;
+---
+
+<ul class="client-band">
+  {clients.map((c, i) => {
+    const accent = pillarBySlug(c.pillar)?.accent ?? "#0FB5C4";
+    return (
+      <li data-reveal data-delay={Math.min(i + 1, 5)}>
+        <a href={c.href} class="client card card-hover glass-rim" style={`--pillar:${accent}`}>
+          <span class="client-mark" aria-hidden="true">{c.name.charAt(0)}</span>
+          <span class="client-body">
+            <span class="client-name">{c.name}</span>
+            <span class="client-industry">{c.industry}</span>
+          </span>
+          <span class="client-cta">
+            Case study
+            <Icon name="lucide:arrow-up-right" />
+          </span>
+        </a>
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .client-band {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .client {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.9rem;
+    height: 100%;
+    padding: 1.15rem 1.25rem;
+  }
+  .client-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: color-mix(in srgb, var(--pillar) 45%, var(--color-ink));
+    background: color-mix(in srgb, var(--pillar) 14%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  .client-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .client-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+  .client-industry {
+    margin-top: 0.15rem;
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    line-height: 1.35;
+  }
+  .client-cta {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--pillar) 45%, var(--color-ink));
+  }
+  .client-cta svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .client:hover .client-cta svg {
+    transform: translate(2px, -2px);
+  }
+
+  @media (min-width: 640px) {
+    .client-band {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .client-band {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

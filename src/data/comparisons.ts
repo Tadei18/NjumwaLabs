@@ -1,9 +1,12 @@
 // Evergreen comparison hub pages. Each has a real comparison table + a verdict.
-export type Row = { feature: string; a: string; b: string };
+// `c` is optional: supply it (on the comparison and on every row) for a
+// three-way comparison; omit it and the page renders as a two-column table.
+export type Row = { feature: string; a: string; b: string; c?: string };
 export type Comparison = {
   slug: string;
   a: string;
   b: string;
+  c?: string;
   metaTitle: string;
   metaDescription: string;
   h1: string;
@@ -172,6 +175,114 @@ export const comparisons: Comparison[] = [
     ],
     related: "ai-automation",
     relatedPosts: [],
+  },
+  {
+    slug: "copilot-studio-vs-power-automate-vs-custom-code",
+    a: "Copilot Studio",
+    b: "Power Automate",
+    c: "Custom code",
+    metaTitle: "Copilot Studio vs Power Automate vs custom code: which to use?",
+    metaDescription:
+      "Copilot Studio vs Power Automate vs custom code compared — reasoning vs rules, cost model, governance, and a clear verdict on which to use for each kind of automation.",
+    h1: "Copilot Studio vs Power Automate vs custom code",
+    intro:
+      "Use Power Automate when the process is a rule you can write down — same input, same output, every time. Use Copilot Studio when the work needs judgement or natural language: interpreting a request, deciding what to do, drafting a reply. Use custom code when you need control the platforms don't give you — a bespoke interface, unusual performance requirements, or economics that break under per-use pricing. Most real solutions combine two of the three: the agent reasons, a flow executes.",
+    takeaways: [
+      "Power Automate → deterministic, rule-based steps. Same input, same output, cheapest per run.",
+      "Copilot Studio → language and judgement: interpreting requests, deciding next steps, conversing.",
+      "Custom code → bespoke UX, unusual scale or performance, or when usage-based pricing stops making sense.",
+      "The winning pattern is usually a combination: the agent decides, a deterministic flow executes.",
+    ],
+    rows: [
+      {
+        feature: "Best at",
+        a: "Language, judgement, conversation",
+        b: "Rule-based, repeatable steps",
+        c: "Anything — at the cost of building it",
+      },
+      {
+        feature: "Predictability",
+        a: "Reasoned — varies by context",
+        b: "Deterministic by design",
+        c: "Exactly what you wrote",
+      },
+      {
+        feature: "Who builds it",
+        a: "Business users + makers (low-code)",
+        b: "Business users + makers (low-code)",
+        c: "Developers",
+      },
+      {
+        feature: "Time to first version",
+        a: "Hours",
+        b: "Hours",
+        c: "Weeks",
+      },
+      {
+        feature: "Cost model",
+        a: "Usage-based (Copilot Credits)",
+        b: "Per-user or per-flow licensing",
+        c: "Build cost + your own hosting",
+      },
+      {
+        feature: "Handles unanticipated input",
+        a: "Yes — that's the point",
+        b: "No — it follows the path",
+        c: "Only if you coded for it",
+      },
+      {
+        feature: "Governance out of the box",
+        a: "Power Platform (DLP, environments, admin center)",
+        b: "Power Platform (DLP, environments, admin center)",
+        c: "You build it",
+      },
+      {
+        feature: "Microsoft 365 / Dataverse fit",
+        a: "Native",
+        b: "Native",
+        c: "Via APIs you integrate",
+      },
+      {
+        feature: "Typical use",
+        a: "Support agent, ERP assistant, triage, lead qualification",
+        b: "Approvals, notifications, data sync, scheduled jobs",
+        c: "Customer-facing products, high-volume pipelines",
+      },
+    ],
+    verdict: [
+      "If you can write the process down as a flowchart with no judgement calls in it, use Power Automate. It's cheaper, faster to build, and gives the same result every time — and reliability is worth more than intelligence for a process that doesn't need any.",
+      "If the work involves reading something written by a human, deciding what it means, or replying in natural language, that's Copilot Studio. Agents cope with the request nobody anticipated, which is exactly where rule-based automation falls over.",
+      "Choose custom code when the platforms genuinely constrain you: a consumer-facing product with a bespoke interface, volumes where per-use pricing stops adding up, or logic and performance requirements the low-code tools can't express. It costs more upfront and you own it entirely — sometimes that's exactly right.",
+      "In practice the best designs combine them. Let the agent handle interpretation and decisions, and let a deterministic flow do the mechanical execution. As someone certified across the Power Platform, Azure and Dynamics 365 — and who also builds custom software — I'll recommend the mix that actually fits, not the one that sells the most licences.",
+    ],
+    faqs: [
+      {
+        q: "Is Copilot Studio replacing Power Automate?",
+        a: "No — they solve different problems and are designed to work together. Copilot Studio agents call Power Automate flows as tools, and Copilot Studio also has its own agent flows, which are deterministic and billed through Copilot Studio rather than needing a separate Power Automate licence.",
+      },
+      {
+        q: "Which is cheaper, Copilot Studio or Power Automate?",
+        a: "For a fixed, repeatable process, Power Automate is usually cheaper — its licensing is per user or per flow, and a run costs the same whatever the content. Copilot Studio bills in Copilot Credits based on the complexity of what the agent does, so cost scales with reasoning and tool use as well as volume. If the process needs no judgement, you're paying for intelligence you don't use.",
+      },
+      {
+        q: "When is custom code actually the right answer?",
+        a: "When you need a bespoke user experience, unusual performance or scale, logic the low-code platforms can't express, or when usage-based pricing at your volume exceeds the cost of building and hosting it yourself. It's also the right answer when the thing you're building is your product rather than an internal process.",
+      },
+      {
+        q: "Can I start low-code and move to custom later?",
+        a: "Yes, and it's often the sensible path. Validate the process in Copilot Studio or Power Automate where it's cheap to change your mind, then rebuild only the parts that outgrow the platform. The requirements you learn from a working low-code version make the custom build far more accurate.",
+      },
+      {
+        q: "Do I need all three?",
+        a: "Most organisations end up with two. A very common shape is Power Automate for the deterministic plumbing, Copilot Studio for the conversational and judgement-heavy work, and custom code reserved for the one or two things that are genuinely your competitive advantage.",
+      },
+    ],
+    related: "ai-automation",
+    relatedPosts: [
+      { label: "What is Microsoft Copilot Studio?", href: "/blog/what-is-copilot-studio/" },
+      { label: "Autonomous agents in Copilot Studio", href: "/blog/autonomous-agents-copilot-studio/" },
+      { label: "How to build your first agent in Copilot Studio", href: "/blog/build-first-agent-copilot-studio/" },
+    ],
   },
 ];
 

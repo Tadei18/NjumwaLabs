@@ -1,0 +1,165 @@
+---
+title: "How to keep up with Dynamics 365 and Copilot updates (without drowning)"
+description: "Release waves, service updates, preview labels and the Message Center — a practitioner's system for staying current with Dynamics 365 and Copilot in 30 minutes a month."
+pubDate: 2026-08-25
+updatedDate: 2026-08-25
+category: "dynamics-365-finance-operations"
+tags: ["dynamics 365", "release wave", "one version", "copilot", "d365 finance operations"]
+featured: false
+draft: false
+author: "Crispus Martin Njumwa"
+takeaways:
+  - "There are two different clocks. Release waves (April and October) announce features; service updates (four a year, February/April/July/October) actually change your F&O environment."
+  - "You must take at least two service updates a year and can pause only one at a time — 'we'll skip this round' isn't a strategy that scales."
+  - "Sandbox autoupdates land seven days before production. That week is your regression window; treat it as a scheduled commitment, not a surprise."
+  - "Release plans are intentions, not inventory. Microsoft's own disclaimer says features may change or may not ship — check the GA/preview label before you build a business case."
+  - "Thirty minutes a month, on a calendar invite, beats four panicked hours the week an update lands."
+faqs:
+  - q: "What's the difference between a release wave and a service update?"
+    a: "A release wave is Microsoft's twice-yearly announcement of what's coming — wave 1 covers April through September, wave 2 covers October through March. A service update is the actual change to your finance and operations environment. There are four service updates a year, with autoupdates in February, April, July and October. Waves tell you what's planned; service updates are what turn up in your system."
+  - q: "How many Dynamics 365 F&O updates can I skip?"
+    a: "Microsoft requires a minimum of two service updates per year, and you can pause only one consecutive update at a time. The pause can apply to your designated UAT sandbox, production, or both. Once the pause window ends, if you haven't self-updated to a supported version, Microsoft applies the latest update automatically based on your Lifecycle Services configuration."
+  - q: "How do I try new features before they hit production?"
+    a: "Two routes. Preview service updates are published as deployable packages in the Shared asset library in Lifecycle Services — deploy them to a development or test environment only, never production. Separately, early access for release wave features lets you validate an upcoming wave in a sandbox before it reaches production. Both exist so you find surprises on your schedule rather than Microsoft's."
+  - q: "Where do I find out what's actually changed in my version?"
+    a: "The 'What's new or changed' pages on Microsoft Learn are the definitive record, split by app — Finance, Supply Chain Management, Commerce, Human Resources — plus separate pages for platform updates and Lifecycle Services. For a specific service update, that's the page to read before you regression test, not the release plan."
+  - q: "How often do Copilot features change?"
+    a: "Faster than the rest of the ERP, and less predictably. Copilot capabilities depend on the Power Platform and Copilot Studio as well as your F&O version, so a feature can appear or change behaviour without an F&O service update. Preview labels also move. Re-check any Copilot capability you depend on at least once per release wave."
+  - q: "Can I automate keeping up with this?"
+    a: "Partly, and it's a genuinely good use of the technology. Microsoft publishes a Learn MCP Server that gives agents access to current Microsoft documentation, and Copilot Studio can connect to it as a tool — the Microsoft Learn Docs MCP connector is certified and needs no authentication. Building a small agent that answers 'what changed for D365 F&O Copilot this month' is a realistic weekend project and a good first Copilot Studio build."
+---
+
+import Definition from "../../components/Definition.astro";
+import StatCallout from "../../components/StatCallout.astro";
+import RelatedContent from "../../components/RelatedContent.astro";
+
+**The short answer:** Track two clocks, not one. **Release waves** (twice a year: April–September and October–March) tell you what Microsoft *plans* to ship. **Service updates** (four a year, with autoupdates in February, April, July and October) are what actually change your Dynamics 365 Finance & Operations environment. Follow the release plan for the first, the "what's new or changed" pages and the Message Center for the second, and give yourself thirty minutes a month on a recurring calendar invite. That's the whole system.
+
+Every D365 team I've worked with has the same background anxiety: the platform moves, and nobody's quite sure whether they're behind. It isn't a lack of information — it's the opposite. Release plans, "what's new" pages, blogs, the Message Center, preview announcements, Copilot documentation that quietly changes a label from preview to GA. Four hundred pages of truth, and no idea which twelve apply to you.
+
+So here's how I actually keep track — and where the noise is safe to ignore.
+
+## The two clocks
+
+The single most useful mental correction is separating these.
+
+### Clock one: release waves
+
+<Definition term="a Dynamics 365 release wave">
+A release wave is Microsoft's twice-yearly plan of new and updated features. **Wave 1 covers features releasing April through September; wave 2 covers October through March.** The release plan is published ahead of the wave, browsable on Microsoft Learn (updated weekly), viewable in the Release planner, and downloadable as a PDF that refreshes with each publish.
+</Definition>
+
+Release waves are the *announcement* layer. They're where you learn that an agent is coming, or that a module is being modernised. They're planning input for your roadmap.
+
+They are not a delivery guarantee, and Microsoft says so plainly. Release plans describe functionality that may not have been released yet, and delivery timelines and projected functionality may change or may not ship. Anyone building a business case on a wave-plan item is building on an intention.
+
+The habit that helps: use the **Release planner** and filter to the products you actually run. Reading the whole Dynamics 365 plan is a waste of an afternoon. Reading the twenty rows relevant to your Finance and Supply Chain footprint is twenty minutes well spent, twice a year.
+
+### Clock two: service updates
+
+This is the clock that changes your system.
+
+<StatCallout
+  value="4 per year"
+  label="Service updates for finance and operations apps, with autoupdates in February, April, July and October. A minimum of two per year is required, and only one consecutive update can be paused."
+  source="Microsoft Learn — Service update availability"
+  sourceUrl="https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/get-started/public-preview-releases"
+/>
+
+The mechanics that matter for planning:
+
+- **Each release has a preview window**, then general availability for self-update, then two autoupdate windows four weeks apart. You choose which window suits your validation cycle.
+- **Sandbox autoupdate happens seven days before the production update.** That week is your regression window. It's the most important date in the whole cycle and the one most often discovered by accident.
+- **You can pause**, but only one consecutive update, applied to your UAT sandbox, production, or both. After the pause window, Microsoft applies the latest update based on your Lifecycle Services configuration.
+- **End of service is real.** Each version has an end-of-service date after which Microsoft doesn't investigate or fix issues, and support can't take cases. Falling behind doesn't just mean missing features — it means losing support.
+
+To make this concrete: as I write in August 2026, version 10.0.48 is the current generally available release for self-update, and 10.0.49 — a major release — is in its preview window ahead of general availability in September. If you don't know which of those numbers describes your environment right now, that's the first thing to find out.
+
+**Practical move:** put your sandbox autoupdate dates for the next twelve months in a shared calendar today, each with a seven-day regression block after it. Everything else in this article is optional; this one isn't.
+
+## Where the reliable information lives
+
+Five sources. That's genuinely all you need.
+
+**1. The release plans on Microsoft Learn.** Two visits a year, filtered to your products. Once when the wave plan publishes, once mid-wave to see what actually landed.
+
+**2. The "what's new or changed" pages.** Separate pages per app — Finance, Supply Chain Management, Commerce, Human Resources — plus platform updates and Lifecycle Services. This is the definitive per-version record and the correct input to your regression testing. The release plan says what's planned; these say what shipped.
+
+**3. The Microsoft 365 Message Center.** In the admin center under **Health → Message center**. Upcoming changes, new and changed features, planned maintenance, required actions. Each admin can set preferences and opt into a weekly digest — do that, because a weekly summary email is far more sustainable than remembering to check a portal. Service health for Dynamics 365 and Power Platform lives in the Power Platform admin center.
+
+**4. The official blogs.** The [Dynamics 365 blog](https://www.microsoft.com/en-us/dynamics-365/blog/) and the [Power Platform blog](https://www.microsoft.com/en-us/power-platform/blog/). Lower signal density than the docs, but they're where the *why* gets explained — direction, intent, context that documentation doesn't carry.
+
+**5. The docs for the specific features you depend on.** This is the one people skip, and it's the highest-value habit on the list. If your business relies on generative help, or the reconciliation agent, or the ERP MCP server, put those three pages on a quarterly re-read. Preview labels move. Prerequisites change. Retirement dates appear — the older static Dynamics 365 ERP MCP server, for instance, is documented as retiring on 1 October 2026, which is exactly the kind of thing you want to learn from a doc page rather than from an outage.
+
+## Why Copilot needs its own attention
+
+Copilot and agent features don't move on the F&O clock. They sit across three moving platforms — finance and operations apps, the Power Platform, and Copilot Studio — so a capability can change without a service update touching your environment.
+
+Three specific things to re-check each wave:
+
+**Preview labels.** *Preview*, *production ready preview* and *generally available* are three different commitments. Features move between them. Anything you've built a process around should have its label re-verified, not assumed.
+
+**Prerequisites and version floors.** Copilot features carry minimum versions — agent management needs F&O 10.0.44 or later; the ERP MCP server needs 10.0.47 or later (or specified quality updates on 10.0.45/10.0.46). Those floors rise. Staying current is what keeps the AI roadmap available to you at all.
+
+**Billing and licensing.** Copilot Studio's billing currency changed from messages to Copilot Credits in September 2025; MCP tool calls bill differently depending on whether the agent runs in Copilot Studio or elsewhere. If agents are in production, licensing changes are cost changes.
+
+If you want the current state of the F&O Copilot picture, I keep [what Copilot actually does in F&O](/blog/copilot-dynamics-365-finance-operations/) and [the 2026 agentic shift](/blog/dynamics-365-ai-agents-2026-agentic-shift/) updated as things move.
+
+## The system: thirty minutes a month
+
+Here's what I'd actually put in a calendar. It's deliberately small, because a system nobody follows is worse than no system.
+
+**Monthly — 30 minutes**
+- Skim the Message Center digest. Anything flagged as requiring action goes straight into your backlog with an owner.
+- Check your environments' current versions in LCS against the release schedule. Are you where you thought you were?
+- Re-read the doc page for one feature you depend on. Rotate through them.
+
+**Per service update — half a day, four times a year**
+- Read the "what's new or changed" page for your version.
+- Run your regression suite in the sandbox during the seven-day window before production.
+- Note anything Copilot-related that changed behaviour.
+
+**Per release wave — two hours, twice a year**
+- Filter the release planner to your products.
+- Pull out the five items that would actually matter to your business.
+- For each: what's the label, which wave, what would it require of us?
+- Decide what to pilot in early access, and book it.
+
+**Annually**
+- Review agent and Copilot governance: who owns each agent, what roles they hold, what the activity logs show, what it all costs.
+
+That's it. About eight hours a year, and it replaces the two failure modes I see most: teams that ignore updates until something breaks, and teams that read everything and act on nothing.
+
+## The clever bit: build an agent that reads the docs for you
+
+Here's a genuinely good use of the technology to keep up with the technology — and, conveniently, an excellent first Copilot Studio project.
+
+Microsoft publishes a **Learn MCP Server** that gives AI agents access to current Microsoft documentation, and Copilot Studio can connect to an MCP server as a tool. The Microsoft Learn Docs MCP connector is certified and requires no authentication. There's even a dedicated Microsoft Learn article on getting started with the Learn MCP Server in Copilot Studio.
+
+So you can build a small internal agent that:
+
+- Answers "what are the current prerequisites for the D365 ERP MCP server?" from live documentation rather than from someone's memory of a blog post.
+- Runs on a weekly schedule and posts a short summary to a Teams channel.
+- Is grounded in Microsoft's actual docs, so it cites its sources and doesn't invent features.
+
+It's a couple of hours' work, it's genuinely useful, and it's the best possible way to learn the platform — you build the thing that keeps you current *on* the platform you're trying to stay current with. My walkthrough is here: [how to build your first agent in Copilot Studio](/blog/build-first-agent-copilot-studio/).
+
+One honest caveat: an agent that reads documentation is a research assistant, not a change-management process. It won't tell you your sandbox autoupdate is next Tuesday. Keep the calendar.
+
+<RelatedContent
+  title="Go deeper"
+  links={[
+    { label: "Dynamics 365 Finance & Operations consulting", href: "/services/dynamics-365-finance-operations/", kind: "service" },
+    { label: "Copilot in D365 F&O: what it actually does", href: "/blog/copilot-dynamics-365-finance-operations/", kind: "post" },
+    { label: "How to build your first agent in Copilot Studio", href: "/blog/build-first-agent-copilot-studio/", kind: "post" },
+    { label: "What a D365 F&O technical consultant does", href: "/blog/what-d365-finance-operations-consultant-does/", kind: "post" },
+  ]}
+/>
+
+## Or hand the tracking to someone else
+
+Staying current is exactly the kind of work that's important, never urgent, and therefore never done. If you'd rather have a Microsoft-certified consultant watch the release plans, flag what actually affects your environment, and handle the regression testing around each service update, that's a straightforward ongoing arrangement — and usually far cheaper than the update that catches you unprepared.
+
+See [Dynamics 365 Finance & Operations](/services/dynamics-365-finance-operations/) or [book a free call](/contact/).
+
+*Verified against Microsoft's documentation in August 2026. Release schedules and version numbers move — always confirm the current dates for your own environments in Lifecycle Services.*

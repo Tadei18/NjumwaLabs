@@ -1,0 +1,151 @@
+---
+title: "What is Microsoft Copilot Studio? A plain-English guide for businesses"
+description: "Microsoft Copilot Studio explained without the jargon — what agents are, how you build one, what it costs, where agents run, and when it's the right tool for your business."
+pubDate: 2026-08-25
+updatedDate: 2026-08-25
+category: "ai-automation"
+tags: ["copilot studio", "ai agents", "microsoft", "low-code", "automation"]
+featured: false
+draft: false
+author: "Crispus Martin Njumwa"
+takeaways:
+  - "Copilot Studio is Microsoft's low-code studio for building and managing AI agents — you describe what you want in plain English and refine from there."
+  - "Agents range from simple question-answering to fully autonomous: reacting to events and completing tasks without anyone prompting them."
+  - "Five building blocks are worth knowing: instructions, knowledge, tools, topics and triggers. Everything else is detail."
+  - "You need a Power Platform environment with Dataverse. A trial lets you build and test — but you can't publish an agent on it."
+  - "Billing is usage-based in Copilot Credits, and unused credits don't roll over month to month. Estimate volume before you commit."
+faqs:
+  - q: "Do I need to know how to code to use Copilot Studio?"
+    a: "No. Copilot Studio is a low-code, graphical experience — you can create a working agent by describing what you want it to do in your own words, then connect knowledge and tools through menus. Developers can go deeper (custom connectors, MCP servers, code-first extensions), but a capable business user can build and ship a genuinely useful agent without writing code."
+  - q: "What does Copilot Studio cost?"
+    a: "Billing is usage-based in Copilot Credits, which replaced the older per-message model in September 2025. You can buy credits pay-as-you-go, prepurchase them, or use prepaid packs — Microsoft's product page currently lists a standard pack at $200 per pack per month for 25,000 Copilot Credits, with pay-as-you-go available too. Both the pay-as-you-go and prepaid routes need an Azure subscription. Some Copilot Studio access is also included with a Microsoft 365 Copilot licence. Credits are enforced monthly and unused ones don't carry over."
+  - q: "Where do Copilot Studio agents actually run?"
+    a: "Wherever you publish them. Copilot Studio deploys agents natively to channels including Microsoft Teams, Microsoft 365 Copilot, SharePoint, Power Pages and your own website, plus mobile apps and messaging platforms. You publish once and the agent becomes available across the channels you've connected."
+  - q: "What's the difference between an agent and a chatbot?"
+    a: "A classic chatbot follows conversation paths someone scripted in advance. An agent reasons: it reads your instructions, decides which knowledge to consult and which tools to call, and works out the next step from context. In practice that means an agent handles requests nobody explicitly anticipated — and can chain several tools together to finish a task rather than just answer a question."
+  - q: "Do I need Dataverse and an Azure subscription?"
+    a: "You need a Power Platform environment with Dataverse — that's where Copilot Studio stores your agents and their configuration. An Azure subscription is required for the pay-as-you-go and prepurchase billing routes, because the billing policy is created against your Azure subscription. If you're using an included Microsoft 365 Copilot entitlement, that particular requirement doesn't apply."
+  - q: "Is Copilot Studio the same as Power Virtual Agents?"
+    a: "Copilot Studio is what Power Virtual Agents became. If you evaluated Power Virtual Agents a couple of years ago and moved on, the product you'd be looking at today is substantially different — generative orchestration, tools, autonomous triggers and multi-agent patterns are all new since then. It's worth a second look."
+---
+
+import Definition from "../../components/Definition.astro";
+import StatCallout from "../../components/StatCallout.astro";
+import RelatedContent from "../../components/RelatedContent.astro";
+
+**The short answer:** Microsoft Copilot Studio is a low-code platform for building and managing AI agents — software assistants that answer questions, follow your instructions, use your business data, and take actions in your systems. You describe what you want the agent to do in plain English, connect it to knowledge and tools, test it in a panel beside the editor, and publish it to Teams, your website, or Microsoft 365 Copilot. It runs on the Power Platform, needs Dataverse, and bills by usage in Copilot Credits.
+
+If you've heard "Copilot" used four different ways in one meeting, you're not alone. Microsoft uses the word for the assistant inside Word, the assistant inside Dynamics 365, the chat at copilot.microsoft.com, and the platform for building your own. **Copilot Studio is the last one — the workshop, not the product.**
+
+Here's what it actually is, in language a business owner can act on.
+
+## What is an agent, in Microsoft's terms?
+
+<Definition term="an agent">
+An agent is an AI assistant that handles conversations and completes tasks. It follows the instructions you give it, draws on the knowledge sources you connect, and uses tools to take action — reasoning through a request and deciding the best next step based on its instructions and context.
+</Definition>
+
+The word doing the heavy lifting is *reasoning*. A traditional chatbot follows a decision tree somebody drew: if the customer says X, reply Y. An agent is given a job description, some reference material and a toolbox, and works out its own route. That's why agents cope with the question nobody anticipated, and old-style chatbots so reliably didn't.
+
+Agents in Copilot Studio sit on a spectrum:
+
+- **Question-answering.** Point it at your documentation, policies or website and it answers customer or staff questions in natural language, with citations.
+- **Task-completing.** Give it tools and it does things — looks up an order, creates a ticket, sends a quote, updates a record.
+- **Autonomous.** Give it a trigger and it acts without being asked: a new email arrives, a record changes, a schedule comes round, and the agent gets to work.
+
+Most businesses should start at the first, get value, then move along. The jump straight to autonomous is where projects get expensive.
+
+## The five building blocks you actually need to understand
+
+Copilot Studio has a lot of surface area. In practice, five concepts carry almost all the meaning.
+
+**1. Instructions.** Plain-English direction telling the agent its role, tone, boundaries and priorities. Microsoft's own guidance is that the platform treats agent instructions rather like code — the wrong instruction breaks behaviour in ways that are hard to trace, and if a complex set of instructions stops working, the recommended fix is to strip them back and add them in one at a time, testing between each. Treat instructions as a version-controlled asset, not a text box someone edits on a Friday.
+
+**2. Knowledge.** The material your agent can draw on: documents, websites, SharePoint, Dataverse tables, structured databases. This is what makes an agent *yours* rather than a generic chatbot — and it's the single biggest determinant of answer quality. Bad knowledge, bad agent. No exceptions.
+
+**3. Tools.** What the agent can *do*, as opposed to what it knows. A tool might be a Power Automate flow, a connector to another system, or an MCP server exposing a whole application's capabilities. Each tool is a skill; the agent chains them as needed.
+
+**4. Topics.** A topic defines how a piece of conversation progresses, built from connected nodes — steps, questions and conditions. Topics are the deterministic, scripted parts you keep control of. Use them where the path must be exact: identity checks, regulated wording, escalation.
+
+**5. Triggers.** What starts the agent when there's no human typing. A schedule, a new email, a row added or changed in Dataverse, a new document. Triggers are what turn an assistant into an autonomous worker.
+
+<Definition term="generative orchestration">
+Generative orchestration is the LLM-driven planning layer in Copilot Studio. Instead of matching a user's message to a pre-written topic, it interprets the intent, breaks a complex request into parts, chooses the right tools, topics, knowledge sources or even other agents, and executes a multi-step plan with guardrails. It's the difference between an agent that follows your script and one that composes its own.
+</Definition>
+
+## What can you actually build with it?
+
+The genuinely useful patterns I see working for small and mid-sized businesses:
+
+- **A customer support agent** on your website and in Teams, grounded in your product documentation and policies, escalating to a human when it isn't confident.
+- **An internal help desk** — HR policies, IT how-tos, expense rules — that answers the same forty questions your operations manager currently answers by hand.
+- **A lead qualification agent** that engages a website enquiry, asks the qualifying questions, and writes the result into your CRM. (There's more on the economics of that in [AI lead generation for small businesses](/blog/ai-lead-generation-for-small-businesses/).)
+- **A document processing agent** triggered by an arriving email: read the attachment, extract the fields, create the record, flag the exceptions.
+- **An ERP assistant** that answers questions about live business data — the pattern Microsoft itself now uses to connect agents to Dynamics 365 through MCP.
+
+You don't have to start from a blank page, either. Copilot Studio ships agent templates on the Agents page — preconfigured bundles of instructions, tools, topics and triggers you customise. There's also an Agent Library in Microsoft's Copilot Agent Kit: a curated, marketplace-style catalog of production-ready templates and reusable components you can install into your environment. For a first build, starting from a template that's roughly adjacent to your use case usually beats starting clean.
+
+## What you need before you start
+
+Three practical prerequisites, and one trap.
+
+**A Power Platform environment with Dataverse.** Copilot Studio stores agents and their configuration there. Most organisations with Microsoft 365 already have one.
+
+**A licensing route.** There are several: Copilot Studio access included with a Microsoft 365 Copilot licence, a standalone subscription, prepaid credit packs, or pay-as-you-go. The last two are set up against an Azure subscription, with a billing policy created in the Power Platform admin center.
+
+**Somewhere to publish.** Teams, Microsoft 365 Copilot, SharePoint, Power Pages, your own website — decide early, because the channel affects how you handle authentication and what a good conversation looks like.
+
+**The trap:** the trial licence lets you create agents and test them in the test panel, but **you can't publish**. Plenty of people build something excellent on a trial and only then discover they can't ship it. Know which side of that line you're on before you invest a fortnight.
+
+## What it costs — honestly
+
+Copilot Studio is usage-based, and since September 2025 the currency is Copilot Credits rather than messages. Credits reflect the effort behind a response: a simple answer costs less than an agent that reasons across several tools and writes to another system.
+
+<StatCallout
+  value="$200 / 25,000"
+  label="Microsoft's listed Copilot Studio prepurchase pack — $200 per pack per month for 25,000 Copilot Credits, with up to 20% saving for up-front purchase. Pay-as-you-go is also available; both routes require an Azure subscription."
+  source="Microsoft — Copilot Studio product page (August 2026)"
+  sourceUrl="https://www.microsoft.com/en-us/microsoft-365-copilot/microsoft-copilot-studio"
+/>
+
+Two things to plan around:
+
+- **Capacity is enforced monthly and unused credits don't carry over.** You can't bank a quiet January against a busy February.
+- **Cost tracks complexity, not just volume.** An agent that reads a knowledge base and answers is cheap. An agent that reasons, calls three tools and writes back to two systems, thousands of times a day, is a different budget. Model your realistic volume before committing — Microsoft publishes an agent usage estimator for exactly this.
+
+For most SMEs the honest framing is: cheap to try, worth checking the arithmetic before you scale. That's a much better position than most enterprise software, but it isn't free.
+
+## When Copilot Studio is the right tool — and when it isn't
+
+**It's a strong fit when:**
+- You're already in the Microsoft ecosystem — Microsoft 365, Teams, Dataverse, Dynamics 365. The integration is genuinely the differentiator.
+- The work is conversational, or judgement-shaped: interpreting a request, deciding what to do, drafting a reply.
+- You want business users to maintain it, not a development team.
+- Governance matters — data loss prevention policies, environment boundaries and admin controls come with the platform rather than being something you build.
+
+**Look elsewhere when:**
+- The process is rigid and rule-based with no language in it. That's plain automation, and a deterministic flow is cheaper and more reliable than an agent. I've laid out that trade-off in [Copilot Studio vs Power Automate vs custom code](/compare/copilot-studio-vs-power-automate-vs-custom-code/).
+- You need a consumer-facing product with a bespoke interface and total control over the model.
+- Your volume is high, uniform and predictable — at which point per-credit pricing may cost more than a purpose-built implementation.
+
+## Where to start
+
+If this sounds relevant, the sensible first move is small: one agent, one clearly bounded job, one channel, measured against what that job costs you today. My step-by-step walkthrough is here — [how to build your first agent in Copilot Studio](/blog/build-first-agent-copilot-studio/) — and if you want the autonomous end of the spectrum, [autonomous agents in Copilot Studio](/blog/autonomous-agents-copilot-studio/) covers triggers, guardrails and the patterns that keep them safe.
+
+<RelatedContent
+  title="Go deeper"
+  links={[
+    { label: "AI automation services", href: "/services/ai-automation/", kind: "service" },
+    { label: "How to build your first agent in Copilot Studio", href: "/blog/build-first-agent-copilot-studio/", kind: "post" },
+    { label: "Copilot Studio vs Power Automate vs custom code", href: "/compare/copilot-studio-vs-power-automate-vs-custom-code/", kind: "compare" },
+    { label: "Copilot Studio — definition", href: "/glossary/copilot-studio/", kind: "glossary" },
+  ]}
+/>
+
+## Not sure whether this fits your business?
+
+I'm Microsoft-certified across the Power Platform, Azure and Dynamics 365 — which mostly means I've seen where these tools deliver and where they quietly disappoint. If you describe the process you're trying to improve, I'll tell you straight whether an agent is the right answer, and roughly what it would take.
+
+See [AI automation](/services/ai-automation/) or [book a free call](/contact/).
+
+*Copilot Studio changes fast. This article was verified against Microsoft's documentation and pricing pages in August 2026 — confirm current features and pricing for your tenant before committing.*

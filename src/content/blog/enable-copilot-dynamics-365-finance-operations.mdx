@@ -1,0 +1,153 @@
+---
+title: "How to enable Copilot in Dynamics 365 Finance & Operations"
+description: "A step-by-step guide to enabling Copilot in Dynamics 365 F&O — Power Platform Integration in LCS, the required Dynamics 365 apps, Bing Search, region settings, and why the Copilot button won't appear."
+pubDate: 2026-08-25
+updatedDate: 2026-08-25
+category: "dynamics-365-finance-operations"
+tags: ["copilot", "dynamics 365", "d365 finance operations", "lifecycle services", "power platform"]
+featured: false
+draft: false
+author: "Crispus Martin Njumwa"
+takeaways:
+  - "Enabling Copilot starts outside F&O: turn on Power Platform Integration for the environment in Lifecycle Services. You don't need dual-write."
+  - "Once Power Platform Integration is on, Microsoft deploys most Copilot features automatically — so this is usually verification work, not installation work."
+  - "Each Copilot feature needs its matching Dynamics 365 app installed in your Power Platform environment. Missing app = missing feature."
+  - "The chat sidecar depends on Bing Search, and may need cross-region data movement allowed depending on where your Dataverse environment sits."
+  - "Copilot is <strong>not supported</strong> in developer environments deployed through LCS — so testing it there will always fail."
+howto:
+  name: "Enable Copilot in Dynamics 365 Finance & Operations"
+  totalTime: "PT45M"
+  steps:
+    - name: "Enable Power Platform Integration in Lifecycle Services"
+      text: "In your LCS project, open the environment's Full details page and enable Power Platform Integration so the environment is linked to a Dataverse environment. This is the connection Copilot's AI services run through. You do not need to enable dual-write unless you already use it."
+    - name: "Confirm the required Dynamics 365 apps are installed"
+      text: "In the Power Platform admin center, open your environment, and under Resources select Dynamics 365 apps. Confirm that Copilot for finance and operations apps is installed, plus Copilot in Dynamics 365 Finance or Copilot in Dynamics 365 Supply Chain Management if you want the app-specific summaries. Install anything missing."
+    - name: "Check the tenant can publish copilots with AI features"
+      text: "In the Power Platform admin center, go to Settings and find the setting named Publish bots with AI features. It is enabled by default, but a tenant administrator can switch it off — and if it is off, Copilot features in finance and operations apps will not work."
+    - name: "Turn on Bing Search and any required cross-region data movement"
+      text: "The Copilot sidecar uses generative answers from Copilot Studio, which require Bing Search. Depending on the regional availability of the back-office AI services, your Dataverse environment may also need to allow cross-region calls. If either is disabled, users cannot open the sidecar or it returns no answers."
+    - name: "Enable the individual features you want"
+      text: "Some Copilot capabilities need nothing further, while others are switched on per feature — through Feature management in finance and operations apps, or through their own setup article. Work through Microsoft's feature-specific installation table for the features on your list."
+    - name: "Verify in a Tier 2+ environment, not a developer box"
+      text: "Sign in to a sandbox or production environment and confirm the Copilot button appears at the top of the page and the sidecar answers a question. Copilot and AI agents are not supported in developer environments deployed through Lifecycle Services, so never use one of those to test."
+faqs:
+  - q: "I enabled Power Platform Integration but there's still no Copilot button. What now?"
+    a: "Work through four checks in order: is the Copilot for finance and operations apps application installed in the linked Dataverse environment; is the tenant setting Publish bots with AI features enabled; is Bing Search on (and cross-region data movement allowed, if your region needs it); and are you testing in a developer environment deployed through LCS, where Copilot isn't supported? Microsoft also suggests republishing the Copilot for finance and operations apps chatbot in Copilot Studio, and refreshing the browser."
+  - q: "Do I need dual-write to use Copilot in F&O?"
+    a: "No. Copilot needs Power Platform Integration — the link between your F&O environment and a Dataverse environment. Microsoft's documentation explicitly notes you don't have to enable dual-write if you don't use it. Dual-write only becomes relevant if you want F&O data synced into Dataverse tables for an agent to read."
+  - q: "Why isn't Copilot available in our developer environment?"
+    a: "Microsoft states that Copilot and AI agents aren't supported in developer environments deployed through Lifecycle Services. Cloud-hosted developer boxes aren't linked to Dataverse the way a Tier 2+ sandbox is, so the AI services Copilot depends on aren't there. Test Copilot in a sandbox instead."
+  - q: "Does Copilot work in GCC and GCC-High environments?"
+    a: "It can, but not by default. In US Government Community Cloud and GCC-High environments the required Copilot apps aren't installed in Dataverse automatically, and Bing Search is off by default and must be explicitly enabled by an administrator. Features controlled through Feature management may look enabled while not actually working until an admin installs those apps."
+  - q: "How do I turn the Copilot sidecar off for the whole organisation?"
+    a: "There are a few levers. On versions 10.0.38 and 10.0.39 you could disable the User experience for Copilot in Finance and Operations feature in Feature management, but from 10.0.40 that feature is mandatory. From then on, the practical routes are turning off Bing Search for copilots and generative AI features in the environment, or turning off Copilot for Power Apps applications in that environment."
+  - q: "How long does enabling Copilot actually take?"
+    a: "If Power Platform Integration is already on and the required apps are installed, verification is often under an hour. If you're enabling Power Platform Integration for the first time, allow for the Dataverse environment to be deployed and the applications to install, plus your own change-control process — that's typically days rather than minutes."
+---
+
+import Definition from "../../components/Definition.astro";
+import RelatedContent from "../../components/RelatedContent.astro";
+
+**The short answer:** You enable Copilot in Dynamics 365 Finance & Operations by enabling **Power Platform Integration** for the environment in Lifecycle Services — not from inside F&O. Once that link to Dataverse exists, Microsoft deploys most Copilot features automatically. Everything after that is verification: confirming the right Dynamics 365 apps are installed in your Power Platform environment, that the tenant is allowed to publish copilots with AI features, and that Bing Search (plus, in some regions, cross-region data movement) is enabled. Copilot is not supported at all in developer environments deployed through LCS.
+
+Most "how do I enable Copilot" requests I get aren't really installation problems. They're detective problems: someone enabled the obvious switch, nothing appeared, and now nobody knows which of six layers is the one saying no. So this guide is written as a fault-finding order, not just a happy path.
+
+## Why enabling Copilot starts in Lifecycle Services
+
+<Definition term="Power Platform Integration (for F&O)">
+Power Platform Integration is the setting in Lifecycle Services that links a finance and operations environment to a Microsoft Dataverse environment. Copilot in F&O is built from three layers: the UI you see, the application code, and AI services — large language models hosted on Azure — reached *through Dataverse*. No Dataverse link, no AI services, no Copilot. That's why the first step happens in LCS rather than in the ERP.
+</Definition>
+
+There's a helpful consequence buried in Microsoft's documentation: *usually, if Power Platform Integration is enabled, all the required Copilot features are automatically deployed to your environment.* So for most tenants this is a verification exercise. If you find yourself manually installing a long list of components, something upstream is off, and the steps below will tell you which.
+
+One important scoping note before you start: you don't need dual-write. Microsoft's guidance is explicit that you don't have to enable it if you don't use it. Dual-write is about syncing data into Dataverse tables; Copilot needs the environment link, which is a different thing.
+
+## Step 1 — Enable Power Platform Integration in LCS
+
+In your LCS project, open the environment and go to **Full details**. Look for the **Power Platform Integration** section. If it already shows a Power Platform environment, you're linked. If it doesn't, follow the on-screen instructions to deploy an associated Dataverse environment.
+
+Do this in a sandbox first. It's a structural change to the environment, and it belongs in change control like any other.
+
+## Step 2 — Confirm the required Dynamics 365 apps are installed
+
+This is the step that catches people, because Copilot isn't one application — different features need different apps present in your Power Platform environment.
+
+| Copilot feature | Dynamics 365 app that must be installed |
+|---|---|
+| Generative help and guidance, and the bot behind the Copilot sidecar | Copilot for finance and operations apps |
+| Copilot summaries in Supply Chain Management and Commerce | Copilot in Dynamics 365 Supply Chain Management |
+| Copilot summaries in Finance | Copilot in Dynamics 365 Finance |
+
+To check: open the **Power Platform admin center**, select your environment to open its detailed view, and under **Resources** select **Dynamics 365 apps**. Anything missing, select **Install app** and follow the prompts.
+
+Usually these are already installed. Two situations where they typically aren't: you only recently enabled Power Platform Integration, or you're on a government cloud. In GCC and GCC-High environments the required Copilot apps are *not* installed in Dataverse by default — and here's the trap Microsoft calls out specifically: features controlled through Feature management can still show as enabled inside F&O while not working, because the Dataverse side isn't there. Enabled and functional are not the same check.
+
+## Step 3 — Check the tenant setting that can veto everything
+
+There's a tenant-level switch that governs whether Power Platform may publish copilots with AI features at all. It's on by default — but a tenant administrator can turn it off, often during a security review, and often without the ERP team ever hearing about it.
+
+To check it: **Power Platform admin center** → **Settings** → find the row where **Name** is *Publish bots with AI features* → set the option in the **Publish Copilots with AI features** dialog → **Save**.
+
+If this is off, nothing else you do in F&O will make Copilot appear. Check it early — it takes ninety seconds and it's the single most common silent blocker I encounter.
+
+## Step 4 — Bing Search and cross-region data movement
+
+The Copilot sidecar uses conversational bots and the **generative answers** capability from Copilot Studio. Generative answers require **Bing Search**.
+
+Separately, depending on whether the back-office AI services are available in your region, your Dataverse environment may need to be set up to support **cross-region calls**. If the required AI services already exist in your Dataverse region, you don't need to configure this at all.
+
+The failure mode is worth memorising, because it's ambiguous in the UI: if Bing Search is disabled, or cross-region data movement is required but disabled, users either can't open the Copilot sidecar or the sidecar opens and returns no answers. Same root cause, two different symptoms, neither of which says "someone turned off Bing Search."
+
+In GCC and GCC-High, Bing Search is off by default and must be explicitly enabled by an administrator.
+
+This is also the step where a real conversation with your security or compliance team belongs — you're consenting to data movement for AI features. Better to have that discussion deliberately in week one than urgently on a go-live weekend.
+
+## Step 5 — Enable the individual features you want
+
+With the foundation in place, some Copilot features need nothing else at all. Microsoft's own table lists basic Copilot support as having no additional requirements, while others have their own setup:
+
+- **Generative help and guidance** — usually available by default once Power Platform Integration is on.
+- **Workflow history summary** — turn on Copilot support for the Workflow history page.
+- **Enhanced user feedback** — lets users send written feedback, not just thumbs up/down.
+- **Immersive Home** — turned on in Feature management; it's the prerequisite for agent management, so if agents are on your roadmap, start here.
+- **App-specific features** — collections coordinator summary and customer page summary in Finance; AI summaries and confirmed purchase order changes in Supply Chain Management; Copilot in site builder in Commerce; each has its own enablement article.
+
+Work down the list of features you actually want. Enabling everything on day one just widens the surface you have to support.
+
+## Step 6 — Verify (in the right kind of environment)
+
+Sign in and confirm the **Copilot** button appears at the top of the page, open the sidecar, and ask it something concrete — "how do I create a recurring journal?" is a good test because the answer is unambiguous and comes from documentation.
+
+Critically: **do not test in a developer environment deployed through Lifecycle Services.** Microsoft states plainly that Copilot and AI agents aren't supported there. I've watched a team spend most of a week debugging "broken" Copilot in an environment where it was never going to run. Use a Tier 2+ sandbox.
+
+## When it still doesn't appear: the troubleshooting order
+
+Work these in sequence — they're roughly ordered by how often each turns out to be the culprit.
+
+1. **Is Power Platform Integration actually enabled**, with a Power Platform environment shown in the environment's Full details in LCS?
+2. **Is the *Copilot for finance and operations apps* application installed** in that Dataverse environment? If not, install it from **Resources → Dynamics 365 apps** in the Power Platform admin center.
+3. **Is the tenant setting *Publish bots with AI features* enabled?**
+4. **Is Bing Search on**, and is cross-region data movement allowed if your region needs it?
+5. **Is this a developer environment deployed through LCS?** If so, that's your answer — Copilot isn't supported there.
+6. **Republish the chatbot.** In the Power Apps maker portal, select the Dataverse environment, go to **More → Chatbots**, open *Copilot for finance and operations apps*, and select **Publish**.
+7. **Refresh the browser.** Unglamorous, but Microsoft lists it, and it does occasionally resolve a stale client after a deployment.
+
+If you're still stuck after seven, the issue is more likely tenant-level governance — a data loss prevention policy, an environment policy, or Copilot disabled for your organisation through a support request — than anything in the F&O environment itself.
+
+<RelatedContent
+  title="Related reading"
+  links={[
+    { label: "Dynamics 365 Finance & Operations consulting", href: "/services/dynamics-365-finance-operations/", kind: "service" },
+    { label: "Copilot in D365 F&O: what it actually does", href: "/blog/copilot-dynamics-365-finance-operations/", kind: "post" },
+    { label: "How to keep up with Dynamics 365 and Copilot updates", href: "/blog/keep-up-dynamics-365-copilot-updates/", kind: "post" },
+    { label: "Copilot sidecar (D365) — definition", href: "/glossary/copilot-sidecar/", kind: "glossary" },
+  ]}
+/>
+
+## Want this done properly the first time?
+
+Enabling Copilot touches Lifecycle Services, the Power Platform admin center, tenant settings and your security posture — four places, usually four different owners. If you'd rather have a Microsoft-certified consultant work through it with your team, confirm what's actually available in your region and licences, and hand you a short written record of what was changed and why, I can do that.
+
+See [Dynamics 365 Finance & Operations](/services/dynamics-365-finance-operations/) or [book a free call](/contact/).
+
+*Verified against Microsoft's documentation in August 2026. Copilot prerequisites change with every release wave — confirm current requirements for your version and region before making changes.*

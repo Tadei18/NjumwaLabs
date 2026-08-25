@@ -133,6 +133,51 @@ Edit `src/data/pillarContent.ts` — add to the relevant pillar's `offerings`,
 `benefits`, or `faqs` arrays. To add a whole new pillar, also update
 `src/data/services.ts` and `src/data/pricing.ts`.
 
+### A comparison page
+Add an entry to `src/data/comparisons.ts`. Two-way comparisons set `a` and `b`;
+for a three-way comparison also set `c` on the comparison **and on every row** —
+`src/pages/compare/[slug].astro` renders the third column only when `c` is present.
+
+### A glossary term
+Add an entry to `src/data/glossary.ts`. Each term emits `DefinedTerm` JSON-LD and
+gets a page at `/glossary/<slug>/`. Keep `short` to a single definition-first
+sentence — that's the line AI answer engines quote.
+
+---
+
+## ⚠️ Content that needs refreshing each release wave
+
+The Dynamics 365 / Copilot / Copilot Studio cluster tracks **fast-moving Microsoft
+features**. Availability, prerequisites, preview labels and pricing change with
+every release wave (wave 1 = April–September, wave 2 = October–March), and
+finance and operations service updates land four times a year (February, April,
+July, October).
+
+**Review these each release wave**, re-verify every claim against Microsoft Learn,
+then bump `updatedDate` in the frontmatter:
+
+| File | Watch for |
+|---|---|
+| `src/content/blog/copilot-dynamics-365-finance-operations.mdx` | New Copilot features; preview → GA label changes |
+| `src/content/blog/enable-copilot-dynamics-365-finance-operations.mdx` | Prerequisites, admin-centre navigation, Bing Search / region requirements |
+| `src/content/blog/dynamics-365-ai-agents-2026-agentic-shift.mdx` | Agent GA status, MCP version floors, billing rates, the 1 Oct 2026 static MCP retirement |
+| `src/content/blog/what-is-copilot-studio.mdx` | Copilot Credits pricing, authoring experiences, channels |
+| `src/content/blog/build-first-agent-copilot-studio.mdx` | Authoring UI changes (standard harness vs new experience) |
+| `src/content/blog/autonomous-agents-copilot-studio.mdx` | Trigger types, trigger authentication behaviour |
+| `src/content/blog/keep-up-dynamics-365-copilot-updates.mdx` | Current version numbers and the release schedule table |
+| `src/data/comparisons.ts` → `copilot-studio-vs-power-automate-vs-custom-code` | Licensing and cost model changes |
+| `src/data/glossary.ts` → `copilot-studio`, `autonomous-agent`, `agentic-ai`, `model-context-protocol`, `generative-orchestration`, `copilot-sidecar` | Definition drift as Microsoft renames things |
+
+Every post ends with a dated verification note. **Update that note and
+`updatedDate` together** — a stale "verified in August 2026" line on refreshed
+content is worse than no line at all.
+
+Source of truth is always Microsoft Learn, not memory:
+`learn.microsoft.com/dynamics365/fin-ops-core/dev-itpro/copilot/`,
+`learn.microsoft.com/microsoft-copilot-studio/`, and the release plans at
+`learn.microsoft.com/dynamics365/release-plans/`. State GA, preview and planned
+accurately — release plans describe features that may change or may not ship.
+
 ---
 
 ## Project structure

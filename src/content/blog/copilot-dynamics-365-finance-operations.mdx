@@ -1,0 +1,139 @@
+---
+title: "Copilot in Dynamics 365 Finance & Operations: what it actually does"
+description: "A Microsoft-certified consultant's honest guide to Copilot in Dynamics 365 Finance & Operations — how it's built, what's genuinely useful today, and what's still preview."
+pubDate: 2026-08-25
+updatedDate: 2026-08-25
+category: "dynamics-365-finance-operations"
+tags: ["copilot", "dynamics 365", "d365 finance operations", "erp", "ai agents"]
+featured: false
+draft: false
+author: "Crispus Martin Njumwa"
+takeaways:
+  - "Copilot in F&O isn't one feature — it's a chat sidecar, embedded AI summaries inside pages, and a new layer of task-running agents."
+  - "It's built on Copilot Studio: your prompt goes to a Copilot Studio agent that picks tools, fetches data and writes the answer in plain English."
+  - "The sidecar answers <em>how do I</em> questions from Microsoft's public docs — not from your ledger. That distinction explains most disappointment."
+  - "The genuinely useful bits today are summaries (workflow history, customer page, collections) and the agents. Several headline features are still labelled preview."
+  - "Microsoft states it doesn't use your data to train Copilot's models unless you consent — an important answer for your finance and audit teams."
+faqs:
+  - q: "Is Copilot included in my Dynamics 365 Finance & Operations licence?"
+    a: "The basic Copilot experiences — the chat sidecar, generative help and guidance, workflow history summaries — come with the app once Power Platform Integration is enabled; there's no separate purchase for them. Autonomous agents are different: agent management requires billing to be set up in the Power Platform admin center and consumes Copilot Credits per deployed agent, so those do carry a running cost."
+  - q: "Which Dynamics 365 apps actually have Copilot features?"
+    a: "Copilot spans all the finance and operations apps for shared features like generative help, workflow history summaries and chat with F&O data. On top of that, Finance, Supply Chain Management, Commerce and Project Operations each add their own app-specific features, and each needs its matching Dynamics 365 app installed in your Power Platform environment."
+  - q: "Does Microsoft use our ERP data to train its AI models?"
+    a: "No. Microsoft's Copilot data security and privacy FAQ for Dynamics 365 states that customer data isn't used to train Copilot or its AI features unless you provide consent, and that Copilot honours your existing data permissions and policies."
+  - q: "Why can't my users see the Copilot button?"
+    a: "Usually one of four things: Power Platform Integration isn't enabled in Lifecycle Services, the required Dynamics 365 app isn't installed in your Dataverse environment, Bing Search or cross-region data movement is switched off, or you're looking at a developer environment deployed through LCS — where Copilot isn't supported at all."
+  - q: "Can Copilot answer questions about our own data, not just the documentation?"
+    a: "Yes, but you have to set that up. The out-of-the-box sidecar is grounded in Microsoft's public documentation. To ask questions of your own records you add finance and operations data as a knowledge source in Copilot Studio — for example via virtual entities — which Microsoft currently documents as a preview capability."
+---
+
+import Definition from "../../components/Definition.astro";
+import StatCallout from "../../components/StatCallout.astro";
+import RelatedContent from "../../components/RelatedContent.astro";
+
+**The short answer:** Copilot in Dynamics 365 Finance & Operations is three different things wearing one badge — a natural-language chat panel that answers "how do I do this in D365" from Microsoft's documentation, AI-written summaries embedded directly into pages like workflow history and the customer page, and a newer set of agents that actually perform finance tasks such as account reconciliation. The chat panel is live and useful but narrower than most people expect; the summaries save real minutes every day; the agents are the interesting part and several are still labelled preview.
+
+I've spent the last few years building the technical side of D365 F&O — including the technical components of a 200+ user insurance ERP go-live — and Copilot is the question I now get asked in almost every scoping call. Usually phrased as some version of "is it real, or is it a demo?"
+
+Here's the honest answer, checked against Microsoft's current documentation rather than a conference keynote.
+
+## What is Copilot in Dynamics 365 F&O?
+
+<Definition term="Copilot in finance and operations apps">
+Copilot in F&O is a set of AI capabilities layered onto the ERP. Microsoft's own architecture documentation describes it as three parts: the user-experience components you see, the application code behind them, and AI services — large language models hosted on Azure and reached through Dataverse. That Dataverse connection is supplied by Power Platform Integration, which is why enabling Copilot starts in Lifecycle Services rather than in F&O itself.
+</Definition>
+
+The piece most people mean when they say "Copilot" is the sidecar.
+
+<Definition term="the Copilot sidecar">
+The *sidecar* is the chat pane that opens on the right-hand side of a finance and operations page when a user selects the Copilot button. Microsoft calls it the primary Copilot interface in F&O: a natural-language conversation running alongside your work, rather than a separate destination you navigate to. Behind it sits a single Copilot Studio agent named **Copilot for finance and operations apps**, deployed into the Dataverse environment linked to your F&O environment.
+</Definition>
+
+That last detail matters more than it sounds. Copilot in F&O isn't a bespoke AI system Microsoft built only for ERP. It's built on Microsoft Copilot Studio, which does the central orchestration — receiving the prompt, working out the intent, deciding which tools or topics to invoke, running them, and turning the result back into a sentence. Everything Copilot can do in F&O is, structurally, a *tool* attached to that agent.
+
+Which means the question "what can Copilot do in my ERP?" is really the question "which tools has Microsoft attached to that agent — and which ones can I add?"
+
+## How does the Copilot sidecar actually answer a question?
+
+This is where expectations and reality part company, so it's worth being precise. The out-of-the-box sidecar feature is called **generative help and guidance**, and Microsoft documents its pipeline in three steps:
+
+1. **Query rewrite** — it reformulates your question to make it easier to search.
+2. **Document search** — it uses the Bing search index to find the most relevant documents *in the learn.microsoft.com domain*.
+3. **Response generation** — an LLM composes an answer from those documents, with citations.
+
+Read that second step again. By default, Copilot searches Microsoft's public documentation. It is a very good, very fast documentation reader that understands where you are in the app. It is not, out of the box, reading your general ledger.
+
+So it will answer "how do I set up a recurring journal?" or "what does this workflow status mean?" beautifully. Ask it "which vendor invoices are overdue?" and — unless someone has configured extra knowledge sources — you'll be disappointed.
+
+That single misunderstanding causes more Copilot disappointment on F&O projects than any technical problem I've encountered.
+
+The good news: it's extensible. Administrators can add custom knowledge in Copilot Studio — PDF, Word or RTF files, SharePoint links — and can turn on general knowledge answering. And Microsoft documents a capability called **chat with finance and operations data**, which adds your structured F&O data as a knowledge source (through virtual entities, or through Dataverse tables synced with dual-write) so an agent can answer questions from records the user is allowed to see. That one is currently labelled preview, so treat it as something to pilot, not something to promise the board.
+
+## What's genuinely useful today?
+
+Cutting through it, here's what earns its keep right now.
+
+**Generative help and guidance.** Available across all the finance and operations apps. Realistically, it replaces the tab where your consultant used to search Microsoft Learn. For a new user in month one of a go-live, it's a meaningful reduction in "how do I…" tickets — the kind that never make it into a support SLA but consume everyone's afternoon.
+
+**Workflow history summary.** An AI-written summary on the workflow history page, across all workflow document types. Anyone who has scrolled a 40-step approval history to work out *where a purchase requisition actually got stuck* understands why this matters.
+
+**Summaries in Finance.** Collections coordinator summary — AI-written summary text in the collections workspace, plus generated reminder letter text. Customer page summary — a generated overview at the top of the customer page. These are small features with an outsized effect on how fast an AR clerk gets oriented.
+
+**Summaries in Supply Chain Management and Commerce.** Including the confirmed purchase orders with changes workspace, where AI built into the page helps a buyer understand what a supplier changed and react to it.
+
+**The agents.** This is the substantial shift. Microsoft now ships finance and operations agents — Account Reconciliation, Procurement (supplier communications), Expense, Time, Approvals — deployed through an agent deployment wizard in the Power Platform admin center. Each runs under its own dedicated agent user identity with its own security roles, which is exactly the design you want if you're the person who signs off on segregation of duties.
+
+<StatCallout
+  value="90 days"
+  label="Default retention for the agent activity log in F&O — every action an autonomous agent takes is recorded in Dataverse, and administrators can change the retention period."
+  source="Microsoft Learn — Enable agent management"
+  sourceUrl="https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/fin-ops/copilot/agent-mgmt"
+/>
+
+## What's hype, or at least not-yet?
+
+Three honest caveats.
+
+**"Preview" is doing a lot of work.** Several of the headline capabilities — agent management, Immersive Home, the Account Reconciliation Agent, chat with F&O data — carry preview or "production ready preview" labels in Microsoft's documentation. Production ready preview is a genuine step up from a lab experiment, but it isn't a general-availability commitment. If a vendor demo left you believing all of this is GA and unconditional, check the label yourself before you build a business case on it.
+
+**Agents cost money per agent.** Agent management requires billing set up in the Power Platform admin center with Copilot Studio credits assigned to the environment. Microsoft's documentation is blunt about the consequence: your organisation is billed for each deployed agent, and if credits run out, agents might be temporarily deactivated. Budget for consumption, not just licences.
+
+**Administrative control over agents is still maturing.** Microsoft's own listed limitations for agent management include no extensibility and no direct UI-based override for individual user actions — administrators cancel agent actions by deleting the associated batch jobs. That's workable. It is not yet the polished governance console a large finance function will eventually want.
+
+## Does Copilot see our data — and does it train on it?
+
+The question every CFO asks, so let's be exact.
+
+Microsoft's Copilot data security and privacy FAQ for Dynamics 365 states that customer data isn't used to train Copilot or its AI features unless you provide consent, and that Copilot adheres to your existing data permissions and policies. Practically, that second half is the more useful guarantee day to day: Copilot doesn't create a back door around D365 security. Where agents work through Microsoft's ERP tooling, the agent's own security role determines which forms, entities and actions it can even see — the model isn't handed a view of the ERP that a human in the same role wouldn't get.
+
+There's one architectural fact worth flagging to your security team early, because it surprises people: generative answers in the sidecar require Bing Search to be enabled, and depending on where your Dataverse environment sits, you may need to allow cross-region calls for the AI services. Neither is exotic, but both are decisions someone has to consciously approve. Discover that during the go-live weekend and you'll have a bad Saturday.
+
+## Where this is heading
+
+The direction of travel is unmistakable, and it isn't "better chat". It's agents that do work.
+
+Microsoft has shipped a Dynamics 365 ERP MCP server that lets agents built on any compatible platform read F&O data, drive forms and invoke business logic — with everything scoped by the agent's security role. In practice that turns the ERP into something an agent can operate rather than merely query. If you want the full picture of what that changes for a finance team, I've written it up separately in [the 2026 agentic shift in Dynamics 365](/blog/dynamics-365-ai-agents-2026-agentic-shift/).
+
+For now, my advice to clients is unglamorous and it works:
+
+- **Turn on the free stuff properly.** Generative help, workflow history summary, the Finance summaries. Low risk, immediate value, no credits consumed. Most environments I look at have some of this half-enabled without realising.
+- **Pilot one agent, not five.** Account reconciliation is the obvious first candidate for a finance team, because the work is high-volume, rules-shaped and easy to check.
+- **Treat preview as preview.** Pilot it, measure it, keep a manual path — and re-read the documentation each release wave, because these labels move.
+
+<RelatedContent
+  title="Go deeper"
+  links={[
+    { label: "Dynamics 365 Finance & Operations consulting", href: "/services/dynamics-365-finance-operations/", kind: "service" },
+    { label: "How to enable Copilot in Dynamics 365 F&O", href: "/blog/enable-copilot-dynamics-365-finance-operations/", kind: "post" },
+    { label: "From Copilot chat to AI agents: the 2026 agentic shift", href: "/blog/dynamics-365-ai-agents-2026-agentic-shift/", kind: "post" },
+    { label: "Copilot sidecar (D365) — definition", href: "/glossary/copilot-sidecar/", kind: "glossary" },
+  ]}
+/>
+
+## Getting a straight answer for your environment
+
+Every environment is different — your version, your region, your Dataverse setup and your licences all change what's actually available to you. If you want someone Microsoft-certified to look at your F&O environment and tell you plainly which Copilot features you can switch on this month, which ones are worth piloting, and which ones to wait on, that's a conversation I'm happy to have.
+
+See [Dynamics 365 Finance & Operations](/services/dynamics-365-finance-operations/) or [book a free call](/contact/).
+
+*Copilot features in Dynamics 365 change with every release wave. This article was verified against Microsoft's documentation in August 2026 — always confirm current availability, preview status and licensing for your own tenant before committing.*

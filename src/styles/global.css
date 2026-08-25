@@ -11,15 +11,19 @@
 /*  Deliberately NOT cream/serif, not near-black+acid, not broadsheet. */
 /* ------------------------------------------------------------------ */
 @theme {
-  --color-bg: #f4f6fb;
-  --color-surface: #ffffff;
-  --color-surface-2: #eef1f8;
+  --color-bg: #eef1f8;
+  /* Surfaces are translucent so they read as glass over the mesh backdrop.
+     Use --color-surface-solid where a genuinely opaque fill is required
+     (knockout rings, anything that must occlude what's behind it). */
+  --color-surface: rgba(255, 255, 255, 0.72);
+  --color-surface-solid: #ffffff;
+  --color-surface-2: rgba(236, 240, 249, 0.66);
   --color-ink: #10182b;
   --color-ink-soft: #233048;
-  --color-muted: #566076;
-  --color-line: #dfe3ee;
+  --color-muted: #4d566b;
+  --color-line: rgba(16, 24, 43, 0.1);
   --color-accent: #0fb5c4;
-  --color-accent-ink: #0a7b86;
+  --color-accent-ink: #066c78;
   --color-accent-2: #ffb020;
 
   --font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
@@ -29,10 +33,16 @@
   --radius-card: 18px;
   --radius-pill: 999px;
 
-  --shadow-soft: 0 1px 2px rgba(16, 24, 43, 0.04), 0 8px 24px rgba(16, 24, 43, 0.06);
-  --shadow-lift: 0 2px 4px rgba(16, 24, 43, 0.06), 0 18px 48px rgba(16, 24, 43, 0.12);
+  /* Layered like real glass: a tight contact shadow, a soft cast shadow, and
+     an inset specular line along the top edge where light catches the lip. */
+  --shadow-soft: 0 1px 2px rgba(16, 24, 43, 0.05), 0 10px 28px rgba(16, 24, 43, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-lift: 0 2px 6px rgba(16, 24, 43, 0.07), 0 22px 56px rgba(16, 24, 43, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Slight overshoot — the "liquid" settle on hover/press. */
+  --ease-liquid: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Dark surface tokens used for inverted sections (hero, footer, CTA). */
@@ -40,6 +50,26 @@
   --color-night: #0a1020;
   --color-night-2: #111a31;
   --color-night-line: rgba(255, 255, 255, 0.1);
+
+  /* ---- Liquid glass material ------------------------------------- */
+  /* Blur is deliberately reserved for the floating layer (nav bars,
+     menus, drawers, pills). Content surfaces get the *look* from
+     translucency + rim light + layered shadow, which costs nothing to
+     composite — that's what keeps this fast on mobile. */
+  --glass-blur: 20px;
+  --glass-blur-sm: 12px;
+  --glass-saturate: 1.8;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-strong: rgba(255, 255, 255, 0.82);
+  --glass-edge: rgba(16, 24, 43, 0.09);
+  --glass-rim: rgba(255, 255, 255, 0.95);
+  --glass-sheen: rgba(255, 255, 255, 0.55);
+
+  /* Dark-section equivalents. */
+  --glass-bg-dark: rgba(255, 255, 255, 0.07);
+  --glass-bg-dark-strong: rgba(255, 255, 255, 0.12);
+  --glass-edge-dark: rgba(255, 255, 255, 0.14);
+  --glass-rim-dark: rgba(255, 255, 255, 0.4);
 }
 
 @layer base {
@@ -49,12 +79,28 @@
   }
 
   body {
+    position: relative;
     background-color: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Mesh backdrop — the thing translucent surfaces refract. A fixed
+     pseudo-element rather than background-attachment: fixed, which
+     repaints on every scroll frame on mobile. Painted once, composited. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 12% 8%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%),
+      radial-gradient(50% 45% at 88% 4%, color-mix(in srgb, var(--color-accent-2) 10%, transparent), transparent 70%),
+      radial-gradient(70% 60% at 50% 100%, color-mix(in srgb, #6f7bff 10%, transparent), transparent 70%);
   }
 
   h1,
@@ -139,42 +185,141 @@
     padding: 0.85rem 1.4rem;
     border-radius: var(--radius-pill);
     transition:
-      transform 0.18s var(--ease-out),
+      transform 0.35s var(--ease-liquid),
       background-color 0.18s var(--ease-out),
-      box-shadow 0.18s var(--ease-out);
+      border-color 0.18s var(--ease-out),
+      box-shadow 0.25s var(--ease-out);
     white-space: nowrap;
   }
   .btn:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+  }
+  /* Press gives slightly, like a soft solid. */
+  .btn:active {
+    transform: translateY(0) scale(0.985);
+    transition-duration: 0.08s;
   }
   .btn-primary {
     background: var(--color-accent);
     color: #03222a;
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 35%, transparent);
+    box-shadow:
+      0 8px 24px color-mix(in srgb, var(--color-accent) 35%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
   }
   .btn-primary:hover {
     background: color-mix(in srgb, var(--color-accent) 88%, white);
+    box-shadow:
+      0 12px 32px color-mix(in srgb, var(--color-accent) 45%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
   }
+  /* Glass pill: translucent, blurred, with a bright top lip. */
   .btn-ghost {
-    background: transparent;
+    background: var(--glass-bg);
     color: var(--color-ink);
-    border: 1px solid var(--color-line);
+    border: 1px solid var(--glass-edge);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
   .btn-ghost:hover {
-    border-color: var(--color-ink);
+    border-color: color-mix(in srgb, var(--color-accent) 50%, var(--glass-edge));
+    background: var(--glass-bg-strong);
   }
   .btn-on-dark {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg-dark);
     color: #fff;
-    border: 1px solid var(--color-night-line);
+    border: 1px solid var(--glass-edge-dark);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   }
   .btn-on-dark:hover {
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--glass-bg-dark-strong);
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .btn-ghost,
+    .btn-on-dark {
+      -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+      backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+    }
+  }
+
+  /* ---- Liquid glass primitives ------------------------------------ */
+
+  /* Rim light: a 1px gradient border that brightens where light would
+     catch the edge of a glass slab. Built with a masked pseudo-element so
+     it can be a gradient (a plain border-color cannot). */
+  .glass-rim {
+    position: relative;
+  }
+  .glass-rim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      145deg,
+      var(--glass-rim),
+      rgba(255, 255, 255, 0) 38%,
+      rgba(255, 255, 255, 0) 62%,
+      color-mix(in srgb, var(--glass-rim) 60%, transparent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .section-dark .glass-rim::after,
+  .glass-dark.glass-rim::after {
+    background: linear-gradient(
+      145deg,
+      var(--glass-rim-dark),
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      color-mix(in srgb, var(--glass-rim-dark) 55%, transparent)
+    );
+  }
+
+  /* Floating glass — the only surfaces that actually blur what's behind
+     them. Keep this list short; each one is a compositing layer. */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-edge);
+    box-shadow: var(--shadow-soft);
+  }
+  .glass-strong {
+    background: var(--glass-bg-strong);
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .glass,
+    .glass-strong {
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+      backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    }
+  }
+  /* No backdrop-filter support: fall back to an opaque surface so text
+     never sits on a see-through panel. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass,
+    .glass-strong {
+      background: color-mix(in srgb, var(--color-surface-solid) 94%, var(--color-bg));
+    }
+  }
+  .glass-dark {
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-edge-dark);
   }
 
   .card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
+    position: relative;
+    background:
+      linear-gradient(165deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%),
+      var(--color-surface);
+    border: 1px solid var(--glass-edge);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-soft);
   }
@@ -182,15 +327,57 @@
   /* ---- Card variant system (Phase 2.1) ---- */
   /* Reusable lift-on-hover for any .card. */
   .card-hover {
+    position: relative;
     transition:
-      transform 0.22s var(--ease-out),
-      box-shadow 0.22s var(--ease-out),
-      border-color 0.22s var(--ease-out);
+      transform 0.4s var(--ease-liquid),
+      box-shadow 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out);
   }
   .card-hover:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-lift);
-    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--glass-edge));
+  }
+  /* Hover brightens the rim rather than sweeping a highlight across the
+     whole face — a full-surface sheen washes out body text on light
+     cards. The travelling specular is reserved for dark surfaces and
+     buttons (.sheen below), where there's contrast headroom for it. */
+  .card-hover.glass-rim::after {
+    transition: opacity 0.3s var(--ease-out);
+    opacity: 0.75;
+  }
+  .card-hover.glass-rim:hover::after {
+    opacity: 1;
+  }
+
+  /* Travelling specular highlight for dark//saturated surfaces.
+     Transform + opacity only, so it animates on the compositor. */
+  .sheen {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .sheen::after {
+    content: "";
+    position: absolute;
+    inset: -20% -60%;
+    background: linear-gradient(
+      105deg,
+      transparent 42%,
+      var(--glass-sheen) 50%,
+      transparent 58%
+    );
+    opacity: 0;
+    transform: translateX(-45%);
+    transition:
+      transform 0.8s var(--ease-out),
+      opacity 0.35s var(--ease-out);
+    pointer-events: none;
+  }
+  .sheen:hover::after,
+  .sheen:focus-visible::after {
+    opacity: 1;
+    transform: translateX(45%);
   }
 
   /* Deep-indigo feature card with inner glow. */
@@ -239,10 +426,45 @@
     pointer-events: none;
   }
 
+  /* Dark glass cards get the travelling specular — there's contrast
+     headroom on a dark face that a light card doesn't have. */
+  .card-dark::after,
+  .card-gradient::after {
+    content: "";
+    position: absolute;
+    inset: -20% -60%;
+    z-index: -1;
+    background: linear-gradient(
+      105deg,
+      transparent 42%,
+      rgba(255, 255, 255, 0.16) 50%,
+      transparent 58%
+    );
+    opacity: 0;
+    transform: translateX(-45%);
+    transition:
+      transform 0.9s var(--ease-out),
+      opacity 0.35s var(--ease-out);
+    pointer-events: none;
+  }
+  .card-dark:hover::after,
+  .card-gradient:hover::after {
+    opacity: 1;
+    transform: translateX(45%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-dark::after,
+    .card-gradient::after {
+      display: none;
+    }
+  }
+
   /* White card with a pillar-colour left accent (set --pillar inline). */
   .card-accent {
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
+    background:
+      linear-gradient(165deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%),
+      var(--color-surface);
+    border: 1px solid var(--glass-edge);
     border-left: 3px solid var(--pillar, var(--color-accent));
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-soft);
@@ -500,7 +722,69 @@
   transform: translateX(0);
 }
 
+/* ------------------------------------------------------------------ */
+/*  Liquid glass — accessibility & performance guards                  */
+/* ------------------------------------------------------------------ */
+
+/* Users who ask for reduced transparency get solid surfaces. This is a
+   real accessibility setting (macOS/iOS "Reduce Transparency", Windows
+   transparency effects), not a nicety — translucency over a mesh
+   backdrop is exactly what it exists to switch off. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --color-surface: #ffffff;
+    --color-surface-2: #eef1f8;
+    --glass-bg: #ffffff;
+    --glass-bg-strong: #ffffff;
+    --glass-bg-dark: #16203a;
+    --glass-bg-dark-strong: #1c2745;
+    --glass-sheen: transparent;
+  }
+  body::before {
+    display: none;
+  }
+  .glass,
+  .glass-strong,
+  .btn-ghost,
+  .btn-on-dark,
+  .site-header,
+  .mega,
+  .drawer {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .card,
+  .card-accent {
+    background: var(--color-surface);
+  }
+  .glass-rim::after {
+    display: none;
+  }
+}
+
+/* Windows High Contrast / forced colours: drop the decorative material
+   entirely and let the OS palette through. */
+@media (forced-colors: active) {
+  .glass-rim::after,
+  .sheen::after,
+  body::before,
+  .grain-overlay {
+    display: none;
+  }
+  .card,
+  .glass,
+  .glass-strong {
+    border: 1px solid CanvasText;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .sheen::after {
+    display: none;
+  }
+  .card-hover:hover {
+    transform: none;
+  }
   [data-reveal] {
     opacity: 1 !important;
     transform: none !important;

@@ -10,7 +10,7 @@ const { testimonial: t } = Astro.props;
 
 <figure class="testimonial card" data-reveal>
   <span class="quote-mark" aria-hidden="true">"</span>
-  <div class="stars" aria-label={`${t.rating} out of 5`}>
+  <div class="stars" role="img" aria-label={`${t.rating} out of 5`}>
     {Array.from({ length: t.rating }).map(() => (
       <Icon name="lucide:star" />
     ))}

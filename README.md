@@ -251,6 +251,48 @@ mono **JetBrains Mono** for technical texture. Tokens live in `src/styles/global
 (`@theme` block) — change them there to re-skin the whole site. The signature element is
 the interactive, animated **SystemsMap** node-graph in the hero (`src/components/SystemsMap.astro`).
 
+### Liquid glass material (Phase 3)
+
+The surface language is translucent glass over a fixed mesh backdrop. Two rules
+keep it fast and legible:
+
+**1. Blur is reserved for the floating layer.** `backdrop-filter` is expensive —
+each use creates a compositing layer. Only surfaces that genuinely float above
+content get it: the sticky header, the mega menu, the mobile drawer, and pill
+controls (`.btn-ghost`, `.btn-on-dark`, filter chips). Content surfaces (cards,
+callouts, FAQ items) get the *look* from translucency + a rim light + layered
+shadow, which costs nothing to composite. Adding blur to every card is what
+tanks mobile performance — don't.
+
+**2. Nothing may depend on blur to be readable.** The header's opacity is set so
+it stays legible if the blur never composites (older GPUs, blocked compositing,
+some mobile browsers). Blur makes it look like glass; opacity makes it readable.
+If you lower `.site-header` opacity, check it with blur disabled first.
+
+Tokens (`:root` in `src/styles/global.css`): `--glass-bg`, `--glass-bg-strong`,
+`--glass-edge`, `--glass-rim`, `--glass-sheen`, `--glass-blur`, plus `-dark`
+variants for inverted sections. `--color-surface` / `--color-surface-2` are now
+**translucent**; use `--color-surface-solid` anywhere a fill must actually
+occlude what's behind it.
+
+Utilities: `.glass` / `.glass-strong` (real blur), `.glass-rim` (gradient rim
+light via a masked pseudo-element), `.sheen` (travelling specular — dark
+surfaces and buttons only; it washes out body text on light cards).
+
+**Accessibility guards** — all three are implemented and must be preserved:
+
+- `prefers-reduced-transparency: reduce` → solid surfaces, blur off, mesh hidden.
+  This is a real OS setting, not a nicety.
+- `forced-colors: active` → decorative gradients, rim lights and grain removed.
+- `prefers-reduced-motion: reduce` → sheen and hover lift disabled.
+
+**Colour contrast.** Raw pillar accents fail WCAG AA as text — amber `#FFB020`
+on its own 12% tint is 1.51:1. Wherever a pillar accent is used as a text
+colour it is darkened toward ink:
+`color-mix(in srgb, var(--pillar) 45%, var(--color-ink))`, which clears AA for
+all five pillars (worst case 5.10:1). `--color-accent-ink` is `#066c78` for the
+same reason. Don't lighten either without re-checking contrast.
+
 ### Motion & the dark-section system (Phase 2)
 
 The page alternates light and **dark "peak" sections** for rhythm. Any section becomes a

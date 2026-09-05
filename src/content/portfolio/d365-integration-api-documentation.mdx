@@ -1,0 +1,111 @@
+---
+title: "Two integration API specifications for a D365 F&O insurance deployment"
+description: "Authored the integration API references — eight endpoints across two specifications — that let a large insurer's policy, claims and life-management platforms post transactions into Dynamics 365 Finance & Operations."
+client: "A leading East African insurance group"
+industry: "Insurance / Financial services"
+pillar: "technical-writing"
+pubDate: 2026-07-30
+stack: ["OAuth 2.0", "REST", "JSON", "Dynamics 365 F&O", "Data entities", "Markdown", "Word"]
+metrics:
+  - value: "8"
+    label: "endpoints documented"
+  - value: "2"
+    label: "specifications, sole author"
+featured: true
+draft: false
+---
+
+> Real documentation, authored at Impax Business Solutions where I am listed as both Author and Solution Architect on the revision history. The client is anonymized for confidentiality, and **every credential, token, tenant ID and hostname in the excerpts below is a placeholder** — the originals are not reproduced here.
+
+## The context
+
+A leading East African insurance group runs Dynamics 365 Finance & Operations as its core ERP. Two upstream platforms had to post financial transactions into it: a policy and claims system, and a life-management system. Neither vendor had access to the D365 side.
+
+I architected both integrations and wrote both specifications:
+
+- **D365 ↔ policy & claims platform** — five endpoints: OAuth 2.0 token generation, policy details, claims, claim payments, remittances.
+- **D365 ↔ life-management system** — three endpoints: OAuth 2.0 token generation, receipts, payments.
+
+## The problem
+
+The reader is an integration engineer at another company. They cannot read the D365 code, cannot see the data entities, and cannot ask me a question mid-sprint. The specification is the entire contract.
+
+That constraint rules out most of what makes documentation feel finished but behave badly:
+
+- **Placeholder examples.** `"field1": "value1"` tells a reader nothing about whether a 14-digit policy number is a string or an integer, or what an empty cheque number means on a mobile-money receipt.
+- **Auth described once, vaguely.** "Use a bearer token" is not a contract. Token lifetime, re-issue behaviour and what happens at expiry are what actually determine whether an integration survives its first night in production.
+- **Drift between sibling documents.** Two specs for the same ERP that order their sections differently force the reader to re-learn the layout, and they stop trusting both.
+
+## The approach
+
+**One template, applied to every endpoint.** Purpose, URL, HTTP method, authorisation, request schema, a fully worked example, and the HTTP responses — in that order, in both documents. A reader who has integrated one endpoint can predict where anything lives in the next.
+
+**Shared concerns factored out.** Authentication is documented once as a reference section rather than repeated per endpoint, with the part that actually bites spelled out:
+
+> The APIs use the OAuth 2.0 protocol for authentication. The token generation service returns a token that expires after 1 hour. This token must be passed in the header of the transaction APIs before expiry. Once the hour lapses, the integrating party must request a fresh token before making any further API requests.
+
+**Credentials as placeholders, by convention.** Environment-specific values are named in the document and delivered out of band:
+
+```text
+The following parameters will be shared separately.
+
+  { baseURL }
+  { client_id }
+  { client_secret }
+  { resource address }
+```
+
+**Worked examples from real payloads.** Both specifications document transaction schemas of roughly fifty fields. Rather than one sanitised example, each endpoint carries several that span the cases an integrator will actually hit — multiple currencies with exchange rates, cheque, EFT, mobile money and wire settlement, and business lines from motor through medical to reinsurance — so a reader pattern-matches to their own case instead of guessing what a placeholder stood for.
+
+**One response contract, one status taxonomy.** Every transaction endpoint returns the same envelope, so error handling is written once on the integrator's side:
+
+```json
+{
+  "Success": false,
+  "StatusCode": "01",
+  "TransReference": "Batch of 150 records",
+  "LogDate": "2025-11-18T12:00:00.000Z",
+  "ResponseMessage": "Duplicate transactions detected in the batch"
+}
+```
+
+| Status code | Meaning           |
+| ----------- | ----------------- |
+| `00`        | Success           |
+| `01`        | Duplicate records |
+| `02`        | Incomplete record |
+| `99`        | Server error      |
+
+Distinguishing "duplicate" from "incomplete" from "server error" is the difference between an integrator writing a retry that helps and one that floods the ERP with the same batch.
+
+## Sample — endpoint reference
+
+The shape every endpoint follows, with identifiers genericised:
+
+> ### 2. Receipts API
+>
+> **Description:** This endpoint is used to get new receipts from the source system and create them in Dynamics.
+>
+> **URL:** `https://{baseurl}/api/services/{IntegrationService}/{Endpoint}/newReceipts`
+>
+> `POST /endpoint2`
+>
+> **Authorization**
+>
+> | Authorization type | Value                                                               |
+> | ------------------ | ------------------------------------------------------------------- |
+> | Bearer token       | Provide the auth token generated from the token generation endpoint |
+>
+> **Request body:** a `contracts` object carrying the company code and an array of receipt records. Each record documents ~50 fields covering the transaction, its GL posting, the policy and client it belongs to, banking and settlement details, and reconciliation state.
+>
+> **HTTP response codes**
+>
+> `200` Successful · `400` Bad Request · `401` Unauthorized · `500` Internal Server Error
+
+## The result
+
+Both specifications were issued at v1.0 as the integration contract for third-party engineering teams — the document each vendor built against without access to the ERP. The per-endpoint template and the shared authentication and response sections carried across both, so the second specification was faster to write and cheaper for a returning reader to navigate.
+
+## A note on what this demonstrates
+
+I build the integrations I document. The worked examples are real payloads, not invented shapes, and the status taxonomy came out of the error paths the implementation actually has. That is the part that is hard to fake: documentation can read well and be quietly wrong, and the only reliable defence is having called the endpoint yourself.

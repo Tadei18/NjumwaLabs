@@ -80,10 +80,19 @@
     border-top: 1px solid var(--color-line);
     margin-block: 2rem;
   }
+  /* Wide tables scroll inside their own box rather than pushing the page
+     sideways. The wrapper is what scrolls; the table keeps its own width. */
   .prose table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
+    /* The page paints a fixed engineering grid behind everything, and a
+       translucent cell lets it show through as phantom column rules. Give
+       the table its own opaque ground so rows read as rows. */
+    background: var(--color-surface-solid);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
   }
   .prose th,
   .prose td {
@@ -92,7 +101,10 @@
     text-align: left;
   }
   .prose th {
-    background: var(--color-surface-2);
+    background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface-solid));
     font-family: var(--font-display);
+  }
+  .prose tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface-solid));
   }
 </style>

@@ -2,7 +2,7 @@
 // Compact, non-interactive echo of the signature SystemsMap — for interior page
 // heroes. Pure CSS animation (draw-in + travelling pulse + breathing), no JS,
 // reduced-motion safe. Smaller than the home-hero version.
-import { pillars } from "@data/services";
+import { systemPillars } from "@data/services";
 
 const C = { x: 150, y: 130 };
 const positions = [
@@ -12,7 +12,7 @@ const positions = [
   { x: 88, y: 222 },
   { x: 50, y: 105 },
 ];
-const nodes = pillars.map((p, i) => ({ ...p, ...positions[i] }));
+const nodes = systemPillars.map((p, i) => ({ ...p, ...positions[i] }));
 const ring = [
   [0, 1],
   [1, 2],
@@ -27,39 +27,79 @@ const ring = [
     <span class="pulse-dot"></span>
     <span class="smm-head-label">one connected system</span>
   </div>
-  <svg viewBox="0 0 300 270" class="smm" role="img" aria-label="The five services connected into one business operating system." xmlns="http://www.w3.org/2000/svg">
+  <svg
+    viewBox="0 0 300 270"
+    class="smm"
+    role="img"
+    aria-label="The five services connected into one business operating system."
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <defs>
       <radialGradient id="smm-hub" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#0fb5c4" stop-opacity="0.4" />
-        <stop offset="100%" stop-color="#0fb5c4" stop-opacity="0" />
+        <stop offset="0%" stop-color="#0fb5c4" stop-opacity="0.4"></stop>
+        <stop offset="100%" stop-color="#0fb5c4" stop-opacity="0"></stop>
       </radialGradient>
     </defs>
 
     <g fill="none" stroke-linecap="round">
-      {nodes.map((n, i) => (
-        <line class="smm-edge" style={`--i:${i}`} pathLength="1" x1={C.x} y1={C.y} x2={n.x} y2={n.y} />
-      ))}
-      {ring.map(([a, b], i) => (
-        <line class="smm-ring" style={`--i:${i + 5}`} pathLength="1" x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} />
-      ))}
+      {
+        nodes.map((n, i) => (
+          <line
+            class="smm-edge"
+            style={`--i:${i}`}
+            pathLength="1"
+            x1={C.x}
+            y1={C.y}
+            x2={n.x}
+            y2={n.y}
+          />
+        ))
+      }
+      {
+        ring.map(([a, b], i) => (
+          <line
+            class="smm-ring"
+            style={`--i:${i + 5}`}
+            pathLength="1"
+            x1={nodes[a].x}
+            y1={nodes[a].y}
+            x2={nodes[b].x}
+            y2={nodes[b].y}
+          />
+        ))
+      }
     </g>
     <g fill="none" stroke-linecap="round" aria-hidden="true">
-      {nodes.map((n, i) => (
-        <line class="smm-pulse" style={`--i:${i}`} pathLength="1" x1={C.x} y1={C.y} x2={n.x} y2={n.y} />
-      ))}
+      {
+        nodes.map((n, i) => (
+          <line
+            class="smm-pulse"
+            style={`--i:${i}`}
+            pathLength="1"
+            x1={C.x}
+            y1={C.y}
+            x2={n.x}
+            y2={n.y}
+          />
+        ))
+      }
     </g>
 
-    <circle cx={C.x} cy={C.y} r="48" fill="url(#smm-hub)" class="smm-glow" />
-    <circle cx={C.x} cy={C.y} r="30" class="smm-hub" />
+    <circle cx={C.x} cy={C.y} r="48" fill="url(#smm-hub)" class="smm-glow"></circle>
+    <circle cx={C.x} cy={C.y} r="30" class="smm-hub"></circle>
     <text x={C.x} y={C.y - 2} text-anchor="middle" class="smm-hub-sm">YOUR</text>
     <text x={C.x} y={C.y + 10} text-anchor="middle" class="smm-hub-lg">OS</text>
 
-    {nodes.map((n, i) => (
-      <g class="smm-node" style={`--i:${i}`}>
-        <circle cx={n.x} cy={n.y} r="22" class="smm-circle" />
-        <text x={n.x} y={n.y + 3} text-anchor="middle" class="smm-label">{n.short.split(" ")[0]}</text>
-      </g>
-    ))}
+    {
+      nodes.map((n, i) => (
+        <g class="smm-node" style={`--i:${i}`}>
+          <circle cx={n.x} cy={n.y} r="22" class="smm-circle" />
+          <text x={n.x} y={n.y + 3} text-anchor="middle" class="smm-label">
+            {n.short.split(" ")[0]}
+          </text>
+        </g>
+      ))
+    }
   </svg>
 </div>
 

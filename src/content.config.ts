@@ -7,6 +7,7 @@ const pillarSlugs = [
   "mobile-apps",
   "database-administration",
   "dynamics-365-finance-operations",
+  "technical-writing",
 ] as const;
 
 const blog = defineCollection({
@@ -51,9 +52,7 @@ const portfolio = defineCollection({
       pubDate: z.coerce.date(),
       stack: z.array(z.string()).default([]),
       // headline result metrics, e.g. { value: "62%", label: "faster load" }
-      metrics: z
-        .array(z.object({ value: z.string(), label: z.string() }))
-        .default([]),
+      metrics: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
       cover: image().optional(),
       coverAlt: z.string().optional(),
       featured: z.boolean().default(false),

@@ -3,7 +3,7 @@
 // wired into one business "operating system". On load: nodes scale in and lines
 // draw; after load: lines carry a travelling pulse and nodes breathe. Hovering a
 // node highlights its links and previews how it feeds the others. Pure SVG + JS.
-import { pillars } from "@data/services";
+import { systemPillars } from "@data/services";
 
 // Pentagon layout around a centre hub (viewBox 600 x 520).
 const C = { x: 300, y: 260 };
@@ -15,7 +15,10 @@ const positions = [
   { x: 80, y: 210 }, // erp (upper left)
 ];
 
-const nodes = pillars.map((p, i) => ({ ...p, ...positions[i], id: p.slug }));
+// Five nodes, five positions — the pentagon is the point. New services that
+// aren't layers of the client's system (technical writing) are excluded by
+// `systemPillars` rather than crammed into a sixth vertex.
+const nodes = systemPillars.map((p, i) => ({ ...p, ...positions[i], id: p.slug }));
 
 const feeds: Record<string, string> = {
   "web-development":
@@ -48,78 +51,92 @@ const ring = [
   >
     <defs>
       <radialGradient id="hubGrad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#0fb5c4" stop-opacity="0.45" />
-        <stop offset="100%" stop-color="#0fb5c4" stop-opacity="0" />
+        <stop offset="0%" stop-color="#0fb5c4" stop-opacity="0.45"></stop>
+        <stop offset="100%" stop-color="#0fb5c4" stop-opacity="0"></stop>
       </radialGradient>
       <linearGradient id="nodeGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#16223e" />
-        <stop offset="100%" stop-color="#0d1428" />
+        <stop offset="0%" stop-color="#16223e"></stop>
+        <stop offset="100%" stop-color="#0d1428"></stop>
       </linearGradient>
     </defs>
 
     {/* base edges (draw in on load) */}
     <g class="edges" fill="none" stroke-linecap="round">
-      {nodes.map((n, i) => (
-        <line
-          class="edge spoke"
-          data-from={n.id}
-          style={`--i:${i}`}
-          pathLength="1"
-          x1={C.x}
-          y1={C.y}
-          x2={n.x}
-          y2={n.y}
-        />
-      ))}
-      {ring.map(([a, b], i) => (
-        <line
-          class="edge ring"
-          data-a={nodes[a].id}
-          data-b={nodes[b].id}
-          style={`--i:${i + 5}`}
-          pathLength="1"
-          x1={nodes[a].x}
-          y1={nodes[a].y}
-          x2={nodes[b].x}
-          y2={nodes[b].y}
-        />
-      ))}
+      {
+        nodes.map((n, i) => (
+          <line
+            class="edge spoke"
+            data-from={n.id}
+            style={`--i:${i}`}
+            pathLength="1"
+            x1={C.x}
+            y1={C.y}
+            x2={n.x}
+            y2={n.y}
+          />
+        ))
+      }
+      {
+        ring.map(([a, b], i) => (
+          <line
+            class="edge ring"
+            data-a={nodes[a].id}
+            data-b={nodes[b].id}
+            style={`--i:${i + 5}`}
+            pathLength="1"
+            x1={nodes[a].x}
+            y1={nodes[a].y}
+            x2={nodes[b].x}
+            y2={nodes[b].y}
+          />
+        ))
+      }
     </g>
 
     {/* travelling pulses along the spokes */}
     <g class="pulses" fill="none" stroke-linecap="round" aria-hidden="true">
-      {nodes.map((n, i) => (
-        <line
-          class="pulse"
-          data-from={n.id}
-          style={`--i:${i}`}
-          pathLength="1"
-          x1={C.x}
-          y1={C.y}
-          x2={n.x}
-          y2={n.y}
-        />
-      ))}
+      {
+        nodes.map((n, i) => (
+          <line
+            class="pulse"
+            data-from={n.id}
+            style={`--i:${i}`}
+            pathLength="1"
+            x1={C.x}
+            y1={C.y}
+            x2={n.x}
+            y2={n.y}
+          />
+        ))
+      }
     </g>
 
     {/* hub */}
-    <circle cx={C.x} cy={C.y} r="86" fill="url(#hubGrad)" class="hub-glow" />
+    <circle cx={C.x} cy={C.y} r="86" fill="url(#hubGrad)" class="hub-glow"></circle>
     <g class="hub">
-      <circle cx={C.x} cy={C.y} r="50" class="hub-core" />
+      <circle cx={C.x} cy={C.y} r="50" class="hub-core"></circle>
       <text x={C.x} y={C.y - 5} text-anchor="middle" class="hub-label hub-label-sm">YOUR</text>
       <text x={C.x} y={C.y + 13} text-anchor="middle" class="hub-label">business OS</text>
     </g>
 
     {/* nodes */}
-    {nodes.map((n, i) => (
-      <a href={n.href} class="node" data-node={n.id} style={`--i:${i}`} aria-label={`${n.title} — view services`}>
-        <circle cx={n.x} cy={n.y} r="40" class="node-halo" />
-        <circle cx={n.x} cy={n.y} r="36" class="node-circle" />
-        <text x={n.x} y={n.y + 4} text-anchor="middle" class="node-label">
-          {n.short.split(" ")[0]}
-        </text>
-      </a>
-    ))}
+    {
+      nodes.map((n, i) => (
+        <a
+          href={n.href}
+          class="node"
+          data-node={n.id}
+          style={`--i:${i}`}
+          aria-label={`${n.title} — view services`}
+        >
+          <circle cx={n.x} cy={n.y} r="40" class="node-halo" />
+          <circle cx={n.x} cy={n.y} r="36" class="node-circle" />
+          <text x={n.x} y={n.y + 4} text-anchor="middle" class="node-label">
+            {n.short.split(" ")[0]}
+          </text>
+        </a>
+      ))
+    }
   </svg>
 
   <figcaption
@@ -311,7 +328,9 @@ const ring = [
     fill: url(#nodeGrad);
     stroke: rgba(255, 255, 255, 0.16);
     stroke-width: 1.5;
-    transition: stroke 0.2s var(--ease-out), filter 0.2s var(--ease-out);
+    transition:
+      stroke 0.2s var(--ease-out),
+      filter 0.2s var(--ease-out);
   }
   .node:hover .node-circle,
   .node:focus-visible .node-circle {

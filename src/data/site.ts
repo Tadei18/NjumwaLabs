@@ -48,6 +48,7 @@ export const nav = [
         label: "Dynamics 365 Finance & Operations",
         href: "/services/dynamics-365-finance-operations/",
       },
+      { label: "Technical writing & API docs", href: "/services/technical-writing/" },
     ],
   },
   { label: "Portfolio", href: "/portfolio/" },

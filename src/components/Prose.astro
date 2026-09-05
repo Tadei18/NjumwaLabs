@@ -26,9 +26,34 @@
     margin-top: 2rem;
     scroll-margin-top: 6rem;
   }
+  /* h4/h5 previously had no rule at all, so they inherited the body size and
+     then shrank further wherever their content was inline code — which in an
+     API reference is every endpoint signature, i.e. the document's primary
+     navigation rendering smaller than its prose. */
+  .prose h4 {
+    font-size: 1.12rem;
+    margin-top: 2rem;
+    scroll-margin-top: 6rem;
+  }
+  .prose h5 {
+    font-size: 1rem;
+    margin-top: 1.75rem;
+    color: var(--color-ink);
+    scroll-margin-top: 6rem;
+  }
   .prose h2 + p,
-  .prose h3 + p {
+  .prose h3 + p,
+  .prose h4 + p,
+  .prose h5 + p {
     margin-top: 0.75rem;
+  }
+  /* An endpoint signature is a heading that happens to be monospace: keep the
+     heading's scale and weight rather than dropping to body-code size. */
+  .prose :is(h2, h3, h4, h5) code {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--color-accent-ink);
+    background: color-mix(in srgb, var(--color-accent) 11%, var(--color-surface-2));
   }
   .prose a {
     color: var(--color-accent-ink);

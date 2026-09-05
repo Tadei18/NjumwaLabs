@@ -1,82 +1,184 @@
 ---
+/**
+ * Home hero.
+ *
+ * Two jobs, both above the fold:
+ *   1. Say what this is, and make it look like the work is good.
+ *   2. Prove it — the credential rail sits inside the first screen, so a
+ *      visitor never has to scroll to find out whether I'm qualified.
+ *
+ * The showpiece is a real 3D scene: a glass slab on a perspective stage,
+ * tilting to the pointer, with badge chips lifted off its face on the Z
+ * axis so they shift against the slab as it rotates. Flat and correct
+ * with JS off or reduced-motion on.
+ */
 import { Icon } from "astro-icon/components";
 import SystemsMap from "@components/SystemsMap.astro";
+import { allCerts } from "@data/credentials";
+import { pillars } from "@data/services";
+
+// Counted, never hand-typed — the rail can't drift from the cert list.
+const certCount = allCerts.length;
+
+const proof: { prefix: string; count: string; suffix: string; label: string; icon: string }[] = [
+  {
+    prefix: "",
+    count: String(certCount),
+    suffix: "",
+    label: "Microsoft & industry certifications",
+    icon: "badge-check",
+  },
+  {
+    prefix: "×",
+    count: "3",
+    suffix: "",
+    label: "Solution Architect Expert",
+    icon: "award",
+  },
+  {
+    prefix: "",
+    count: "200",
+    suffix: "+",
+    label: "user D365 ERP go-live delivered",
+    icon: "building-2",
+  },
+  {
+    prefix: "",
+    count: String(pillars.length),
+    suffix: "",
+    label: "capabilities under one roof",
+    icon: "layers",
+  },
+];
 ---
 
 <section class="hero section-dark">
-  <span class="glow glow-cyan hero-glow-1" aria-hidden="true"></span>
-  <span class="glow glow-amber hero-glow-2" aria-hidden="true"></span>
+  <span class="glow glow-cyan glow-live hero-glow-1" data-parallax="0.12" aria-hidden="true"></span>
+  <span class="glow glow-amber glow-live hero-glow-2" data-parallax="0.06" aria-hidden="true"
+  ></span>
+  <span class="glow glow-violet glow-live hero-glow-3" data-parallax="0.18" aria-hidden="true"
+  ></span>
 
   <div class="container-x hero-grid">
     <div class="hero-copy">
       <span class="eyebrow hero-eyebrow load-fade">
         <span class="pulse-dot"></span>
-        Software · AI · Mobile · Data · ERP
+        Available for new projects · Nairobi → worldwide
       </span>
 
       <h1 class="hero-title">
-        <span class="reveal-line"><span>Software, automation,</span></span>
+        <span class="reveal-line"><span>Software, automation</span></span>
         <span class="reveal-line"><span>and data systems that</span></span>
-        <span class="reveal-line"><span class="text-gradient">grow your business.</span></span>
+        <span class="reveal-line"><span class="text-gradient-live">grow your business.</span></span>
       </h1>
 
       <p class="hero-sub load-fade d2">
-        I design, build, automate and maintain the systems behind growing companies — web and mobile
-        apps, AI automation, reliable databases, and Dynamics 365 — at enterprise quality and
-        globally affordable prices.
+        Microsoft-certified engineering for web, mobile, AI automation, databases and Dynamics 365 —
+        enterprise rigour, globally affordable prices.
       </p>
 
       <div class="hero-actions load-fade d3">
-        <a href="/contact/" class="btn btn-primary" data-track="book_call_hero">
+        <a href="/contact/" class="btn btn-primary btn-lg" data-track="book_call_hero">
           <Icon name="lucide:calendar-check" />
           Book a free call
         </a>
-        <a href="/services/" class="btn btn-on-dark">
-          See services
-          <Icon name="lucide:arrow-right" />
+        <a href="#credentials" class="btn btn-on-dark btn-lg">
+          See the credentials
+          <Icon name="lucide:arrow-down" />
         </a>
       </div>
 
-      <p class="hero-creds load-fade d4">
-        <Icon name="lucide:shield-check" />
-        Microsoft Certified · Solution Architect Expert ×3 · 200+ user ERP go-live delivered
-      </p>
+      <!-- The proof rail. This is the part that must be readable without
+           scrolling: four numbers that answer "is he any good?" before the
+           visitor has to take my word for anything. -->
+      <ul class="proof-rail load-fade d4" aria-label="Credentials at a glance">
+        {
+          proof.map((p) => (
+            <li class="proof">
+              <Icon name={`lucide:${p.icon}`} class="proof-icon" />
+              <span class="proof-num">
+                <span data-count={p.count} data-prefix={p.prefix} data-suffix={p.suffix}>
+                  {p.prefix + p.count + p.suffix}
+                </span>
+              </span>
+              <span class="proof-label">{p.label}</span>
+            </li>
+          ))
+        }
+      </ul>
     </div>
 
-    <div class="hero-panel load-fade d2">
-      <div class="panel-head">
-        <span class="panel-dot"></span>
-        <span class="panel-title">your business — one connected system</span>
+    <!-- 3D stage. .stage owns the perspective, .tilt is the thing that
+         rotates inside it, and the badges ride above the face on Z. -->
+    <div class="hero-stage stage load-fade d2">
+      <div class="hero-panel slab-dark tilt" data-tilt="6">
+        <div class="panel-head depth-1">
+          <span class="panel-dot"></span>
+          <span class="panel-title">your business — one connected system</span>
+        </div>
+
+        <div class="panel-map depth-1">
+          <SystemsMap />
+        </div>
+
+        <!-- Floating chips: lifted furthest off the face, so they get the
+             most parallax as the slab turns. -->
+        <div class="chip chip-tr depth-3 float" style="--float-delay: 0s;">
+          <Icon name="lucide:award" />
+          <span><strong>{certCount}</strong> certifications</span>
+        </div>
+        <div class="chip chip-bl depth-2 float" style="--float-delay: 1.4s;">
+          <Icon name="lucide:zap" />
+          <span><strong>&lt; 1 day</strong> first response</span>
+        </div>
       </div>
-      <SystemsMap />
     </div>
   </div>
 
-  <a href="#explore" class="hero-scroll load-fade d4" aria-label="Scroll to content">
-    <Icon name="lucide:chevron-down" />
+  <a href="#credentials" class="hero-scroll load-fade d5" aria-label="Scroll to credentials">
+    <span class="scroll-rail"><span class="scroll-bead"></span></span>
   </a>
 </section>
 
 <style>
   .hero {
-    min-height: 90vh;
+    position: relative;
+    /* Capped, not open-ended: the proof rail at the bottom of this
+        section is the whole point, so the hero must not grow past a
+        screen and push it under the fold. */
+    min-height: min(86svh, 46rem);
     display: flex;
     align-items: center;
-    padding-block: clamp(3rem, 7vw, 5rem) clamp(3.5rem, 8vw, 6rem);
+    padding-block: clamp(2rem, 4vw, 3rem) clamp(2.5rem, 5vw, 3.75rem);
   }
   .hero-glow-1 {
     width: 38rem;
     height: 38rem;
     top: -12rem;
     left: -10rem;
-    opacity: 0.35;
+    --glow-lo: 0.3;
+    --glow-hi: 0.5;
+    translate: 0 var(--parallax-y, 0);
   }
   .hero-glow-2 {
     width: 32rem;
     height: 32rem;
     bottom: -14rem;
     right: -8rem;
-    opacity: 0.28;
+    --glow-lo: 0.22;
+    --glow-hi: 0.38;
+    animation-delay: -4s;
+    translate: 0 var(--parallax-y, 0);
+  }
+  .hero-glow-3 {
+    width: 26rem;
+    height: 26rem;
+    top: 28%;
+    right: 22%;
+    --glow-lo: 0.12;
+    --glow-hi: 0.26;
+    animation-delay: -8s;
+    translate: 0 var(--parallax-y, 0);
   }
 
   .hero-grid {
@@ -84,7 +186,7 @@ import SystemsMap from "@components/SystemsMap.astro";
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    gap: 2.75rem;
     align-items: center;
     width: 100%;
   }
@@ -92,18 +194,24 @@ import SystemsMap from "@components/SystemsMap.astro";
   .hero-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.55rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-edge-dark);
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    backdrop-filter: blur(var(--glass-blur-sm));
   }
   .hero-title {
-    margin-top: 1.25rem;
-    font-size: clamp(2.5rem, 7vw, 4.75rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
+    margin-top: 1.1rem;
+    font-size: clamp(2.05rem, 4.6vw, 3.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
   }
   .hero-sub {
-    margin-top: 1.5rem;
-    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
-    color: rgba(255, 255, 255, 0.74);
+    margin-top: 1.1rem;
+    font-size: clamp(0.98rem, 1.5vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.76);
     line-height: 1.6;
     max-width: 46ch;
   }
@@ -111,38 +219,72 @@ import SystemsMap from "@components/SystemsMap.astro";
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
   }
   .hero-actions svg {
     width: 1.15rem;
     height: 1.15rem;
   }
-  .hero-creds {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    letter-spacing: 0.01em;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.5;
+
+  /* ---- proof rail ---- */
+  .proof-rail {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
   }
-  .hero-creds svg {
-    width: 1rem;
-    height: 1rem;
+  .proof {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 0.6rem;
+    row-gap: 0.15rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-edge-dark);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    transition:
+      background-color 0.25s var(--ease-out),
+      border-color 0.25s var(--ease-out),
+      transform 0.4s var(--ease-liquid);
+  }
+  .proof:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+    transform: translateY(-3px);
+  }
+  .proof-icon {
+    grid-row: 1 / 3;
+    align-self: center;
+    width: 1.4rem;
+    height: 1.4rem;
     color: var(--color-accent);
-    flex-shrink: 0;
+  }
+  .proof-num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .proof-label {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.66);
   }
 
+  /* ---- 3D stage ---- */
+  .hero-stage {
+    position: relative;
+  }
   .hero-panel {
     position: relative;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
-    border: 1px solid var(--color-night-line);
-    border-radius: 24px;
-    padding: 1.25rem 1.25rem 1.75rem;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    padding: 1.15rem 1.15rem 1.6rem;
   }
   .panel-head {
     display: flex;
@@ -167,41 +309,146 @@ import SystemsMap from "@components/SystemsMap.astro";
     color: rgba(255, 255, 255, 0.6);
   }
 
-  .hero-scroll {
+  .chip {
     position: absolute;
-    bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    display: none;
-    color: rgba(255, 255, 255, 0.5);
-    animation: bob 2s ease-in-out infinite;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(12, 20, 38, 0.82);
+    border: 1px solid var(--glass-edge-dark);
+    -webkit-backdrop-filter: blur(10px) saturate(1.4);
+    backdrop-filter: blur(10px) saturate(1.4);
+    box-shadow:
+      0 14px 30px -10px rgba(0, 0, 0, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
   }
-  .hero-scroll svg {
-    width: 1.5rem;
-    height: 1.5rem;
+  .chip strong {
+    font-family: var(--font-mono);
+    color: var(--color-accent);
   }
-  @keyframes bob {
+  .chip svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--color-accent);
+  }
+  /* .float animates translateY, so the Z lift has to live on the parent
+     rule it composes with — hence a wrapper-free `translate` here rather
+     than folding both into one transform. */
+  .chip-tr {
+    top: -0.9rem;
+    right: -0.6rem;
+  }
+  .chip-bl {
+    bottom: -0.9rem;
+    left: -0.6rem;
+  }
+  .depth-2.float {
+    animation-name: float-depth-2;
+  }
+  .depth-3.float {
+    animation-name: float-depth-3;
+  }
+  @keyframes float-depth-2 {
     0%,
     100% {
-      transform: translateX(-50%) translateY(0);
+      transform: translateZ(36px) translateY(0);
     }
     50% {
-      transform: translateX(-50%) translateY(6px);
+      transform: translateZ(36px) translateY(-9px);
+    }
+  }
+  @keyframes float-depth-3 {
+    0%,
+    100% {
+      transform: translateZ(58px) translateY(0);
+    }
+    50% {
+      transform: translateZ(58px) translateY(-11px);
     }
   }
 
+  /* ---- scroll cue ---- */
+  .hero-scroll {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: none;
+  }
+  .scroll-rail {
+    display: block;
+    position: relative;
+    width: 1.5rem;
+    height: 2.4rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    overflow: hidden;
+  }
+  .scroll-bead {
+    position: absolute;
+    left: 50%;
+    top: 0.4rem;
+    width: 0.28rem;
+    height: 0.55rem;
+    margin-left: -0.14rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    animation: bead 2s var(--ease-out) infinite;
+  }
+  @keyframes bead {
+    0% {
+      opacity: 0;
+      transform: translateY(-0.3rem);
+    }
+    35%,
+    65% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(1.1rem);
+    }
+  }
+
+  @media (min-width: 560px) {
+    .proof-rail {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .proof {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+      row-gap: 0.35rem;
+    }
+    .proof-icon {
+      grid-row: auto;
+    }
+  }
   @media (min-width: 980px) {
     .hero-grid {
-      grid-template-columns: 1.02fr 0.98fr;
+      grid-template-columns: 1.06fr 0.94fr;
       gap: 3.5rem;
     }
     .hero-scroll {
       display: block;
     }
+    .proof-rail {
+      margin-top: 2rem;
+    }
   }
+
   @media (prefers-reduced-motion: reduce) {
-    .hero-scroll {
+    .scroll-bead {
+      animation: none;
+      top: 0.9rem;
+    }
+    .depth-2.float,
+    .depth-3.float {
       animation: none;
     }
   }

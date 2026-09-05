@@ -15,7 +15,11 @@ const {
 
 <section class="cta">
   <div class="container-x">
-    <div class="cta-card" data-reveal>
+    <div class="cta-card glass-rim" data-reveal="scale">
+      <span class="glow glow-cyan glow-live cta-glow-1" aria-hidden="true"></span>
+      <span class="glow glow-amber glow-live cta-glow-2" aria-hidden="true"></span>
+      <span class="orb cta-orb-1 float" aria-hidden="true"></span>
+      <span class="orb cta-orb-2 float" aria-hidden="true"></span>
       <span class="eyebrow cta-eyebrow">Next step</span>
       <h2 class="cta-heading">{heading}</h2>
       <p class="cta-text">{text}</p>
@@ -24,7 +28,13 @@ const {
           <Icon name="lucide:calendar-check" />
           Book a free call
         </a>
-        <a href={whatsappLink} target="_blank" rel="noopener" class="btn btn-on-dark" data-track="whatsapp_cta">
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener"
+          class="btn btn-on-dark"
+          data-track="whatsapp_cta"
+        >
           <Icon name="lucide:message-circle" />
           Message on WhatsApp
         </a>
@@ -39,20 +49,76 @@ const {
   }
   .cta-card {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
     background: var(--color-night);
+    border: 1px solid var(--glass-edge-dark);
     border-radius: 28px;
     padding: clamp(2.25rem, 5vw, 4rem);
     text-align: center;
     color: #fff;
+    box-shadow: 0 40px 80px -30px rgba(10, 16, 32, 0.55);
+  }
+  .cta-glow-1 {
+    width: 26rem;
+    height: 26rem;
+    top: -12rem;
+    left: -8rem;
+    --glow-lo: 0.24;
+    --glow-hi: 0.42;
+  }
+  .cta-glow-2 {
+    width: 22rem;
+    height: 22rem;
+    bottom: -12rem;
+    right: -6rem;
+    --glow-lo: 0.16;
+    --glow-hi: 0.3;
+    animation-delay: -6s;
+  }
+  /* Two shaded spheres, small and off to the sides — enough dimension to
+     stop the panel reading as a flat rectangle, not enough to compete
+     with the heading. */
+  .cta-orb-1 {
+    position: absolute;
+    top: 12%;
+    left: 6%;
+    width: 3.25rem;
+    height: 3.25rem;
+    --orb: var(--color-accent);
+    opacity: 0.55;
+  }
+  .cta-orb-2 {
+    position: absolute;
+    bottom: 14%;
+    right: 8%;
+    width: 2.1rem;
+    height: 2.1rem;
+    --orb: var(--color-accent-2);
+    opacity: 0.5;
+    --float-delay: 2.2s;
+  }
+  @media (max-width: 720px) {
+    .cta-orb-1,
+    .cta-orb-2 {
+      display: none;
+    }
   }
   .cta-card::before {
     content: "";
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(60% 80% at 15% 0%, color-mix(in srgb, var(--color-accent) 28%, transparent), transparent 70%),
-      radial-gradient(50% 70% at 100% 100%, color-mix(in srgb, var(--color-accent-2) 18%, transparent), transparent 70%);
+      radial-gradient(
+        60% 80% at 15% 0%,
+        color-mix(in srgb, var(--color-accent) 28%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        50% 70% at 100% 100%,
+        color-mix(in srgb, var(--color-accent-2) 18%, transparent),
+        transparent 70%
+      );
     pointer-events: none;
   }
   .cta-eyebrow {

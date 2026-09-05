@@ -36,17 +36,21 @@ const defaultSteps: Step[] = [
 const { steps = defaultSteps } = Astro.props;
 ---
 
-<ol class="steps" data-reveal>
-  {steps.map((step, i) => (
-    <li class="step" data-reveal data-delay={String(i + 1)}>
-      <span class="step-top">
-        <span class="step-icon"><Icon name={`lucide:${step.icon}`} /></span>
-        <span class="step-num">{String(i + 1).padStart(2, "0")}</span>
-      </span>
-      <h3 class="step-title">{step.title}</h3>
-      <p class="step-text">{step.text}</p>
-    </li>
-  ))}
+<ol class="steps stage" data-reveal>
+  {
+    steps.map((step, i) => (
+      <li class="step slab tilt" data-tilt="5" data-reveal="3d" data-delay={String(i + 1)}>
+        <span class="step-top">
+          <span class="step-icon">
+            <Icon name={`lucide:${step.icon}`} />
+          </span>
+          <span class="step-num">{String(i + 1).padStart(2, "0")}</span>
+        </span>
+        <h3 class="step-title">{step.title}</h3>
+        <p class="step-text">{step.text}</p>
+      </li>
+    ))
+  }
 </ol>
 
 <style>
@@ -62,16 +66,16 @@ const { steps = defaultSteps } = Astro.props;
   .step {
     position: relative;
     padding: 1.5rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out),
-      border-color 0.22s var(--ease-out);
+    transition:
+      transform 0.5s var(--ease-glide),
+      box-shadow 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out);
   }
+  /* `transform` is the tilt's; the hover state only deepens the shadow. */
   .step:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lift);
-    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
+    box-shadow: var(--shadow-float);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, var(--glass-edge));
   }
   /* connecting progress line across the row (desktop), draws in on reveal */
   .steps::before {
@@ -82,7 +86,11 @@ const { steps = defaultSteps } = Astro.props;
     left: 12%;
     right: 12%;
     height: 2px;
-    background: linear-gradient(90deg, var(--color-accent), color-mix(in srgb, var(--color-accent) 20%, transparent));
+    background: linear-gradient(
+      90deg,
+      var(--color-accent),
+      color-mix(in srgb, var(--color-accent) 20%, transparent)
+    );
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 1s var(--ease-out) 0.3s;
@@ -94,6 +102,11 @@ const { steps = defaultSteps } = Astro.props;
   .step > * {
     position: relative;
     z-index: 1;
+  }
+  .step-top,
+  .step-title,
+  .step-text {
+    transform: translateZ(14px);
   }
   .step-top {
     display: flex;

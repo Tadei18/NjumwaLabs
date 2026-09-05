@@ -14,18 +14,33 @@ interface Props {
   coverAlt?: string;
   metrics?: { value: string; label: string }[];
 }
-const { url, title, description, client, industry, pillar, cover, coverAlt, metrics = [] } =
-  Astro.props;
+const {
+  url,
+  title,
+  description,
+  client,
+  industry,
+  pillar,
+  cover,
+  coverAlt,
+  metrics = [],
+} = Astro.props;
 const p = pillarBySlug(pillar);
 ---
 
-<a href={url} class="cs-card card" data-reveal>
+<a href={url} class="cs-card card tilt" data-tilt="3.5" data-reveal="3d">
   <div class="cs-frame">
     <span class="cs-bar" aria-hidden="true">
       <span class="cs-dot"></span><span class="cs-dot"></span><span class="cs-dot"></span>
     </span>
     <div class="cs-media">
-      <CaseCover pillar={pillar} title={title} metric={metrics[0]} cover={cover} coverAlt={coverAlt} />
+      <CaseCover
+        pillar={pillar}
+        title={title}
+        metric={metrics[0]}
+        cover={cover}
+        coverAlt={coverAlt}
+      />
       {p && <span class="cs-tag">{p.short}</span>}
     </div>
   </div>
@@ -33,16 +48,18 @@ const p = pillarBySlug(pillar);
     <p class="cs-meta">{client} · {industry}</p>
     <h3 class="cs-title">{title}</h3>
     <p class="cs-desc">{description}</p>
-    {metrics.length > 0 && (
-      <ul class="cs-metrics">
-        {metrics.slice(0, 2).map((m) => (
-          <li>
-            <span class="cs-metric-val">{m.value}</span>
-            <span class="cs-metric-label">{m.label}</span>
-          </li>
-        ))}
-      </ul>
-    )}
+    {
+      metrics.length > 0 && (
+        <ul class="cs-metrics">
+          {metrics.slice(0, 2).map((m) => (
+            <li>
+              <span class="cs-metric-val">{m.value}</span>
+              <span class="cs-metric-label">{m.label}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
     <span class="cs-cta">
       Read case study
       <Icon name="lucide:arrow-right" />
@@ -55,11 +72,20 @@ const p = pillarBySlug(pillar);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+    transition:
+      transform 0.5s var(--ease-glide),
+      translate 0.35s var(--ease-liquid),
+      box-shadow 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out);
   }
-  .cs-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lift);
+  /* `transform` belongs to .tilt on this element, so the hover lift rides
+     on the individual `translate` property instead of overwriting it. The
+     extra class keeps this above `[data-reveal].is-visible`, which resets
+     `translate` and would otherwise cancel the lift. */
+  .cs-card.tilt:hover {
+    translate: 0 -5px;
+    box-shadow: var(--shadow-float);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--glass-edge));
   }
   .cs-frame {
     background: var(--color-surface-2);

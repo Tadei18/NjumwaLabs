@@ -1,15 +1,13 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Hero from "@components/Hero.astro";
+import AtAGlance from "@components/AtAGlance.astro";
 import SectionHeading from "@components/SectionHeading.astro";
 import ServiceCard from "@components/ServiceCard.astro";
-import BenefitBlock from "@components/BenefitBlock.astro";
 import ProcessSteps from "@components/ProcessSteps.astro";
 import ClientBand from "@components/ClientBand.astro";
 import CaseStudyCard from "@components/CaseStudyCard.astro";
-import CredentialsBand from "@components/CredentialsBand.astro";
 import LogoCloud from "@components/LogoCloud.astro";
-import Stat from "@components/Stat.astro";
 import CTASection from "@components/CTASection.astro";
 import { Icon } from "astro-icon/components";
 import { pillars } from "@data/services";
@@ -37,33 +35,18 @@ const clients = showcaseClientSlugs
     pillar: p.data.pillar,
   }));
 
-const why = [
-  {
-    icon: "award",
-    title: "Microsoft-certified, enterprise-proven",
-    text: "Three Microsoft Solution Architect Expert certifications and a 200+ user D365 ERP go-live behind me — I bring enterprise rigour to projects of every size.",
-  },
-  {
-    icon: "layers",
-    title: "Full-stack range",
-    text: "Web, mobile, AI automation, databases and ERP under one roof. Fewer vendors, fewer handoffs, one partner who sees the whole system.",
-  },
-  {
-    icon: "wallet",
-    title: "Globally affordable",
-    text: "Enterprise quality at prices well below typical US/EU agencies — so SMEs and startups can afford to build things properly.",
-  },
-  {
-    icon: "message-square-text",
-    title: "Reliable & clear",
-    text: "Regular demos, plain-language updates and dependable delivery. You always know where your project stands.",
-  },
-];
-
 const automationScenarios = [
-  { before: "Leads answered overnight", after: "Answered in 2 seconds, 24/7", icon: "message-circle" },
+  {
+    before: "Leads answered overnight",
+    after: "Answered in 2 seconds, 24/7",
+    icon: "message-circle",
+  },
   { before: "10 hrs/week of data entry", after: "0 — fully automated", icon: "file-spreadsheet" },
-  { before: "Missed calls = lost sales", after: "Every call captured & booked", icon: "phone-call" },
+  {
+    before: "Missed calls = lost sales",
+    after: "Every call captured & booked",
+    icon: "phone-call",
+  },
 ];
 
 const description =
@@ -76,18 +59,21 @@ const description =
   isHome={true}
   schemas={homeSchemas}
 >
+  <!-- Screen 1: the pitch, with the credential rail inside it. -->
   <Hero />
 
+  <!-- Screen 2: credentials, strengths and priced capabilities, together.
+       Everything a visitor needs to judge the offer sits here, one scroll
+       step down — nothing about qualifications is buried further below. -->
+  <AtAGlance />
+
   <!-- Trust strip -->
-  <section class="section trust-strip" id="explore">
+  <section class="section-tight trust-strip" id="explore">
     <div class="container-x">
-      <LogoCloud heading="Trusted by businesses in Kenya, the US, EU & the Gulf — built with" marquee={true} />
-      <div class="stats">
-        <Stat value="5" label="Service pillars, one connected system" />
-        <Stat value="D365" label="Enterprise ERP consulting background" />
-        <Stat value="24/7" label="Automations that never clock off" />
-        <Stat value="< 1 day" label="Typical first response" />
-      </div>
+      <LogoCloud
+        heading="Trusted by businesses in Kenya, the US, EU & the Gulf — built with"
+        marquee={true}
+      />
     </div>
   </section>
 
@@ -99,23 +85,22 @@ const description =
         title="Five capabilities. One business operating system."
         text="Each service stands on its own — or combines into a single system where your website, app, data, automations and ERP all talk to each other."
       />
-      <div class="services-grid">
-        {pillars.map((p, i) => (
-          <ServiceCard pillar={p} index={i} />
-        ))}
+      <div class="services-grid stage">
+        {pillars.map((p, i) => <ServiceCard pillar={p} index={i} />)}
         <a href="/services/" class="service-all card-gradient card-hover" data-reveal>
           <svg class="sa-nodes" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-            <line x1="60" y1="60" x2="60" y2="22" stroke="currentColor" stroke-width="1.5" />
-            <line x1="60" y1="60" x2="94" y2="44" stroke="currentColor" stroke-width="1.5" />
-            <line x1="60" y1="60" x2="84" y2="96" stroke="currentColor" stroke-width="1.5" />
-            <line x1="60" y1="60" x2="30" y2="92" stroke="currentColor" stroke-width="1.5" />
-            <line x1="60" y1="60" x2="24" y2="40" stroke="currentColor" stroke-width="1.5" />
-            <circle cx="60" cy="22" r="6" fill="currentColor" />
-            <circle cx="94" cy="44" r="6" fill="currentColor" />
-            <circle cx="84" cy="96" r="6" fill="currentColor" />
-            <circle cx="30" cy="92" r="6" fill="currentColor" />
-            <circle cx="24" cy="40" r="6" fill="currentColor" />
-            <circle cx="60" cy="60" r="9" fill="#0a1322" stroke="currentColor" stroke-width="2" />
+            <line x1="60" y1="60" x2="60" y2="22" stroke="currentColor" stroke-width="1.5"></line>
+            <line x1="60" y1="60" x2="94" y2="44" stroke="currentColor" stroke-width="1.5"></line>
+            <line x1="60" y1="60" x2="84" y2="96" stroke="currentColor" stroke-width="1.5"></line>
+            <line x1="60" y1="60" x2="30" y2="92" stroke="currentColor" stroke-width="1.5"></line>
+            <line x1="60" y1="60" x2="24" y2="40" stroke="currentColor" stroke-width="1.5"></line>
+            <circle cx="60" cy="22" r="6" fill="currentColor"></circle>
+            <circle cx="94" cy="44" r="6" fill="currentColor"></circle>
+            <circle cx="84" cy="96" r="6" fill="currentColor"></circle>
+            <circle cx="30" cy="92" r="6" fill="currentColor"></circle>
+            <circle cx="24" cy="40" r="6" fill="currentColor"></circle>
+            <circle cx="60" cy="60" r="9" fill="#0a1322" stroke="currentColor" stroke-width="2"
+            ></circle>
           </svg>
           <span class="sa-label">See how they fit together</span>
           <span class="sa-arrow">Explore the system <Icon name="lucide:arrow-right" /></span>
@@ -124,29 +109,16 @@ const description =
     </div>
   </section>
 
-  <!-- Why work with me -->
-  <section class="section why">
-    <div class="container-x">
-      <SectionHeading
-        eyebrow="Why Njumwa Labs"
-        title="The technical partner who can build it, automate it, and keep it running."
-      />
-      <div class="why-grid">
-        {why.map((w) => (
-          <BenefitBlock icon={w.icon} title={w.title} text={w.text} />
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- AI automation spotlight (showpiece, dark) -->
   <section class="section section-dark spotlight">
-    <span class="glow glow-cyan spot-glow" aria-hidden="true"></span>
+    <span class="glow glow-cyan glow-live spot-glow" aria-hidden="true"></span>
     <div class="container-x">
       <div class="spotlight-inner">
-        <div class="spotlight-copy" data-reveal>
+        <div class="spotlight-copy" data-reveal="left">
           <span class="eyebrow">In focus · highest demand</span>
-          <h2 class="spotlight-title">Put your repetitive work <span class="text-gradient">on autopilot.</span></h2>
+          <h2 class="spotlight-title">
+            Put your repetitive work <span class="text-gradient">on autopilot.</span>
+          </h2>
           <p class="spotlight-text">
             AI automation is where most businesses find the fastest return: faster responses, more
             qualified leads, and hours of manual work removed every week. Here's what that looks
@@ -157,17 +129,26 @@ const description =
             <Icon name="lucide:arrow-right" />
           </a>
         </div>
-        <ul class="scenarios">
-          {automationScenarios.map((s, i) => (
-            <li class="scenario" data-reveal data-delay={String(i + 1)}>
-              <span class="scenario-icon"><Icon name={`lucide:${s.icon}`} /></span>
-              <div class="scenario-flow">
-                <span class="scenario-before">{s.before}</span>
-                <Icon name="lucide:arrow-right" class="scenario-arrow" />
-                <span class="scenario-after">{s.after}</span>
-              </div>
-            </li>
-          ))}
+        <ul class="scenarios stage">
+          {
+            automationScenarios.map((s, i) => (
+              <li
+                class="scenario slab-dark tilt"
+                data-tilt="4"
+                data-reveal="right"
+                data-delay={String(i + 1)}
+              >
+                <span class="scenario-icon depth-2">
+                  <Icon name={`lucide:${s.icon}`} />
+                </span>
+                <div class="scenario-flow depth-1">
+                  <span class="scenario-before">{s.before}</span>
+                  <Icon name="lucide:arrow-right" class="scenario-arrow" />
+                  <span class="scenario-after">{s.after}</span>
+                </div>
+              </li>
+            ))
+          }
         </ul>
       </div>
 
@@ -193,35 +174,39 @@ const description =
   </section>
 
   <!-- Featured work -->
-  {featured.length > 0 && (
-    <section class="section">
-      <div class="container-x">
-        <SectionHeading
-          eyebrow="Selected work"
-          title="Systems that delivered measurable results."
-          text="A few representative projects. Each one started as a business problem, not a feature list."
-        />
-        <div class="work-grid">
-          {featured.map((cs) => (
-            <CaseStudyCard
-              url={`/portfolio/${cs.id}/`}
-              title={cs.data.title}
-              description={cs.data.description}
-              client={cs.data.client}
-              industry={cs.data.industry}
-              pillar={cs.data.pillar}
-              cover={cs.data.cover}
-              coverAlt={cs.data.coverAlt}
-              metrics={cs.data.metrics}
-            />
-          ))}
+  {
+    featured.length > 0 && (
+      <section class="section">
+        <div class="container-x">
+          <SectionHeading
+            eyebrow="Selected work"
+            title="Systems that delivered measurable results."
+            text="A few representative projects. Each one started as a business problem, not a feature list."
+          />
+          <div class="work-grid stage">
+            {featured.map((cs) => (
+              <CaseStudyCard
+                url={`/portfolio/${cs.id}/`}
+                title={cs.data.title}
+                description={cs.data.description}
+                client={cs.data.client}
+                industry={cs.data.industry}
+                pillar={cs.data.pillar}
+                cover={cs.data.cover}
+                coverAlt={cs.data.coverAlt}
+                metrics={cs.data.metrics}
+              />
+            ))}
+          </div>
+          <div class="center-cta">
+            <a href="/portfolio/" class="btn btn-ghost">
+              See all work <Icon name="lucide:arrow-right" />
+            </a>
+          </div>
         </div>
-        <div class="center-cta">
-          <a href="/portfolio/" class="btn btn-ghost">See all work <Icon name="lucide:arrow-right" /></a>
-        </div>
-      </div>
-    </section>
-  )}
+      </section>
+    )
+  }
 
   <!-- Process -->
   <section class="section process">
@@ -235,29 +220,24 @@ const description =
     </div>
   </section>
 
-  <!-- Credentials / trust band (dark) -->
-  <section class="section section-dark">
-    <div class="container-x">
-      <CredentialsBand variant="dark" />
-    </div>
-  </section>
-
   <!-- Clients. Real named brands, not testimonials: naming who the work was
        for is verifiable, inventing what they said about it is not. Real quotes
        replace this only when clients actually give them. -->
-  {clients.length > 0 && (
-    <section class="section bg-dots">
-      <div class="container-x">
-        <SectionHeading
-          eyebrow="Selected clients"
-          title="Brands I've built for."
-          text="Live sites and platforms delivered end to end — each one links through to what was built and why."
-          align="center"
-        />
-        <ClientBand clients={clients} />
-      </div>
-    </section>
-  )}
+  {
+    clients.length > 0 && (
+      <section class="section bg-dots">
+        <div class="container-x">
+          <SectionHeading
+            eyebrow="Selected clients"
+            title="Brands I've built for."
+            text="Live sites and platforms delivered end to end — each one links through to what was built and why."
+            align="center"
+          />
+          <ClientBand clients={clients} />
+        </div>
+      </section>
+    )
+  }
 
   <!-- Pricing teaser -->
   <section class="section pricing-teaser">
@@ -268,15 +248,19 @@ const description =
         text="Clear 'from' prices in USD. Local (KES) and custom quotes available — no surprises, ever."
       />
       <div class="teaser-grid">
-        {pillars.map((p) => (
-          <a href={p.href} class="teaser-item" data-reveal>
-            <span class="teaser-name">{p.short}</span>
-            <span class="teaser-price">from {p.priceFrom}</span>
-          </a>
-        ))}
+        {
+          pillars.map((p, i) => (
+            <a href={p.href} class="teaser-item" data-reveal="left" data-delay={String(i + 1)}>
+              <span class="teaser-name">{p.short}</span>
+              <span class="teaser-price">from {p.priceFrom}</span>
+            </a>
+          ))
+        }
       </div>
       <div class="center-cta">
-        <a href="/pricing/" class="btn btn-primary">See full pricing <Icon name="lucide:arrow-right" /></a>
+        <a href="/pricing/" class="btn btn-primary"
+          >See full pricing <Icon name="lucide:arrow-right" /></a
+        >
       </div>
     </div>
   </section>
@@ -286,15 +270,7 @@ const description =
 
 <style>
   .trust-strip {
-    padding-block: clamp(2rem, 5vw, 3.5rem);
-  }
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem 1.5rem;
-    margin-top: 3rem;
-    padding-top: 3rem;
-    border-top: 1px solid var(--color-line);
+    padding-block: clamp(1.75rem, 4vw, 2.75rem);
   }
 
   .services-grid {
@@ -344,15 +320,6 @@ const description =
     transform: translateX(4px);
   }
 
-  .why {
-    background: var(--color-surface-2);
-  }
-  .why-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
   .spotlight {
     position: relative;
   }
@@ -361,7 +328,8 @@ const description =
     height: 34rem;
     top: -10rem;
     right: -8rem;
-    opacity: 0.22;
+    --glow-lo: 0.2;
+    --glow-hi: 0.36;
   }
   .spotlight-inner {
     position: relative;
@@ -401,14 +369,7 @@ const description =
     align-items: center;
     gap: 1rem;
     padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--color-night-line);
     border-radius: var(--radius-card);
-    transition: border-color 0.2s, transform 0.2s var(--ease-out);
-  }
-  .scenario:hover {
-    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
-    transform: translateX(4px);
   }
   .scenario-icon {
     display: inline-flex;
@@ -508,11 +469,18 @@ const description =
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: 14px;
-    transition: border-color 0.18s, transform 0.18s var(--ease-out);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transition:
+      border-color 0.18s,
+      box-shadow 0.25s var(--ease-out),
+      transform 0.35s var(--ease-liquid);
   }
   .teaser-item:hover {
     border-color: var(--color-accent);
-    transform: translateX(4px);
+    transform: translateX(6px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 12px 28px -12px color-mix(in srgb, var(--color-accent) 60%, transparent);
   }
   .teaser-name {
     font-family: var(--font-display);
@@ -525,25 +493,21 @@ const description =
   }
 
   @media (min-width: 640px) {
-    .stats {
-      grid-template-columns: repeat(4, 1fr);
-    }
     .services-grid,
-    .why-grid,
     .work-grid {
       grid-template-columns: repeat(2, 1fr);
     }
     .teaser-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+    .spot-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
   @media (min-width: 980px) {
     .services-grid,
     .work-grid {
       grid-template-columns: repeat(3, 1fr);
-    }
-    .why-grid {
-      grid-template-columns: repeat(2, 1fr);
     }
     .spotlight-inner {
       grid-template-columns: 1fr 1fr;

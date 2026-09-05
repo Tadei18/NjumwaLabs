@@ -1,0 +1,515 @@
+---
+/**
+ * "At a glance" — the second screen of the home page, and the one that has
+ * to do the persuading.
+ *
+ * The brief this answers: a visitor should understand what I'm qualified in
+ * and what I'm good at without hunting for it. So everything that used to be
+ * scattered down the page — the certification band, the "why work with me"
+ * blocks, the capability list with prices — is collapsed into a single
+ * screen-height band directly under the hero.
+ *
+ * Three panels, one grid:
+ *   · Credentials — every certification, grouped by tier
+ *   · Strengths   — the four things that actually differentiate the work
+ *   · Capabilities — five pillars with a real "from" price on each
+ */
+import { Icon } from "astro-icon/components";
+import { credentialGroups, allCerts, verificationUrl } from "@data/credentials";
+import { pillars } from "@data/services";
+
+const groupIcon: Record<string, string> = {
+  expert: "award",
+  associate: "badge-check",
+  ai: "brain-circuit",
+};
+
+const strengths = [
+  {
+    icon: "award",
+    title: "Microsoft-certified, enterprise-proven",
+    text: "Three Solution Architect Expert certifications and a 200+ user D365 ERP go-live — enterprise rigour on projects of every size.",
+  },
+  {
+    icon: "layers",
+    title: "Full-stack range, one partner",
+    text: "Web, mobile, AI automation, databases and ERP under one roof. Fewer vendors, fewer handoffs, one person who sees the whole system.",
+  },
+  {
+    icon: "wallet",
+    title: "Globally affordable",
+    text: "Enterprise quality well below typical US/EU agency rates — so SMEs and startups can afford to build things properly.",
+  },
+  {
+    icon: "message-square-text",
+    title: "Reliable & clear",
+    text: "Regular demos, plain-language updates, dependable delivery. You always know exactly where your project stands.",
+  },
+];
+---
+
+<section class="glance section" id="credentials">
+  <div class="container-x">
+    <div class="glance-head" data-reveal>
+      <span class="eyebrow">
+        <span class="pulse-dot"></span>
+        Credentials &amp; strengths — at a glance
+      </span>
+      <h2 class="glance-title">
+        Everything you'd normally have to dig for,
+        <span class="text-gradient">on one screen.</span>
+      </h2>
+      <p class="glance-text">
+        {allCerts.length} verified certifications, four reasons the work holds up, and five capabilities
+        with real prices. No scrolling required.
+      </p>
+    </div>
+
+    <div class="glance-grid stage">
+      <!-- ── Credentials ───────────────────────────────────────────── -->
+      <article class="panel panel-creds slab tilt" data-tilt="3.5" data-reveal="3d">
+        <header class="panel-top depth-1">
+          <span class="panel-icon"><Icon name="lucide:shield-check" /></span>
+          <div>
+            <h3 class="panel-title">Verified credentials</h3>
+            <p class="panel-sub">Microsoft, Stanford/DeepLearning.AI &amp; Harvard</p>
+          </div>
+          <span class="panel-count">{allCerts.length}</span>
+        </header>
+
+        <div class="tiers depth-1">
+          {
+            credentialGroups.map((g) => (
+              <div class="tier">
+                <p class="tier-label">
+                  <Icon name={`lucide:${groupIcon[g.id] ?? "badge-check"}`} />
+                  {g.label}
+                  <span class="tier-count">{g.items.length}</span>
+                </p>
+                <ul class="tier-list">
+                  {g.items.map((c) => (
+                    <li class="cert">
+                      <Icon name={g.id === "expert" ? "lucide:award" : "lucide:badge-check"} />
+                      <span title={c.name}>{c.short}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+
+        <footer class="panel-foot depth-1">
+          {
+            verificationUrl ? (
+              <a href={verificationUrl} target="_blank" rel="noopener" class="panel-link">
+                Verify on Microsoft Learn
+                <Icon name="lucide:external-link" />
+              </a>
+            ) : (
+              <a href="/about/" class="panel-link">
+                More about the background
+                <Icon name="lucide:arrow-right" />
+              </a>
+            )
+          }
+        </footer>
+      </article>
+
+      <!-- ── Strengths ─────────────────────────────────────────────── -->
+      <article
+        class="panel panel-strengths slab tilt"
+        data-tilt="3.5"
+        data-reveal="3d"
+        data-delay="1"
+      >
+        <header class="panel-top depth-1">
+          <span class="panel-icon"><Icon name="lucide:sparkles" /></span>
+          <div>
+            <h3 class="panel-title">Why this works</h3>
+            <p class="panel-sub">What you actually get</p>
+          </div>
+        </header>
+
+        <ul class="strengths depth-1">
+          {
+            strengths.map((s) => (
+              <li class="strength">
+                <span class="strength-icon">
+                  <Icon name={`lucide:${s.icon}`} />
+                </span>
+                <div>
+                  <h4 class="strength-title">{s.title}</h4>
+                  <p class="strength-text">{s.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+    </div>
+
+    <!-- ── Capabilities rail ──────────────────────────────────────── -->
+    <div class="cap-head" data-reveal>
+      <span class="cap-eyebrow">Five capabilities · transparent starting prices</span>
+      <a href="/pricing/" class="cap-all">Full pricing <Icon name="lucide:arrow-right" /></a>
+    </div>
+    <ul class="caps stage">
+      {
+        pillars.map((p, i) => (
+          <li>
+            <a
+              href={p.href}
+              class="cap slab tilt"
+              data-tilt="6"
+              data-reveal="3d"
+              data-delay={String(i + 1)}
+              style={`--pillar:${p.accent}`}
+            >
+              <span class="cap-icon depth-2">
+                <Icon name={`lucide:${p.icon}`} />
+              </span>
+              <span class="cap-name depth-1">{p.short}</span>
+              <span class="cap-outcome depth-1">{p.outcome}</span>
+              <span class="cap-price depth-2">from {p.priceFrom}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .glance {
+    position: relative;
+  }
+  /* Two columns from tablet up: the heading and its supporting line sit
+     side by side rather than stacking, which keeps the three panels below
+     within reach of the fold — the point of the whole section. */
+  .glance-head {
+    display: grid;
+    gap: 0.7rem 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .glance-head .eyebrow {
+    grid-column: 1 / -1;
+  }
+  .glance-head .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .glance-title {
+    font-size: clamp(1.65rem, 3.4vw, 2.4rem);
+    max-width: 22ch;
+  }
+  .glance-text {
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 46ch;
+  }
+
+  .glance-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  /* ---- shared panel chrome ---- */
+  .panel {
+    padding: 1.5rem;
+    height: 100%;
+  }
+  .panel-top {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding-bottom: 1.1rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .panel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 14px;
+    color: var(--color-accent-ink);
+    background: linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--color-accent) 22%, transparent),
+      color-mix(in srgb, var(--color-accent) 6%, transparent)
+    );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  .panel-icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .panel-title {
+    font-size: 1.12rem;
+  }
+  .panel-sub {
+    margin-top: 0.15rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .panel-count {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1;
+    color: var(--color-accent-ink);
+  }
+
+  /* ---- credentials ---- */
+  .tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .tier-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    margin-bottom: 0.6rem;
+  }
+  .tier-label svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-accent-ink);
+  }
+  .tier-count {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.42rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    color: var(--color-accent-ink);
+    letter-spacing: 0;
+  }
+  .tier-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .cert {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    padding: 0.42rem 0.7rem 0.42rem 0.55rem;
+    border-radius: 10px;
+    color: var(--color-ink-soft);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5));
+    border: 1px solid var(--color-line);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition:
+      transform 0.35s var(--ease-liquid),
+      border-color 0.2s var(--ease-out),
+      box-shadow 0.2s var(--ease-out);
+  }
+  .cert:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 6px 16px -6px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+  .cert svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex-shrink: 0;
+    color: var(--color-accent-ink);
+  }
+  .panel-foot {
+    margin-top: 1.35rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+  .panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-accent-ink);
+  }
+  .panel-link svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .panel-link:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* ---- strengths ---- */
+  .strengths {
+    display: flex;
+    flex-direction: column;
+    gap: 1.05rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .strength {
+    display: flex;
+    gap: 0.85rem;
+  }
+  .strength-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--color-accent) 13%, transparent);
+    color: var(--color-accent-ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  }
+  .strength-icon svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .strength-title {
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+  .strength-text {
+    margin-top: 0.25rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  /* ---- capability rail ---- */
+  .cap-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2.5rem 0 1rem;
+  }
+  .cap-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .cap-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--color-accent-ink);
+  }
+  .cap-all svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+  .cap-all:hover svg {
+    transform: translateX(3px);
+  }
+
+  .caps {
+    /* A long, wide row needs a deeper eye point than the default: at
+       1200px the cards at either end of five would skew hard. */
+    --persp: 2200px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .caps > li {
+    display: flex;
+  }
+  .cap {
+    /* The slab's pointer hotspot picks up this pillar's colour, so each
+       card lights in its own hue rather than generic white. */
+    --slab-hotspot: color-mix(in srgb, var(--pillar) 30%, rgba(255, 255, 255, 0.8));
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
+    padding: 1.05rem 1.1rem 1.15rem;
+    border-radius: var(--radius-card);
+  }
+  .cap-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    margin-bottom: 0.4rem;
+    border-radius: 12px;
+    color: color-mix(in srgb, var(--pillar) 62%, var(--color-ink));
+    background: color-mix(in srgb, var(--pillar) 14%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  .cap-icon svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  .cap-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.98rem;
+    line-height: 1.2;
+  }
+  .cap-outcome {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+    flex-grow: 1;
+  }
+  .cap-price {
+    margin-top: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: color-mix(in srgb, var(--pillar) 45%, var(--color-ink));
+  }
+
+  @media (min-width: 720px) {
+    .glance-head {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: end;
+    }
+    .glance-text {
+      padding-bottom: 0.3rem;
+    }
+    .caps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .glance-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+    .caps {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -39,8 +39,10 @@ const accent = pillarBySlug(slug)?.accent ?? "#0FB5C4";
           </a>
         </div>
       </div>
-      <div class="plh-visual load-fade d2">
-        <ServiceIllustration slug={slug} />
+      <div class="plh-stage stage load-fade d2">
+        <div class="plh-visual tilt" data-tilt="6">
+          <ServiceIllustration slug={slug} />
+        </div>
       </div>
     </div>
   </div>
@@ -63,6 +65,9 @@ const accent = pillarBySlug(slug)?.accent ?? "#0FB5C4";
     background: color-mix(in srgb, var(--pillar) 45%, transparent);
     opacity: 0.16;
     pointer-events: none;
+    animation: glow-breathe 14s ease-in-out infinite alternate;
+    --glow-lo: 0.14;
+    --glow-hi: 0.28;
   }
   .plh-grid {
     position: relative;
@@ -91,7 +96,10 @@ const accent = pillarBySlug(slug)?.accent ?? "#0FB5C4";
   }
   .plh-eyebrow {
     display: block;
-    color: color-mix(in srgb, var(--pillar) 70%, var(--color-ink));
+    /* At 70% the raw pillar accents — amber worst — land near 2.9:1 on the
+       pale hero, and this is small uppercase mono. 50% clears AA while
+       still reading as the pillar's colour. */
+    color: color-mix(in srgb, var(--pillar) 50%, var(--color-ink));
   }
   .plh-title {
     margin-top: 0.6rem;
@@ -114,11 +122,15 @@ const accent = pillarBySlug(slug)?.accent ?? "#0FB5C4";
     width: 1.15rem;
     height: 1.15rem;
   }
+  .plh-stage {
+    max-width: 30rem;
+    width: 100%;
+  }
   .plh-visual {
     border-radius: var(--radius-card);
     overflow: hidden;
-    box-shadow: var(--shadow-lift);
-    max-width: 30rem;
+    border: 1px solid var(--glass-edge);
+    box-shadow: var(--shadow-float);
   }
 
   @media (min-width: 900px) {
@@ -126,7 +138,7 @@ const accent = pillarBySlug(slug)?.accent ?? "#0FB5C4";
       grid-template-columns: 1.1fr 0.9fr;
       gap: 3rem;
     }
-    .plh-visual {
+    .plh-stage {
       justify-self: end;
     }
   }

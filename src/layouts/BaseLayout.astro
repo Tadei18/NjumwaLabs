@@ -71,6 +71,7 @@ const bingToken = import.meta.env.PUBLIC_BING_VERIFICATION;
   </head>
   <body>
     <div class="grain-overlay" aria-hidden="true"></div>
+    <div class="scroll-progress" aria-hidden="true"></div>
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
     <main id="main">
@@ -79,56 +80,12 @@ const bingToken = import.meta.env.PUBLIC_BING_VERIFICATION;
     <Footer />
 
     <script>
-      // Scroll-reveal + count-up — minimal, respects reduced-motion.
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      const countUp = (el: Element) => {
-        const raw = el.getAttribute("data-count");
-        if (!raw) return;
-        const target = parseFloat(raw);
-        const prefix = el.getAttribute("data-prefix") ?? "";
-        const suffix = el.getAttribute("data-suffix") ?? "";
-        const decimals = (raw.split(".")[1] || "").length;
-        if (reduce || isNaN(target)) {
-          el.textContent = prefix + target.toFixed(decimals) + suffix;
-          return;
-        }
-        const dur = 1400;
-        const start = performance.now();
-        const tick = (now: number) => {
-          const p = Math.min((now - start) / dur, 1);
-          const eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
-          if (p < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      };
-
-      const init = () => {
-        const els = document.querySelectorAll("[data-reveal], [data-count]");
-        if (!("IntersectionObserver" in window) || els.length === 0) {
-          els.forEach((el) => {
-            el.classList.add("is-visible");
-            countUp(el);
-          });
-          return;
-        }
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("is-visible");
-                countUp(entry.target);
-                io.unobserve(entry.target);
-              }
-            });
-          },
-          { rootMargin: "0px 0px -8% 0px", threshold: 0.1 }
-        );
-        els.forEach((el) => io.observe(el));
-      };
-      init();
-      document.addEventListener("astro:page-load", init);
+      // All page motion (reveals, count-up, 3D tilt, spotlight, parallax)
+      // lives in one module so there is a single rAF budget and a single
+      // teardown across view transitions.
+      import { initMotion } from "@scripts/motion";
+      initMotion();
+      document.addEventListener("astro:page-load", initMotion);
     </script>
 
     <style>

@@ -10,7 +10,14 @@ interface Props {
 const { pillar, index } = Astro.props;
 ---
 
-<a href={pillar.href} class="service-card" data-reveal style={`--pillar:${pillar.accent}`}>
+<a
+  href={pillar.href}
+  class="service-card tilt"
+  data-tilt="4"
+  data-reveal="3d"
+  data-delay={index === undefined ? undefined : String(Math.min(index + 1, 6))}
+  style={`--pillar:${pillar.accent}`}
+>
   <div class="card-illus">
     <ServiceIllustration slug={pillar.slug} />
     {index !== undefined && <span class="card-num">{String(index + 1).padStart(2, "0")}</span>}
@@ -26,38 +33,57 @@ const { pillar, index } = Astro.props;
 </a>
 
 <style>
+  /* The card is the tilting object, so the transform belongs to .tilt and
+     this rule must not set one of its own. Depth is expressed instead by
+     the shadow deepening as the card lifts — the illustration is clipped
+     to the card, so overflow has to stay hidden and children can't ride
+     out on the Z axis. */
   .service-card {
     position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
+    background:
+      linear-gradient(
+        158deg,
+        rgba(255, 255, 255, 0.62),
+        rgba(255, 255, 255, 0.12) 46%,
+        rgba(255, 255, 255, 0.42)
+      ),
+      var(--color-surface);
+    border: 1px solid var(--glass-edge);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-soft);
     transition:
-      transform 0.22s var(--ease-out),
-      box-shadow 0.22s var(--ease-out),
-      border-color 0.22s var(--ease-out);
+      transform 0.5s var(--ease-glide),
+      box-shadow 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out);
   }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .service-card {
+      -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+      backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+    }
+  }
+  /* Pointer-tracked hotspot in the pillar's own colour, so each card
+     lights in its own hue as the cursor crosses it. */
   .service-card::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: var(--radius-card);
     background: radial-gradient(
-      120% 80% at 50% 0%,
-      color-mix(in srgb, var(--pillar) 9%, transparent),
-      transparent 55%
+      60% 60% at var(--mx) var(--my),
+      color-mix(in srgb, var(--pillar) 18%, transparent),
+      transparent 62%
     );
     opacity: 0;
-    transition: opacity 0.25s var(--ease-out);
+    transition: opacity 0.35s var(--ease-out);
     pointer-events: none;
   }
   .service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lift);
-    border-color: color-mix(in srgb, var(--pillar) 55%, var(--color-line));
+    box-shadow: var(--shadow-float);
+    border-color: color-mix(in srgb, var(--pillar) 55%, var(--glass-edge));
   }
   .service-card:hover::after {
     opacity: 1;
@@ -75,10 +101,11 @@ const { pillar, index } = Astro.props;
     font-family: var(--font-mono);
     font-weight: 600;
     font-size: 0.82rem;
-    /* Raw pillar accents (amber especially) fail WCAG AA as text on
-       their own tint — darken toward ink before using as a text colour. */
-    color: color-mix(in srgb, var(--pillar, var(--color-accent)) 45%, var(--color-ink));
-    background: rgba(10, 19, 34, 0.55);
+    /* The badge sits on a dark scrim over the illustration, so the number
+       has to be lightened toward white — mixing toward ink (correct on a
+       light card face) would put dark text on a dark plate. */
+    color: color-mix(in srgb, var(--pillar, var(--color-accent)) 55%, #ffffff);
+    background: rgba(10, 19, 34, 0.62);
     padding: 0.15rem 0.45rem;
     border-radius: 6px;
     backdrop-filter: blur(2px);
@@ -109,7 +136,10 @@ const { pillar, index } = Astro.props;
     font-family: var(--font-display);
     font-weight: 500;
     font-size: 0.9rem;
-    color: color-mix(in srgb, var(--pillar) 75%, var(--color-ink));
+    /* 75% of a raw pillar accent — amber worst of all — lands under 3:1
+       on the light card face. 55% keeps the pillar's identity while
+       clearing AA for body-sized text. */
+    color: color-mix(in srgb, var(--pillar) 55%, var(--color-ink));
   }
   .card-cta svg {
     width: 1rem;

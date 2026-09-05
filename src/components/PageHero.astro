@@ -15,43 +15,51 @@ interface Props {
   /** Accent hue for the glow (defaults to brand cyan). */
   accent?: string;
 }
-const {
-  eyebrow,
-  title,
-  titleAccent,
-  subtitle,
-  breadcrumbs,
-  visual = "bare",
-  accent,
-} = Astro.props;
+const { eyebrow, title, titleAccent, subtitle, breadcrumbs, visual = "bare", accent } = Astro.props;
 const hasVisual = Astro.slots.has("default");
 const hasCta = Astro.slots.has("cta");
 ---
 
 <section class="page-hero bg-dots" style={accent ? `--ph-accent:${accent}` : undefined}>
-  <span class="glow glow-cyan ph-glow-1" aria-hidden="true"></span>
-  <span class="glow glow-amber ph-glow-2" aria-hidden="true"></span>
+  <span class="glow glow-cyan glow-live ph-glow-1" aria-hidden="true"></span>
+  <span class="glow glow-amber glow-live ph-glow-2" aria-hidden="true"></span>
 
   <div class="container-x ph-grid" class:list={[{ "no-visual": !hasVisual }]}>
     <div class="ph-copy">
       <Breadcrumbs items={breadcrumbs} />
       <span class="eyebrow ph-eyebrow load-fade">{eyebrow}</span>
       <h1 class="ph-title load-fade d1">
-        {title}{titleAccent && <> <span class="text-gradient">{titleAccent}</span></>}
+        {title}{
+          titleAccent && (
+            <>
+              {" "}
+              <span class="text-gradient">{titleAccent}</span>
+            </>
+          )
+        }
       </h1>
       {subtitle && <p class="ph-sub load-fade d2">{subtitle}</p>}
-      {hasCta && (
-        <div class="ph-cta load-fade d3">
-          <slot name="cta" />
-        </div>
-      )}
+      {
+        hasCta && (
+          <div class="ph-cta load-fade d3">
+            <slot name="cta" />
+          </div>
+        )
+      }
     </div>
 
-    {hasVisual && (
-      <div class:list={["ph-visual", "load-fade", "d2", visual]}>
-        <slot />
-      </div>
-    )}
+    {
+      hasVisual && (
+        <div class="ph-stage stage load-fade d2">
+          <div
+            class:list={["ph-visual", visual, { tilt: visual === "panel" }]}
+            data-tilt={visual === "panel" ? "5" : undefined}
+          >
+            <slot />
+          </div>
+        </div>
+      )
+    }
   </div>
 </section>
 
@@ -66,7 +74,8 @@ const hasCta = Astro.slots.has("cta");
     height: 26rem;
     top: -10rem;
     right: -6rem;
-    opacity: 0.16;
+    --glow-lo: 0.13;
+    --glow-hi: 0.24;
     background: color-mix(in srgb, var(--ph-accent, var(--color-accent)) 55%, transparent);
   }
   .ph-glow-2 {
@@ -74,7 +83,9 @@ const hasCta = Astro.slots.has("cta");
     height: 22rem;
     bottom: -12rem;
     left: -8rem;
-    opacity: 0.1;
+    --glow-lo: 0.08;
+    --glow-hi: 0.18;
+    animation-delay: -5s;
   }
 
   .ph-grid {
@@ -108,15 +119,25 @@ const hasCta = Astro.slots.has("cta");
     margin-top: 1.6rem;
   }
 
+  .ph-stage,
   .ph-visual {
     width: 100%;
   }
   .ph-visual.panel {
-    background: linear-gradient(160deg, var(--color-night), var(--color-night-2));
-    border: 1px solid var(--color-night-line);
+    background:
+      linear-gradient(
+        150deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.01) 46%,
+        rgba(255, 255, 255, 0.06)
+      ),
+      linear-gradient(160deg, var(--color-night), var(--color-night-2));
+    border: 1px solid var(--glass-edge-dark);
     border-radius: 22px;
     padding: 1.1rem 1.1rem 1.4rem;
-    box-shadow: var(--shadow-lift);
+    box-shadow:
+      0 30px 70px -22px rgba(10, 16, 32, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   @media (min-width: 900px) {
